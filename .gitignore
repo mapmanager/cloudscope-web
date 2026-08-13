@@ -1,0 +1,27 @@
+# Local datasets and handoff material
+/data/
+/tmp-to-be-deleted/
+
+# Dependencies and generated output
+node_modules/
+dist/
+coverage/
+.vite/
+
+# Local environment and logs
+.env
+.env.*
+!.env.example
+*.local
+*.log
+
+# Editor and operating-system files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# TypeScript and test caches
+*.tsbuildinfo
+.eslintcache
