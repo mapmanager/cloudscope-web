@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 
+import {
+  orientRoiForDisplay,
+  orientYxPlaneForDisplay,
+  type DisplayPlane,
+} from '../data/imageDisplayTransform'
 import { intensityRange, loadImagePlane, type ImagePlane } from '../data/omeZarrLoader'
 import type { PrimaryImageDescriptor, Roi } from '../models/webDataset'
 
@@ -14,7 +19,7 @@ const props = defineProps<{
 }>()
 
 const canvas = ref<HTMLCanvasElement | null>(null)
-const plane = ref<ImagePlane | null>(null)
+const plane = ref<DisplayPlane | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
 let controller: AbortController | null = null
@@ -23,24 +28,27 @@ const contrast = computed(
   () => props.image.channels.find(({ index }) => index === props.channel)?.contrast,
 )
 
-function drawRoi(context: CanvasRenderingContext2D, current: ImagePlane): void {
+function drawRoi(context: CanvasRenderingContext2D, current: DisplayPlane): void {
   if (!props.roi) return
+  const sourceXSize = props.image.sizes.x
+  if (sourceXSize === undefined) return
+  const roi = orientRoiForDisplay(props.roi, sourceXSize)
   const scaleX = current.width / current.sourceWidth
   const scaleY = current.height / current.sourceHeight
   context.save()
   context.strokeStyle = '#ffb44c'
   context.lineWidth = Math.max(1, Math.min(current.width, current.height) / 300)
-  if (props.roi.type === 'rect') {
+  if (roi.type === 'rect') {
     context.strokeRect(
-      props.roi.x_start * scaleX,
-      props.roi.y_start * scaleY,
-      (props.roi.x_stop - props.roi.x_start) * scaleX,
-      (props.roi.y_stop - props.roi.y_start) * scaleY,
+      roi.x_start * scaleX,
+      roi.y_start * scaleY,
+      (roi.x_stop - roi.x_start) * scaleX,
+      (roi.y_stop - roi.y_start) * scaleY,
     )
   } else {
     context.beginPath()
-    context.moveTo(props.roi.x0 * scaleX, props.roi.y0 * scaleY)
-    context.lineTo(props.roi.x1 * scaleX, props.roi.y1 * scaleY)
+    context.moveTo(roi.x0 * scaleX, roi.y0 * scaleY)
+    context.lineTo(roi.x1 * scaleX, roi.y1 * scaleY)
     context.stroke()
   }
   context.restore()
@@ -78,12 +86,13 @@ async function load(): Promise<void> {
   loading.value = true
   error.value = null
   try {
-    plane.value = await loadImagePlane(
+    const sourcePlane: ImagePlane = await loadImagePlane(
       props.image,
       props.documentUrl,
       { channel: props.channel, z: props.z, t: props.t },
       controller.signal,
     )
+    plane.value = orientYxPlaneForDisplay(sourcePlane)
     await nextTick()
     render()
   } catch (reason) {
