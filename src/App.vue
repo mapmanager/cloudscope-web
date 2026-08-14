@@ -33,32 +33,17 @@ onMounted(() => {
 <template>
   <main class="app-shell">
     <header class="app-header">
-      <div>
-        <p class="eyebrow">Static acquisition viewer</p>
-        <h1>CloudScope Web</h1>
-      </div>
-      <div v-if="viewer.datasetDocument.value" class="dataset-summary">
-        <strong>{{ viewer.datasetDocument.value.data.name }}</strong>
-        <span>{{ viewer.datasetDocument.value.data.images.length }} files</span>
-      </div>
+      <h1>CloudScope Web</h1>
+      <DatasetSource
+        v-model="viewer.datasetUrl.value"
+        :loading="viewer.loading.value"
+        @open="viewer.openDataset()"
+      />
     </header>
-
-    <DatasetSource
-      v-model="viewer.datasetUrl.value"
-      :loading="viewer.loading.value"
-      @open="viewer.openDataset()"
-    />
 
     <p v-if="viewer.error.value" class="error-message" role="alert">{{ viewer.error.value }}</p>
 
     <section v-if="viewer.datasetDocument.value" class="panel file-panel">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">Collection index</p>
-          <h2>Files</h2>
-        </div>
-        <span class="muted">Loaded from one dataset.json request</span>
-      </div>
       <FileTable
         :images="viewer.datasetDocument.value.data.images"
         :selected-image-id="viewer.selectedImageId.value"

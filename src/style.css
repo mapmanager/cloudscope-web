@@ -34,14 +34,14 @@ button {
 .app-shell {
   width: min(1500px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 32px 0 64px;
+  padding: 20px 0 64px;
 }
 .app-header {
   display: flex;
-  align-items: end;
+  align-items: center;
   justify-content: space-between;
   gap: 24px;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 h1,
 h2,
@@ -51,9 +51,9 @@ p {
 }
 h1 {
   margin-bottom: 0;
-  font-size: clamp(2rem, 5vw, 4rem);
-  letter-spacing: -0.055em;
-  line-height: 0.95;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  letter-spacing: -0.04em;
+  line-height: 1;
 }
 h2 {
   margin-bottom: 4px;
@@ -74,24 +74,36 @@ h3 {
 .muted {
   color: #8ca1ab;
 }
-.dataset-summary {
-  display: grid;
-  justify-items: end;
-  gap: 3px;
-  color: #8ca1ab;
-}
-.dataset-summary strong {
-  color: #d8e5ea;
-}
-
 .dataset-source {
-  margin-bottom: 20px;
+  position: relative;
 }
-.dataset-source > label {
+.dataset-source summary {
+  cursor: pointer;
+  color: #8ca1ab;
+  font-size: 0.78rem;
+  font-weight: 650;
+  user-select: none;
+}
+.dataset-source[open] summary {
+  margin-bottom: 9px;
+}
+.dataset-source form {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(680px, calc(100vw - 32px));
+  border: 1px solid #2d4651;
+  border-radius: 9px;
+  padding: 12px;
+  background: #0a171d;
+  box-shadow: 0 16px 48px rgb(0 0 0 / 45%);
+}
+.dataset-source label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   color: #9fb4bd;
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 650;
 }
 .dataset-source__row {
@@ -107,7 +119,7 @@ select {
 }
 .dataset-source input {
   width: 100%;
-  padding: 12px 14px;
+  padding: 9px 11px;
 }
 button {
   border: 0;
@@ -132,6 +144,10 @@ button:disabled {
 .analysis-panel {
   padding: 20px;
 }
+.file-panel {
+  padding: 0;
+  overflow: hidden;
+}
 .section-heading {
   display: flex;
   align-items: end;
@@ -144,9 +160,11 @@ button:disabled {
   margin-bottom: 0;
 }
 .table-scroll {
+  height: 270px;
+  min-height: 110px;
+  max-height: 70vh;
+  resize: vertical;
   overflow: auto;
-  border: 1px solid #1c3039;
-  border-radius: 8px;
 }
 .file-table {
   width: 100%;
@@ -157,7 +175,7 @@ button:disabled {
 .file-table th {
   position: sticky;
   top: 0;
-  padding: 10px 12px;
+  padding: 6px 10px;
   color: #849ba5;
   background: #0a171d;
   text-align: left;
@@ -167,7 +185,7 @@ button:disabled {
 }
 .file-table td {
   border-top: 1px solid #182b34;
-  padding: 10px 12px;
+  padding: 5px 10px;
   color: #aabdc5;
 }
 .file-table tbody tr {
@@ -300,10 +318,7 @@ button:disabled {
     padding-top: 20px;
   }
   .app-header {
-    align-items: start;
-  }
-  .dataset-summary {
-    display: none;
+    align-items: center;
   }
   .workspace-grid {
     grid-template-columns: 1fr;
