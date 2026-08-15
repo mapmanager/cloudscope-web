@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
-import { loadCsv } from '../data/csvLoader'
+import type { CsvTable } from '../data/csvLoader'
 import type { ExportedAnalysis } from '../models/webDataset'
 
-const props = defineProps<{ analysis: ExportedAnalysis; documentUrl: URL }>()
+const props = defineProps<{
+  analysis: ExportedAnalysis
+  documentUrl: URL
+  loadTable: (url: URL, signal?: AbortSignal) => Promise<CsvTable>
+}>()
 const plotElement = ref<HTMLDivElement | null>(null)
 const error = ref<string | null>(null)
 const loading = ref(false)
@@ -19,7 +23,7 @@ async function renderPlot(): Promise<void> {
   loading.value = true
   try {
     const plot = props.analysis.plot
-    const table = await loadCsv(new URL(plot.href, props.documentUrl), request.signal)
+    const table = await props.loadTable(new URL(plot.href, props.documentUrl), request.signal)
     const x = table.rows.map((row) => Number(row[plot.x_column]))
     const y = table.rows.map((row) => Number(row[plot.y_column]))
     plotly ??= (await import('plotly.js-dist-min')).default

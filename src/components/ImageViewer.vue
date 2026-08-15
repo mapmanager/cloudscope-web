@@ -6,7 +6,7 @@ import {
   orientYxPlaneForDisplay,
   type DisplayPlane,
 } from '../data/imageDisplayTransform'
-import { intensityRange, loadImagePlane, type ImagePlane } from '../data/omeZarrLoader'
+import { intensityRange, type ImagePlane, type PlaneIndices } from '../data/omeZarrLoader'
 import type { PrimaryImageDescriptor, Roi } from '../models/webDataset'
 
 const props = defineProps<{
@@ -16,6 +16,12 @@ const props = defineProps<{
   z: number
   t: number
   roi: Roi | null
+  loadPlane: (
+    descriptor: PrimaryImageDescriptor,
+    documentUrl: URL,
+    indices: PlaneIndices,
+    signal?: AbortSignal,
+  ) => Promise<ImagePlane>
 }>()
 
 const canvas = ref<HTMLCanvasElement | null>(null)
@@ -86,7 +92,7 @@ async function load(): Promise<void> {
   loading.value = true
   error.value = null
   try {
-    const sourcePlane: ImagePlane = await loadImagePlane(
+    const sourcePlane: ImagePlane = await props.loadPlane(
       props.image,
       props.documentUrl,
       { channel: props.channel, z: props.z, t: props.t },

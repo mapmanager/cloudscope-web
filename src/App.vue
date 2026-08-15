@@ -36,8 +36,10 @@ onMounted(() => {
       <h1>CloudScope Web</h1>
       <DatasetSource
         v-model="viewer.datasetUrl.value"
+        v-model:server-url="viewer.serverUrl.value"
         :loading="viewer.loading.value"
         @open="viewer.openDataset()"
+        @open-server="viewer.openServer"
       />
     </header>
 
@@ -80,6 +82,7 @@ onMounted(() => {
           :roi="selectedRoi"
           :z="viewer.selectedZ.value"
           :t="viewer.selectedT.value"
+          :load-plane="viewer.loadPlane"
         />
         <section class="panel analysis-panel">
           <div class="section-heading">
@@ -94,6 +97,7 @@ onMounted(() => {
               :key="analysis.id"
               :analysis="analysis"
               :document-url="viewer.acqImageDocument.value.url"
+              :load-table="viewer.loadTable"
             />
           </div>
           <p v-else class="empty-state">No exported analysis for this channel and ROI.</p>

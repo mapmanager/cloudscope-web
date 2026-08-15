@@ -1,11 +1,19 @@
 import { computed, ref, shallowRef, watch } from 'vue'
 
-import { loadAcqImage, loadDataset } from '../data/datasetLoader'
+import type { CsvTable } from '../data/csvLoader'
+import type { ImagePlane, PlaneIndices } from '../data/omeZarrLoader'
+import {
+  AcqStoreServerSource,
+  ExportedDatasetSource,
+  type LocalOpenKind,
+  type ViewerDataSource,
+} from '../data/viewerDataSource'
 import type {
   AcqImageDocument,
   DatasetImage,
   LoadedDocument,
   WebDataset,
+  PixelDescriptor,
 } from '../models/webDataset'
 
 const DEFAULT_DEVELOPMENT_DATASET = '/__dev_dataset__/dataset.json'
@@ -56,6 +64,8 @@ export function viewerUrl(href: string, state: UrlSelection & { dataset: string 
 
 export function useViewerState() {
   const datasetUrl = ref(initialDatasetUrl())
+  const serverUrl = ref('http://127.0.0.1:8767')
+  const activeSource = shallowRef<ViewerDataSource | null>(null)
   const datasetDocument = shallowRef<LoadedDocument<WebDataset> | null>(null)
   const acqImageDocument = shallowRef<LoadedDocument<AcqImageDocument> | null>(null)
   const selectedImageId = ref<string | null>(null)
@@ -72,13 +82,16 @@ export function useViewerState() {
       null,
   )
 
-  async function openDataset(url = datasetUrl.value): Promise<void> {
-    if (!url.trim()) return
+  async function activateSource(source: ViewerDataSource): Promise<void> {
     loading.value = true
     error.value = null
+    const previous = activeSource.value
     try {
-      datasetDocument.value = await loadDataset(url.trim())
+      const document = await source.loadDataset()
+      activeSource.value = source
+      datasetDocument.value = document
       datasetUrl.value = datasetDocument.value.url.href
+      if (previous && previous !== source) await previous.close()
       const requested = readUrlSelection(window.location.href)
       const first = datasetDocument.value.data.images[0] ?? null
       const target =
@@ -96,6 +109,7 @@ export function useViewerState() {
         if (requested.t < tSize) selectedT.value = requested.t
       }
     } catch (reason) {
+      await source.close().catch(() => undefined)
       datasetDocument.value = null
       acqImageDocument.value = null
       selectedImageId.value = null
@@ -103,6 +117,16 @@ export function useViewerState() {
     } finally {
       loading.value = false
     }
+  }
+
+  async function openDataset(url = datasetUrl.value): Promise<void> {
+    if (!url.trim()) return
+    await activateSource(new ExportedDatasetSource(url.trim()))
+  }
+
+  async function openServer(kind: LocalOpenKind): Promise<void> {
+    if (!serverUrl.value.trim()) return
+    await activateSource(new AcqStoreServerSource(serverUrl.value.trim(), kind))
   }
 
   watch(
@@ -149,7 +173,11 @@ export function useViewerState() {
     }
     loading.value = true
     try {
-      acqImageDocument.value = await loadAcqImage(datasetDocument.value.url, image.href)
+      if (!activeSource.value) throw new Error('No dataset source is active')
+      acqImageDocument.value = await activeSource.value.loadImage(
+        datasetDocument.value.url,
+        image.href,
+      )
       selectedRoiId.value = acqImageDocument.value.data.rois[0]?.id ?? null
     } catch (reason) {
       error.value = reason instanceof Error ? reason.message : String(reason)
@@ -158,8 +186,24 @@ export function useViewerState() {
     }
   }
 
+  function loadPlane(
+    descriptor: PixelDescriptor,
+    documentUrl: URL,
+    indices: PlaneIndices,
+    signal?: AbortSignal,
+  ): Promise<ImagePlane> {
+    if (!activeSource.value) return Promise.reject(new Error('No dataset source is active'))
+    return activeSource.value.loadPlane(descriptor, documentUrl, indices, signal)
+  }
+
+  function loadTable(url: URL, signal?: AbortSignal): Promise<CsvTable> {
+    if (!activeSource.value) return Promise.reject(new Error('No dataset source is active'))
+    return activeSource.value.loadTable(url, signal)
+  }
+
   return {
     datasetUrl,
+    serverUrl,
     datasetDocument,
     acqImageDocument,
     selectedImageId,
@@ -171,6 +215,9 @@ export function useViewerState() {
     loading,
     error,
     openDataset,
+    openServer,
     selectImage,
+    loadPlane,
+    loadTable,
   }
 }
