@@ -25,6 +25,12 @@ export interface DatasetImage {
   analysis_types: string[]
   accepted: boolean
   has_reference_image: boolean
+  load_state?: LoadState
+}
+
+export interface LoadState {
+  pixels: boolean
+  analysisCsv: boolean
 }
 
 export interface WebDataset {
@@ -133,6 +139,7 @@ export interface AcqImageDocument {
   analyses: ExportedAnalysis[]
   metadata: Record<string, Record<string, unknown>>
   reference_image: ReferenceImageDescriptor | null
+  load_state?: LoadState
 }
 
 export interface LoadedDocument<T> {

@@ -75,6 +75,29 @@ export function useViewerState() {
   const selectedT = ref(0)
   const loading = ref(false)
   const error = ref<string | null>(null)
+  const canUnload = computed(() => activeSource.value?.canUnload ?? false)
+
+  function updateLoadState(
+    imageId: string,
+    patch: Partial<{ pixels: boolean; analysisCsv: boolean }>,
+  ) {
+    const document = datasetDocument.value
+    if (!document) return
+    datasetDocument.value = {
+      ...document,
+      data: {
+        ...document.data,
+        images: document.data.images.map((image) =>
+          image.id === imageId
+            ? {
+                ...image,
+                load_state: { pixels: false, analysisCsv: false, ...image.load_state, ...patch },
+              }
+            : image,
+        ),
+      },
+    }
+  }
 
   const selectedIndexImage = computed<DatasetImage | null>(
     () =>
@@ -91,7 +114,7 @@ export function useViewerState() {
       activeSource.value = source
       datasetDocument.value = document
       datasetUrl.value = datasetDocument.value.url.href
-      if (previous && previous !== source) await previous.close()
+      if (previous && previous !== source) await previous.close().catch(() => undefined)
       const requested = readUrlSelection(window.location.href)
       const first = datasetDocument.value.data.images[0] ?? null
       const target =
@@ -178,6 +201,9 @@ export function useViewerState() {
         datasetDocument.value.url,
         image.href,
       )
+      if (acqImageDocument.value.data.load_state) {
+        updateLoadState(imageId, acqImageDocument.value.data.load_state)
+      }
       selectedRoiId.value = acqImageDocument.value.data.rois[0]?.id ?? null
     } catch (reason) {
       error.value = reason instanceof Error ? reason.message : String(reason)
@@ -186,19 +212,50 @@ export function useViewerState() {
     }
   }
 
-  function loadPlane(
+  async function loadPlane(
     descriptor: PixelDescriptor,
     documentUrl: URL,
     indices: PlaneIndices,
     signal?: AbortSignal,
   ): Promise<ImagePlane> {
-    if (!activeSource.value) return Promise.reject(new Error('No dataset source is active'))
-    return activeSource.value.loadPlane(descriptor, documentUrl, indices, signal)
+    if (!activeSource.value) throw new Error('No dataset source is active')
+    const plane = await activeSource.value.loadPlane(descriptor, documentUrl, indices, signal)
+    if (selectedImageId.value) updateLoadState(selectedImageId.value, { pixels: true })
+    return plane
   }
 
-  function loadTable(url: URL, signal?: AbortSignal): Promise<CsvTable> {
-    if (!activeSource.value) return Promise.reject(new Error('No dataset source is active'))
-    return activeSource.value.loadTable(url, signal)
+  async function loadTable(url: URL, signal?: AbortSignal): Promise<CsvTable> {
+    if (!activeSource.value) throw new Error('No dataset source is active')
+    const table = await activeSource.value.loadTable(url, signal)
+    if (selectedImageId.value) updateLoadState(selectedImageId.value, { analysisCsv: true })
+    return table
+  }
+
+  async function unloadImage(imageId: string): Promise<void> {
+    if (!activeSource.value?.canUnload) return
+    loading.value = true
+    error.value = null
+    try {
+      await activeSource.value.unloadImage(imageId)
+      datasetDocument.value = await activeSource.value.refreshDataset()
+    } catch (reason) {
+      error.value = reason instanceof Error ? reason.message : String(reason)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function closeDataset(): Promise<void> {
+    const source = activeSource.value
+    activeSource.value = null
+    if (source) await source.close().catch(() => undefined)
+    datasetDocument.value = null
+    acqImageDocument.value = null
+    selectedImageId.value = null
+    datasetUrl.value = ''
+    const url = new URL(window.location.href)
+    for (const key of ['dataset', 'image', 'channel', 'roi', 'z', 't']) url.searchParams.delete(key)
+    window.history.replaceState(null, '', url)
   }
 
   return {
@@ -214,10 +271,13 @@ export function useViewerState() {
     selectedT,
     loading,
     error,
+    canUnload,
     openDataset,
     openServer,
     selectImage,
     loadPlane,
     loadTable,
+    unloadImage,
+    closeDataset,
   }
 }

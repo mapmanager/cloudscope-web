@@ -87,7 +87,7 @@ h3 {
 .dataset-source[open] summary {
   margin-bottom: 9px;
 }
-.dataset-source form {
+.dataset-source__popover {
   position: absolute;
   z-index: 10;
   top: calc(100% + 8px);
@@ -98,6 +98,9 @@ h3 {
   padding: 12px;
   background: #0a171d;
   box-shadow: 0 16px 48px rgb(0 0 0 / 45%);
+}
+.dataset-source form + form {
+  margin-top: 14px;
 }
 .dataset-source label {
   display: block;
@@ -147,6 +150,20 @@ button:disabled {
 .file-panel {
   padding: 0;
   overflow: hidden;
+}
+.file-panel__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 10px;
+  border-bottom: 1px solid #182b34;
+}
+.secondary-action,
+.table-action {
+  padding: 5px 10px;
+  color: #b9ced6;
+  background: #18303a;
+  font-size: 0.72rem;
 }
 .section-heading {
   display: flex;

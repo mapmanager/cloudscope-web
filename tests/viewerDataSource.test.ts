@@ -35,6 +35,9 @@ describe('AcqStoreServerSource', () => {
           },
         })
       }
+      if (url.endsWith('/images/image-1/loaded-data') && init?.method === 'DELETE') {
+        return Response.json({ ok: true, loadState: { pixels: false, analysisCsv: false } })
+      }
       if (url.endsWith('/api/v2/datasets/dataset-1') && init?.method === 'DELETE') {
         return Response.json({ ok: true, deleted: true })
       }
@@ -58,12 +61,13 @@ describe('AcqStoreServerSource', () => {
       new URL('http://127.0.0.1:8767/api/v2/datasets/dataset-1/images/image-1'),
       { channel: 0, z: 0, t: 0 },
     )
+    await source.unloadImage('image-1')
     await source.close()
 
     expect(dataset.data.id).toBe('dataset-1')
     expect(plane.data).toBeInstanceOf(Uint16Array)
     expect(Array.from(plane.data)).toEqual([1, 2, 3, 4])
     expect(plane.width).toBe(2)
-    expect(fetchMock).toHaveBeenCalledTimes(4)
+    expect(fetchMock).toHaveBeenCalledTimes(5)
   })
 })

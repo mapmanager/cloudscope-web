@@ -46,10 +46,18 @@ onMounted(() => {
     <p v-if="viewer.error.value" class="error-message" role="alert">{{ viewer.error.value }}</p>
 
     <section v-if="viewer.datasetDocument.value" class="panel file-panel">
+      <div class="file-panel__heading">
+        <strong>{{ viewer.datasetDocument.value.data.name }}</strong>
+        <button type="button" class="secondary-action" @click="viewer.closeDataset()">
+          Close dataset
+        </button>
+      </div>
       <FileTable
         :images="viewer.datasetDocument.value.data.images"
         :selected-image-id="viewer.selectedImageId.value"
+        :can-unload="viewer.canUnload.value"
         @select="viewer.selectImage"
+        @unload="viewer.unloadImage"
       />
     </section>
 

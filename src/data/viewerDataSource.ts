@@ -11,7 +11,9 @@ import type {
 export type LocalOpenKind = 'file' | 'folder' | 'csv'
 
 export interface ViewerDataSource {
+  readonly canUnload: boolean
   loadDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>>
+  refreshDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>>
   loadImage(
     datasetUrl: URL,
     href: string,
@@ -24,14 +26,20 @@ export interface ViewerDataSource {
     signal?: AbortSignal,
   ): Promise<ImagePlane>
   loadTable(url: URL, signal?: AbortSignal): Promise<CsvTable>
+  unloadImage(imageId: string): Promise<void>
   close(): Promise<void>
 }
 
 export class ExportedDatasetSource implements ViewerDataSource {
+  readonly canUnload = false
   constructor(private readonly datasetUrl: string) {}
 
   loadDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>> {
     return loadDataset(this.datasetUrl, signal)
+  }
+
+  refreshDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>> {
+    return this.loadDataset(signal)
   }
 
   loadImage(datasetUrl: URL, href: string, signal?: AbortSignal) {
@@ -51,6 +59,8 @@ export class ExportedDatasetSource implements ViewerDataSource {
     return loadCsv(url, signal)
   }
 
+  async unloadImage(): Promise<void> {}
+
   async close(): Promise<void> {}
 }
 
@@ -66,6 +76,7 @@ const constructors = {
 } as const
 
 export class AcqStoreServerSource implements ViewerDataSource {
+  readonly canUnload = true
   private datasetId: string | null = null
   private manifestUrl: URL | null = null
 
@@ -94,6 +105,11 @@ export class AcqStoreServerSource implements ViewerDataSource {
     }
     this.datasetId = opened.datasetId
     this.manifestUrl = new URL(opened.manifestUrl, server)
+    return loadDataset(this.manifestUrl, signal)
+  }
+
+  refreshDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>> {
+    if (!this.manifestUrl) return Promise.reject(new Error('No server dataset is open'))
     return loadDataset(this.manifestUrl, signal)
   }
 
@@ -151,6 +167,16 @@ export class AcqStoreServerSource implements ViewerDataSource {
 
   loadTable(url: URL, signal?: AbortSignal): Promise<CsvTable> {
     return loadCsv(url, signal)
+  }
+
+  async unloadImage(imageId: string): Promise<void> {
+    if (!this.datasetId) throw new Error('No server dataset is open')
+    const url = new URL(
+      `/api/v2/datasets/${encodeURIComponent(this.datasetId)}/images/${encodeURIComponent(imageId)}/loaded-data`,
+      this.serverUrl,
+    )
+    const response = await fetch(url, { method: 'DELETE' })
+    if (!response.ok) throw new Error(`Could not unload image: HTTP ${response.status}`)
   }
 
   async close(): Promise<void> {
