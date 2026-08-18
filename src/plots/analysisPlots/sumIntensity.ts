@@ -7,6 +7,7 @@ export const sumIntensityPlots: XYPlotSpec[] = [
     source: { analysisName: 'sum_intensity', resource: 'table' },
     data: { xColumn: 'time_sec', yColumn: 'df_f_signal' },
     presentation: {
+      xLinkGroup: 'time',
       xLabel: 'Time (s)',
       yLabel: 'ΔF/F',
       seriesName: 'Sum intensity ΔF/F',

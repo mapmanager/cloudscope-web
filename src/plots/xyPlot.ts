@@ -1,4 +1,5 @@
 import type { CsvTable } from '../data/csvLoader'
+import type { AxisLinkGroup } from '../models/viewState'
 
 export interface XYPlotSpec {
   id: string
@@ -6,6 +7,7 @@ export interface XYPlotSpec {
   source: { analysisName: string; resource: 'table' | 'peaks' }
   data: { xColumn: string; yColumn: string }
   presentation: {
+    xLinkGroup: AxisLinkGroup
     xLabel: string
     yLabel: string
     seriesName: string

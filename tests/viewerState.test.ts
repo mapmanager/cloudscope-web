@@ -129,6 +129,7 @@ describe('viewer selection state', () => {
       sourceWidth: 2,
       sourceHeight: 2,
       level: '0',
+      axes: { x: { spacing: 1, unit: 'Pixels' }, y: { spacing: 1, unit: 'Pixels' } },
     })
     const state = useViewerState({ maxBytes: 1024, maxEntries: 4 })
     await state.openDataset('https://example.test/dataset.json')

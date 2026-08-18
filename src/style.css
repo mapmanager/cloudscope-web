@@ -284,18 +284,51 @@ button:disabled {
 .image-stage {
   position: relative;
   display: grid;
-  min-height: 320px;
+  height: clamp(320px, 45vw, 680px);
   place-items: center;
-  overflow: auto;
+  overflow: hidden;
   border: 1px solid #1c3039;
   border-radius: 8px;
   background: #020608;
+  cursor: crosshair;
+  touch-action: none;
+}
+.image-stage--pan,
+.image-stage--pan:active {
+  cursor: grab;
+}
+.image-stage--pan:active {
+  cursor: grabbing;
 }
 .image-stage canvas {
   display: block;
-  max-width: 100%;
-  max-height: 680px;
+  width: 100%;
+  height: 100%;
   image-rendering: pixelated;
+}
+.image-selection {
+  position: absolute;
+  pointer-events: none;
+  border: 1px solid rgb(111 204 232 / 90%);
+  background: rgb(74 166 194 / 28%);
+}
+.image-selection--x {
+  border-top: 0;
+  border-bottom: 0;
+}
+.image-selection--y {
+  border-right: 0;
+  border-left: 0;
+}
+.image-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.image-help {
+  margin: 8px 0 0;
+  font-size: 0.72rem;
+  text-align: right;
 }
 .image-status {
   position: absolute;

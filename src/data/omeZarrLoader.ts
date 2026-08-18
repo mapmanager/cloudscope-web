@@ -4,12 +4,17 @@ import type { PixelDescriptor } from '../models/webDataset'
 
 interface OmeDataset {
   path: string
+  coordinateTransformations?: Array<{
+    type: string
+    scale?: number[]
+  }>
 }
 
 interface OmeRootMetadata {
   attributes?: {
     ome?: {
       multiscales?: Array<{
+        axes?: Array<{ name: string; unit?: string }>
         datasets?: OmeDataset[]
       }>
     }
@@ -23,6 +28,16 @@ export interface ImagePlane {
   sourceWidth: number
   sourceHeight: number
   level: string
+  axes: {
+    x: PlaneAxisCalibration
+    y: PlaneAxisCalibration
+  }
+}
+
+/** Physical calibration of one source plane axis. */
+export interface PlaneAxisCalibration {
+  spacing: number
+  unit: string
 }
 
 export interface PlaneIndices {
@@ -88,6 +103,27 @@ async function chooseLevel(
   throw new Error('OME-Zarr metadata does not list an image pyramid')
 }
 
+function axisCalibration(
+  name: 'x' | 'y',
+  dims: string[],
+  dataset: OmeDataset,
+  metadata: OmeRootMetadata,
+  descriptor: PixelDescriptor,
+): PlaneAxisCalibration {
+  const index = dims.findIndex((dim) => dim.toLowerCase() === name)
+  const scale = dataset.coordinateTransformations?.find(({ type }) => type === 'scale')?.scale?.[
+    index
+  ]
+  const metadataAxis = metadata.attributes?.ome?.multiscales?.[0]?.axes?.find(
+    (axis) => axis.name.toLowerCase() === name,
+  )
+  const descriptorAxis = descriptor.axes.find((axis) => axis.name.toLowerCase() === name)
+  return {
+    spacing: typeof scale === 'number' && scale > 0 ? scale : (descriptorAxis?.spacing ?? 1),
+    unit: metadataAxis?.unit ?? descriptorAxis?.unit ?? 'Pixels',
+  }
+}
+
 export async function loadImagePlane(
   descriptor: PixelDescriptor,
   documentUrl: URL,
@@ -96,12 +132,17 @@ export async function loadImagePlane(
 ): Promise<ImagePlane> {
   const zarrUrl = new URL(descriptor.href.replace(/\/?$/, '/'), documentUrl)
   const metadata = await fetchRootMetadata(zarrUrl, signal)
-  const paths = metadata.attributes?.ome?.multiscales?.[0]?.datasets?.map(({ path }) => path)
-  if (!paths?.length) throw new Error('OME-Zarr metadata does not contain a multiscale dataset')
+  const datasets = metadata.attributes?.ome?.multiscales?.[0]?.datasets
+  const paths = datasets?.map(({ path }) => path)
+  if (!paths?.length || !datasets) {
+    throw new Error('OME-Zarr metadata does not contain a multiscale dataset')
+  }
 
   const store = new zarr.FetchStore(zarrUrl)
   const group = await zarr.open(store, signal ? { kind: 'group', signal } : { kind: 'group' })
   const { array, path } = await chooseLevel(group, paths, descriptor.dims, signal)
+  const dataset = datasets.find((candidate) => candidate.path === path)
+  if (!dataset) throw new Error(`OME-Zarr metadata does not describe pyramid level ${path}`)
   const result = await zarr.get(
     array,
     planeSelection(descriptor.dims, indices),
@@ -134,6 +175,10 @@ export async function loadImagePlane(
     sourceWidth,
     sourceHeight,
     level: path,
+    axes: {
+      x: axisCalibration('x', descriptor.dims, dataset, metadata, descriptor),
+      y: axisCalibration('y', descriptor.dims, dataset, metadata, descriptor),
+    },
   }
 }
 

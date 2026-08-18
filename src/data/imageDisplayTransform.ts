@@ -36,6 +36,7 @@ export function orientYxPlaneForDisplay(plane: ImagePlane): DisplayPlane {
     height: displayHeight,
     sourceWidth: plane.sourceHeight,
     sourceHeight: plane.sourceWidth,
+    axes: { x: plane.axes.y, y: plane.axes.x },
   }
 }
 

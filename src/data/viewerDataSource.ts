@@ -170,6 +170,18 @@ export class AcqStoreServerSource implements ViewerDataSource {
       sourceWidth,
       sourceHeight,
       level: '0',
+      axes: {
+        x: {
+          spacing:
+            descriptor.axes.find((axis) => axis.name.toLowerCase() === 'x')?.spacing ?? 1,
+          unit: descriptor.axes.find((axis) => axis.name.toLowerCase() === 'x')?.unit ?? 'Pixels',
+        },
+        y: {
+          spacing:
+            descriptor.axes.find((axis) => axis.name.toLowerCase() === 'y')?.spacing ?? 1,
+          unit: descriptor.axes.find((axis) => axis.name.toLowerCase() === 'y')?.unit ?? 'Pixels',
+        },
+      },
     }
   }
 

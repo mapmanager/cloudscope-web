@@ -14,6 +14,7 @@ describe('YX display orientation', () => {
       sourceWidth: 30,
       sourceHeight: 20,
       level: '0',
+      axes: { x: { spacing: 0.5, unit: 'um' }, y: { spacing: 0.1, unit: 'seconds' } },
     })
 
     expect([result.width, result.height]).toEqual([2, 3])
@@ -23,6 +24,10 @@ describe('YX display orientation', () => {
       1, 4, // display Y 2
     ])
     expect([result.sourceWidth, result.sourceHeight]).toEqual([20, 30])
+    expect(result.axes).toEqual({
+      x: { spacing: 0.1, unit: 'seconds' },
+      y: { spacing: 0.5, unit: 'um' },
+    })
   })
 
   it('maps exclusive rectangular ROI bounds into display coordinates', () => {

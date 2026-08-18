@@ -11,6 +11,7 @@ function plane(values: number[]): ImagePlane {
     sourceWidth: values.length,
     sourceHeight: 1,
     level: '0',
+    axes: { x: { spacing: 1, unit: 'Pixels' }, y: { spacing: 1, unit: 'Pixels' } },
   }
 }
 

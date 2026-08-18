@@ -3,6 +3,7 @@ import { computed } from 'vue'
 
 import type { CsvTable } from '../data/csvLoader'
 import type { ExportedAnalysis } from '../models/webDataset'
+import type { AxisRange, LinkedAxisUpdate } from '../models/viewState'
 import { plotsForAnalysis } from '../plots/analysisPlotRegistry'
 import type { XYPlotOverlaySpec, XYPlotSpec } from '../plots/xyPlot'
 import XYPlot from './XYPlot.vue'
@@ -11,7 +12,9 @@ const props = defineProps<{
   analysis: ExportedAnalysis
   documentUrl: URL
   loadTable: (url: URL, signal?: AbortSignal) => Promise<CsvTable>
+  xRange: AxisRange | null
 }>()
+const emit = defineEmits<{ 'x-range-change': [update: LinkedAxisUpdate] }>()
 
 const specs = computed(() => plotsForAnalysis(props.analysis.analysis_type))
 
@@ -49,6 +52,8 @@ function overlays(spec: XYPlotSpec) {
       :resource-url="resourceUrl(spec)!"
       :overlays="overlays(spec)"
       :load-table="loadTable"
+      :x-range="xRange"
+      @x-range-change="emit('x-range-change', $event)"
     />
     <p v-else class="error-message">{{ spec.title }} has no {{ spec.source.resource }} resource.</p>
   </template>

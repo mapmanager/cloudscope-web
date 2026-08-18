@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 
 import AnalysisPlot from './components/AnalysisPlot.vue'
 import DatasetSource from './components/DatasetSource.vue'
@@ -8,9 +8,22 @@ import ImageViewer from './components/ImageViewer.vue'
 import SelectionControls from './components/SelectionControls.vue'
 import { useViewerState } from './composables/useViewerState'
 import { plotsForAnalysis } from './plots/analysisPlotRegistry'
+import type { AxisRange, LinkedAxisUpdate } from './models/viewState'
 
 const viewer = useViewerState()
 const showLocalServer = import.meta.env.DEV
+const linkedTimeRange = ref<AxisRange | null>(null)
+
+function updateLinkedAxis(update: LinkedAxisUpdate): void {
+  if (update.group === 'time') linkedTimeRange.value = update.range
+}
+
+watch(
+  () => viewer.selectedImageId.value,
+  () => {
+    linkedTimeRange.value = null
+  },
+)
 
 const visibleAnalyses = computed(() => {
   const image = viewer.acqImageDocument.value?.data
@@ -97,6 +110,8 @@ onMounted(() => {
           :z="viewer.selectedZ.value"
           :t="viewer.selectedT.value"
           :load-plane="viewer.loadPlane"
+          :x-range="linkedTimeRange"
+          @x-range-change="updateLinkedAxis"
         />
         <div v-if="visibleAnalyses.length" class="analysis-list">
           <AnalysisPlot
@@ -105,6 +120,8 @@ onMounted(() => {
             :analysis="analysis"
             :document-url="viewer.acqImageDocument.value.url"
             :load-table="viewer.loadTable"
+            :x-range="linkedTimeRange"
+            @x-range-change="updateLinkedAxis"
           />
         </div>
       </div>

@@ -7,6 +7,7 @@ export const diameterPlots: XYPlotSpec[] = [
     source: { analysisName: 'diameter', resource: 'table' },
     data: { xColumn: 'time_s', yColumn: 'diameter_um_filt' },
     presentation: {
+      xLinkGroup: 'time',
       xLabel: 'Time (s)',
       yLabel: 'Diameter (um)',
       seriesName: 'Diameter',
