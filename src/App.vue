@@ -7,6 +7,7 @@ import FileTable from './components/FileTable.vue'
 import ImageViewer from './components/ImageViewer.vue'
 import SelectionControls from './components/SelectionControls.vue'
 import { useViewerState } from './composables/useViewerState'
+import { plotsForAnalysis } from './plots/analysisPlotRegistry'
 
 const viewer = useViewerState()
 
@@ -16,7 +17,8 @@ const visibleAnalyses = computed(() => {
   return image.analyses.filter(
     (analysis) =>
       analysis.channel === viewer.selectedChannel.value &&
-      analysis.roi_id === viewer.selectedRoiId.value,
+      analysis.roi_id === viewer.selectedRoiId.value &&
+      plotsForAnalysis(analysis.analysis_type).length > 0,
   )
 })
 
@@ -93,24 +95,15 @@ onMounted(() => {
           :t="viewer.selectedT.value"
           :load-plane="viewer.loadPlane"
         />
-        <section class="panel analysis-panel">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow">Exported results</p>
-              <h2>Analysis</h2>
-            </div>
-          </div>
-          <div v-if="visibleAnalyses.length" class="analysis-list">
-            <AnalysisPlot
-              v-for="analysis in visibleAnalyses"
-              :key="analysis.id"
-              :analysis="analysis"
-              :document-url="viewer.acqImageDocument.value.url"
-              :load-table="viewer.loadTable"
-            />
-          </div>
-          <p v-else class="empty-state">No exported analysis for this channel and ROI.</p>
-        </section>
+        <div v-if="visibleAnalyses.length" class="analysis-list">
+          <AnalysisPlot
+            v-for="analysis in visibleAnalyses"
+            :key="analysis.id"
+            :analysis="analysis"
+            :document-url="viewer.acqImageDocument.value.url"
+            :load-table="viewer.loadTable"
+          />
+        </div>
       </div>
     </section>
 

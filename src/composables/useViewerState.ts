@@ -5,6 +5,7 @@ import type { ImagePlane, PlaneIndices } from '../data/omeZarrLoader'
 import {
   AcqStoreServerSource,
   ExportedDatasetSource,
+  OmeZarrCollectionSource,
   ServerExportedDatasetSource,
   type LocalOpenKind,
   type ViewerDataSource,
@@ -18,7 +19,7 @@ import type {
   PixelDescriptor,
 } from '../models/webDataset'
 
-const DEFAULT_DEVELOPMENT_DATASET = '/__dev_dataset__/dataset.json'
+const DEFAULT_DEVELOPMENT_DATASET = '/__dev_collection__/'
 
 export function initialDatasetUrl(): string {
   const fromUrl = new URL(window.location.href).searchParams.get('dataset')
@@ -81,6 +82,11 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
   const canUnload = computed(() => activeSource.value?.canUnload ?? false)
   let selectionRequest = 0
 
+  function errorMessage(reason: unknown): string {
+    if (import.meta.env.DEV) console.error(reason)
+    return reason instanceof Error ? reason.message : String(reason)
+  }
+
   function updateLoadState(
     imageId: string,
     patch: Partial<{ pixels: boolean; analysisCsv: boolean }>,
@@ -142,7 +148,7 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
       datasetDocument.value = null
       acqImageDocument.value = null
       selectedImageId.value = null
-      error.value = reason instanceof Error ? reason.message : String(reason)
+      error.value = errorMessage(reason)
     } finally {
       loading.value = false
     }
@@ -150,7 +156,13 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
 
   async function openDataset(url = hostedDatasetUrl.value): Promise<void> {
     if (!url.trim()) return
-    await activateSource(new ExportedDatasetSource(url.trim()))
+    const resolved = url.trim()
+    // Temporary migration compatibility: remove this Web Dataset v1 branch
+    // after hosted and server-backed collection loading reach feature parity.
+    const source = resolved.endsWith('.json')
+      ? new ExportedDatasetSource(resolved)
+      : new OmeZarrCollectionSource(resolved)
+    await activateSource(source)
   }
 
   async function openServer(kind: LocalOpenKind): Promise<void> {
@@ -219,7 +231,7 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
       selectedRoiId.value = loaded.data.rois[0]?.id ?? null
     } catch (reason) {
       if (request === selectionRequest) {
-        error.value = reason instanceof Error ? reason.message : String(reason)
+        error.value = errorMessage(reason)
       }
     } finally {
       if (request === selectionRequest) loading.value = false
@@ -251,7 +263,7 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
       () => source.loadPlane(descriptor, documentUrl, indices),
       signal,
     )
-    if (source.canUnload && activeSource.value === source) {
+    if (activeSource.value === source) {
       updateLoadState(imageId, { pixels: true })
     }
     return plane
@@ -262,7 +274,7 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     const source = activeSource.value
     const imageId = acqImageDocument.value?.data.id
     const table = await source.loadTable(url, signal)
-    if (imageId && source.canUnload && activeSource.value === source) {
+    if (imageId && activeSource.value === source) {
       updateLoadState(imageId, { analysisCsv: true })
     }
     return table
@@ -275,9 +287,13 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     try {
       await activeSource.value.unloadImage(imageId)
       planeCache.invalidateImage(imageId)
-      datasetDocument.value = await activeSource.value.refreshDataset()
+      if (activeSource.value.refreshAfterUnload) {
+        datasetDocument.value = await activeSource.value.refreshDataset()
+      } else {
+        updateLoadState(imageId, { pixels: false, analysisCsv: false })
+      }
     } catch (reason) {
-      error.value = reason instanceof Error ? reason.message : String(reason)
+      error.value = errorMessage(reason)
     } finally {
       loading.value = false
     }

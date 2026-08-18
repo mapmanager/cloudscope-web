@@ -4,7 +4,9 @@ import vue from '@vitejs/plugin-vue'
 import sirv from 'sirv'
 import { defineConfig } from 'vitest/config'
 
-const localDatasetRoot = path.resolve(import.meta.dirname, 'data/output')
+const localDatasetRoot = path.resolve(
+  process.env.ACQSTORE_OME_ZARR_ROOT ?? path.resolve(import.meta.dirname, 'data/output'),
+)
 
 export default defineConfig({
   base: './',
@@ -15,7 +17,7 @@ export default defineConfig({
       apply: 'serve',
       configureServer(server) {
         server.middlewares.use(
-          '/__dev_dataset__',
+          '/__dev_collection__',
           sirv(localDatasetRoot, { dev: true, etag: true }),
         )
       },

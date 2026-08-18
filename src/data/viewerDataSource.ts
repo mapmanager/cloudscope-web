@@ -1,6 +1,8 @@
 import { loadCsv, type CsvTable } from './csvLoader'
 import { loadAcqImage, loadDataset } from './datasetLoader'
 import { loadImagePlane, type ImagePlane, type PlaneIndices } from './omeZarrLoader'
+import { loadOmeZarrCollection, loadOmeZarrCollectionImage } from './omeZarrCollectionLoader'
+import type { CollectionImageEntry } from '../models/omeZarrCollection'
 import type {
   AcqImageDocument,
   LoadedDocument,
@@ -13,6 +15,7 @@ export type LocalOpenKind = 'file' | 'folder' | 'csv'
 export interface ViewerDataSource {
   readonly canUnload: boolean
   readonly persistInUrl: boolean
+  readonly refreshAfterUnload: boolean
   loadDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>>
   refreshDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>>
   loadImage(
@@ -34,6 +37,7 @@ export interface ViewerDataSource {
 export class ExportedDatasetSource implements ViewerDataSource {
   readonly canUnload = false
   readonly persistInUrl: boolean = true
+  readonly refreshAfterUnload = false
   constructor(private readonly datasetUrl: string) {}
 
   loadDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>> {
@@ -80,6 +84,7 @@ const constructors = {
 export class AcqStoreServerSource implements ViewerDataSource {
   readonly canUnload = true
   readonly persistInUrl = false
+  readonly refreshAfterUnload = true
   private datasetId: string | null = null
   private manifestUrl: URL | null = null
 
@@ -193,6 +198,8 @@ export class AcqStoreServerSource implements ViewerDataSource {
 }
 
 export class ServerExportedDatasetSource extends ExportedDatasetSource {
+  // Transitional Web Dataset v1 transport. Remove after AcqStore Server serves
+  // the canonical multi-image OME-Zarr collection contract.
   override readonly persistInUrl = false
   private exportId: string | null = null
   private manifestUrl: URL | null = null
@@ -234,5 +241,49 @@ export class ServerExportedDatasetSource extends ExportedDatasetSource {
     await fetch(new URL(`/api/v2/web-exports/${encodeURIComponent(exportId)}`, this.serverUrl), {
       method: 'DELETE',
     })
+  }
+}
+
+export class OmeZarrCollectionSource implements ViewerDataSource {
+  readonly canUnload = true
+  readonly persistInUrl = true
+  readonly refreshAfterUnload = false
+  private entries = new Map<string, CollectionImageEntry>()
+
+  constructor(private readonly collectionUrl: string) {}
+
+  async loadDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>> {
+    const loaded = await loadOmeZarrCollection(this.collectionUrl, signal)
+    this.entries = new Map(loaded.manifest.images.map((entry) => [entry.native_manifest, entry]))
+    return loaded
+  }
+
+  refreshDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>> {
+    return this.loadDataset(signal)
+  }
+
+  loadImage(datasetUrl: URL, href: string, signal?: AbortSignal) {
+    const entry = this.entries.get(href)
+    if (!entry) return Promise.reject(new Error(`Unknown collection image manifest: ${href}`))
+    return loadOmeZarrCollectionImage(datasetUrl, entry, signal)
+  }
+
+  loadPlane(
+    descriptor: PixelDescriptor,
+    documentUrl: URL,
+    indices: PlaneIndices,
+    signal?: AbortSignal,
+  ): Promise<ImagePlane> {
+    return loadImagePlane(descriptor, documentUrl, indices, signal)
+  }
+
+  loadTable(url: URL, signal?: AbortSignal): Promise<CsvTable> {
+    return loadCsv(url, signal)
+  }
+
+  async unloadImage(): Promise<void> {}
+
+  async close(): Promise<void> {
+    this.entries.clear()
   }
 }

@@ -119,9 +119,14 @@ export interface ExportedAnalysis {
   channel: number
   roi_id: number
   summary: Record<string, unknown>
-  table: ResourceLink
+  table: ResourceLink | null
   plot: AnalysisPlotResource | null
   peaks?: AnalysisPeakResource
+  resources?: {
+    table: ResourceLink | null
+    peaks: ResourceLink | null
+  }
+  detection_params?: Record<string, unknown>
 }
 
 export interface ReferenceImageDescriptor extends PixelDescriptor {

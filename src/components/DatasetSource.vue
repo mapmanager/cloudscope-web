@@ -57,9 +57,9 @@ const emit = defineEmits<{
         <p class="muted">The local server opens the native file or folder picker.</p>
       </form>
       <details class="dataset-source__advanced">
-        <summary>Advanced: open hosted dataset URL</summary>
+        <summary>Open hosted OME-Zarr collection</summary>
         <form @submit.prevent="emit('open')">
-          <label for="dataset-url">Hosted dataset.json URL</label>
+          <label for="dataset-url">OME-Zarr collection root URL</label>
           <div class="dataset-source__row">
             <input
               id="dataset-url"
@@ -67,7 +67,7 @@ const emit = defineEmits<{
               type="url"
               required
               spellcheck="false"
-              placeholder="https://example.org/dataset.json"
+              placeholder="https://example.org/dataset.ome.zarr/"
               @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
             />
             <button type="submit" :disabled="loading || !modelValue.trim()">
