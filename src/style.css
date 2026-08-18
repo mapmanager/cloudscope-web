@@ -102,6 +102,14 @@ h3 {
 .dataset-source form + form {
   margin-top: 14px;
 }
+.dataset-source__advanced {
+  margin-top: 12px;
+  color: #8ca1ab;
+  font-size: 0.78rem;
+}
+.dataset-source__advanced form {
+  margin-top: 10px;
+}
 .dataset-source label {
   display: block;
   margin-bottom: 6px;
@@ -111,6 +119,7 @@ h3 {
 }
 .dataset-source__row {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
 }
 input,
@@ -131,6 +140,7 @@ button {
   color: #041312;
   background: #6fd4ca;
   font-weight: 750;
+  white-space: nowrap;
 }
 button:disabled {
   cursor: default;

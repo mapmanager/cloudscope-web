@@ -5,9 +5,11 @@ import type { ImagePlane, PlaneIndices } from '../data/omeZarrLoader'
 import {
   AcqStoreServerSource,
   ExportedDatasetSource,
+  ServerExportedDatasetSource,
   type LocalOpenKind,
   type ViewerDataSource,
 } from '../data/viewerDataSource'
+import { DEFAULT_PLANE_CACHE_OPTIONS, PlaneCache, type PlaneCacheOptions } from '../data/planeCache'
 import type {
   AcqImageDocument,
   DatasetImage,
@@ -62,9 +64,10 @@ export function viewerUrl(href: string, state: UrlSelection & { dataset: string 
   return url.href
 }
 
-export function useViewerState() {
-  const datasetUrl = ref(initialDatasetUrl())
+export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PLANE_CACHE_OPTIONS) {
+  const hostedDatasetUrl = ref(initialDatasetUrl())
   const serverUrl = ref('http://127.0.0.1:8767')
+  const planeCache = new PlaneCache(planeCacheOptions)
   const activeSource = shallowRef<ViewerDataSource | null>(null)
   const datasetDocument = shallowRef<LoadedDocument<WebDataset> | null>(null)
   const acqImageDocument = shallowRef<LoadedDocument<AcqImageDocument> | null>(null)
@@ -76,6 +79,7 @@ export function useViewerState() {
   const loading = ref(false)
   const error = ref<string | null>(null)
   const canUnload = computed(() => activeSource.value?.canUnload ?? false)
+  let selectionRequest = 0
 
   function updateLoadState(
     imageId: string,
@@ -111,11 +115,13 @@ export function useViewerState() {
     const previous = activeSource.value
     try {
       const document = await source.loadDataset()
+      planeCache.clear()
       activeSource.value = source
       datasetDocument.value = document
-      datasetUrl.value = datasetDocument.value.url.href
       if (previous && previous !== source) await previous.close().catch(() => undefined)
-      const requested = readUrlSelection(window.location.href)
+      const requested = source.persistInUrl
+        ? readUrlSelection(window.location.href)
+        : { image: null, channel: 0, roi: null, z: 0, t: 0 }
       const first = datasetDocument.value.data.images[0] ?? null
       const target =
         datasetDocument.value.data.images.find((image) => image.id === requested.image) ?? first
@@ -142,7 +148,7 @@ export function useViewerState() {
     }
   }
 
-  async function openDataset(url = datasetUrl.value): Promise<void> {
+  async function openDataset(url = hostedDatasetUrl.value): Promise<void> {
     if (!url.trim()) return
     await activateSource(new ExportedDatasetSource(url.trim()))
   }
@@ -152,23 +158,28 @@ export function useViewerState() {
     await activateSource(new AcqStoreServerSource(serverUrl.value.trim(), kind))
   }
 
+  async function openExportedFolder(): Promise<void> {
+    if (!serverUrl.value.trim()) return
+    await activateSource(new ServerExportedDatasetSource(serverUrl.value.trim()))
+  }
+
   watch(
-    [
-      datasetUrl,
-      selectedImageId,
-      selectedChannel,
-      selectedRoiId,
-      selectedZ,
-      selectedT,
-      datasetDocument,
-    ],
+    [selectedImageId, selectedChannel, selectedRoiId, selectedZ, selectedT, datasetDocument],
     () => {
       if (!datasetDocument.value) return
+      if (!activeSource.value?.persistInUrl) {
+        const url = new URL(window.location.href)
+        for (const key of ['dataset', 'image', 'channel', 'roi', 'z', 't']) {
+          url.searchParams.delete(key)
+        }
+        window.history.replaceState(null, '', url)
+        return
+      }
       window.history.replaceState(
         null,
         '',
         viewerUrl(window.location.href, {
-          dataset: datasetUrl.value,
+          dataset: datasetDocument.value.url.href,
           image: selectedImageId.value,
           channel: selectedChannel.value,
           roi: selectedRoiId.value,
@@ -181,6 +192,7 @@ export function useViewerState() {
   )
 
   async function selectImage(imageId: string | null): Promise<void> {
+    const request = ++selectionRequest
     selectedImageId.value = imageId
     selectedChannel.value = 0
     selectedRoiId.value = null
@@ -197,18 +209,20 @@ export function useViewerState() {
     loading.value = true
     try {
       if (!activeSource.value) throw new Error('No dataset source is active')
-      acqImageDocument.value = await activeSource.value.loadImage(
-        datasetDocument.value.url,
-        image.href,
-      )
-      if (acqImageDocument.value.data.load_state) {
-        updateLoadState(imageId, acqImageDocument.value.data.load_state)
+      const source = activeSource.value
+      const loaded = await source.loadImage(datasetDocument.value.url, image.href)
+      if (request !== selectionRequest || selectedImageId.value !== imageId) return
+      acqImageDocument.value = loaded
+      if (loaded.data.load_state) {
+        updateLoadState(imageId, loaded.data.load_state)
       }
-      selectedRoiId.value = acqImageDocument.value.data.rois[0]?.id ?? null
+      selectedRoiId.value = loaded.data.rois[0]?.id ?? null
     } catch (reason) {
-      error.value = reason instanceof Error ? reason.message : String(reason)
+      if (request === selectionRequest) {
+        error.value = reason instanceof Error ? reason.message : String(reason)
+      }
     } finally {
-      loading.value = false
+      if (request === selectionRequest) loading.value = false
     }
   }
 
@@ -219,15 +233,38 @@ export function useViewerState() {
     signal?: AbortSignal,
   ): Promise<ImagePlane> {
     if (!activeSource.value) throw new Error('No dataset source is active')
-    const plane = await activeSource.value.loadPlane(descriptor, documentUrl, indices, signal)
-    if (selectedImageId.value) updateLoadState(selectedImageId.value, { pixels: true })
+    const source = activeSource.value
+    const imageId = acqImageDocument.value?.data.id
+    if (!imageId) throw new Error('No image is selected')
+    const key = [
+      datasetDocument.value?.url.href ?? '',
+      imageId,
+      new URL(descriptor.href, documentUrl).href,
+      indices.channel,
+      indices.z,
+      indices.t,
+      0,
+    ].join('|')
+    const plane = await planeCache.getOrLoad(
+      key,
+      imageId,
+      () => source.loadPlane(descriptor, documentUrl, indices),
+      signal,
+    )
+    if (source.canUnload && activeSource.value === source) {
+      updateLoadState(imageId, { pixels: true })
+    }
     return plane
   }
 
   async function loadTable(url: URL, signal?: AbortSignal): Promise<CsvTable> {
     if (!activeSource.value) throw new Error('No dataset source is active')
-    const table = await activeSource.value.loadTable(url, signal)
-    if (selectedImageId.value) updateLoadState(selectedImageId.value, { analysisCsv: true })
+    const source = activeSource.value
+    const imageId = acqImageDocument.value?.data.id
+    const table = await source.loadTable(url, signal)
+    if (imageId && source.canUnload && activeSource.value === source) {
+      updateLoadState(imageId, { analysisCsv: true })
+    }
     return table
   }
 
@@ -237,6 +274,7 @@ export function useViewerState() {
     error.value = null
     try {
       await activeSource.value.unloadImage(imageId)
+      planeCache.invalidateImage(imageId)
       datasetDocument.value = await activeSource.value.refreshDataset()
     } catch (reason) {
       error.value = reason instanceof Error ? reason.message : String(reason)
@@ -248,18 +286,19 @@ export function useViewerState() {
   async function closeDataset(): Promise<void> {
     const source = activeSource.value
     activeSource.value = null
+    planeCache.clear()
     if (source) await source.close().catch(() => undefined)
     datasetDocument.value = null
     acqImageDocument.value = null
     selectedImageId.value = null
-    datasetUrl.value = ''
+    hostedDatasetUrl.value = ''
     const url = new URL(window.location.href)
     for (const key of ['dataset', 'image', 'channel', 'roi', 'z', 't']) url.searchParams.delete(key)
     window.history.replaceState(null, '', url)
   }
 
   return {
-    datasetUrl,
+    hostedDatasetUrl,
     serverUrl,
     datasetDocument,
     acqImageDocument,
@@ -274,6 +313,7 @@ export function useViewerState() {
     canUnload,
     openDataset,
     openServer,
+    openExportedFolder,
     selectImage,
     loadPlane,
     loadTable,

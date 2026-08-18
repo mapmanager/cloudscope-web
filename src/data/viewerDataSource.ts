@@ -12,6 +12,7 @@ export type LocalOpenKind = 'file' | 'folder' | 'csv'
 
 export interface ViewerDataSource {
   readonly canUnload: boolean
+  readonly persistInUrl: boolean
   loadDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>>
   refreshDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>>
   loadImage(
@@ -32,6 +33,7 @@ export interface ViewerDataSource {
 
 export class ExportedDatasetSource implements ViewerDataSource {
   readonly canUnload = false
+  readonly persistInUrl: boolean = true
   constructor(private readonly datasetUrl: string) {}
 
   loadDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>> {
@@ -77,6 +79,7 @@ const constructors = {
 
 export class AcqStoreServerSource implements ViewerDataSource {
   readonly canUnload = true
+  readonly persistInUrl = false
   private datasetId: string | null = null
   private manifestUrl: URL | null = null
 
@@ -184,6 +187,51 @@ export class AcqStoreServerSource implements ViewerDataSource {
     const datasetId = this.datasetId
     this.datasetId = null
     await fetch(new URL(`/api/v2/datasets/${encodeURIComponent(datasetId)}`, this.serverUrl), {
+      method: 'DELETE',
+    })
+  }
+}
+
+export class ServerExportedDatasetSource extends ExportedDatasetSource {
+  override readonly persistInUrl = false
+  private exportId: string | null = null
+  private manifestUrl: URL | null = null
+
+  constructor(private readonly serverUrl: string) {
+    super('')
+  }
+
+  override async loadDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>> {
+    const server = new URL(this.serverUrl)
+    const response = await fetch(new URL('/api/v2/web-exports/pick', server), {
+      method: 'POST',
+      ...(signal ? { signal } : {}),
+    })
+    const opened = (await response.json()) as {
+      ok: boolean
+      exportId?: string
+      manifestUrl?: string
+      message?: string
+      detail?: string
+    }
+    if (!response.ok || !opened.ok || !opened.exportId || !opened.manifestUrl) {
+      throw new Error(opened.message ?? opened.detail ?? 'Could not open exported dataset folder')
+    }
+    this.exportId = opened.exportId
+    this.manifestUrl = new URL(opened.manifestUrl, server)
+    return loadDataset(this.manifestUrl, signal)
+  }
+
+  override refreshDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>> {
+    if (!this.manifestUrl) return Promise.reject(new Error('No exported dataset folder is open'))
+    return loadDataset(this.manifestUrl, signal)
+  }
+
+  override async close(): Promise<void> {
+    if (!this.exportId) return
+    const exportId = this.exportId
+    this.exportId = null
+    await fetch(new URL(`/api/v2/web-exports/${encodeURIComponent(exportId)}`, this.serverUrl), {
       method: 'DELETE',
     })
   }

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { AcqStoreServerSource } from '../src/data/viewerDataSource'
+import { AcqStoreServerSource, ServerExportedDatasetSource } from '../src/data/viewerDataSource'
 import type { PixelDescriptor } from '../src/models/webDataset'
 
 afterEach(() => vi.unstubAllGlobals())
@@ -69,5 +69,42 @@ describe('AcqStoreServerSource', () => {
     expect(Array.from(plane.data)).toEqual([1, 2, 3, 4])
     expect(plane.width).toBe(2)
     expect(fetchMock).toHaveBeenCalledTimes(5)
+  })
+})
+
+describe('ServerExportedDatasetSource', () => {
+  it('opens a picked export through its temporary URL and closes it', async () => {
+    const fetchMock = vi.fn(async (input: string | URL | Request, init?: RequestInit) => {
+      const url = String(input)
+      if (url.endsWith('/api/v2/web-exports/pick')) {
+        return Response.json({
+          ok: true,
+          exportId: 'export-1',
+          manifestUrl: '/api/v2/web-exports/export-1/dataset.json',
+        })
+      }
+      if (url.endsWith('/dataset.json')) {
+        return Response.json({
+          format: 'acqstore-web-dataset',
+          format_version: 1,
+          id: 'export-1',
+          name: 'picked export',
+          images: [],
+        })
+      }
+      if (url.endsWith('/api/v2/web-exports/export-1') && init?.method === 'DELETE') {
+        return Response.json({ ok: true, deleted: true })
+      }
+      throw new Error(`Unexpected fetch: ${url}`)
+    })
+    vi.stubGlobal('fetch', fetchMock)
+    const source = new ServerExportedDatasetSource('http://127.0.0.1:8767')
+
+    const dataset = await source.loadDataset()
+    await source.close()
+
+    expect(dataset.data.name).toBe('picked export')
+    expect(source.persistInUrl).toBe(false)
+    expect(fetchMock).toHaveBeenCalledTimes(3)
   })
 })

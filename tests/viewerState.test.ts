@@ -5,7 +5,13 @@ vi.mock('../src/data/datasetLoader', () => ({
   loadAcqImage: vi.fn(),
 }))
 
+vi.mock('../src/data/omeZarrLoader', async (importOriginal) => {
+  const original = await importOriginal<typeof import('../src/data/omeZarrLoader')>()
+  return { ...original, loadImagePlane: vi.fn() }
+})
+
 import { loadAcqImage, loadDataset } from '../src/data/datasetLoader'
+import { loadImagePlane } from '../src/data/omeZarrLoader'
 import { readUrlSelection, useViewerState, viewerUrl } from '../src/composables/useViewerState'
 
 describe('viewer URL state', () => {
@@ -96,5 +102,24 @@ describe('viewer selection state', () => {
     expect(state.selectedRoiId.value).toBe(7)
     expect(state.selectedZ.value).toBe(0)
     expect(state.selectedT.value).toBe(0)
+  })
+
+  it('reuses a cached channel/Z/T plane', async () => {
+    vi.mocked(loadImagePlane).mockResolvedValue({
+      data: new Uint16Array([1, 2, 3, 4]),
+      width: 2,
+      height: 2,
+      sourceWidth: 2,
+      sourceHeight: 2,
+      level: '0',
+    })
+    const state = useViewerState({ maxBytes: 1024, maxEntries: 4 })
+    await state.openDataset('https://example.test/dataset.json')
+    const document = state.acqImageDocument.value!
+
+    await state.loadPlane(document.data.image, document.url, { channel: 0, z: 0, t: 0 })
+    await state.loadPlane(document.data.image, document.url, { channel: 0, z: 0, t: 0 })
+
+    expect(loadImagePlane).toHaveBeenCalledTimes(1)
   })
 })

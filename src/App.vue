@@ -26,7 +26,7 @@ const selectedRoi = computed(() => {
 })
 
 onMounted(() => {
-  if (viewer.datasetUrl.value) void viewer.openDataset()
+  if (viewer.hostedDatasetUrl.value) void viewer.openDataset()
 })
 </script>
 
@@ -35,11 +35,12 @@ onMounted(() => {
     <header class="app-header">
       <h1>CloudScope Web</h1>
       <DatasetSource
-        v-model="viewer.datasetUrl.value"
+        v-model="viewer.hostedDatasetUrl.value"
         v-model:server-url="viewer.serverUrl.value"
         :loading="viewer.loading.value"
         @open="viewer.openDataset()"
         @open-server="viewer.openServer"
+        @open-exported-folder="viewer.openExportedFolder"
       />
     </header>
 

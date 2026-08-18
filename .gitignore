@@ -1,3 +1,6 @@
+zips/
+*.zip
+
 # Local datasets and handoff material
 /data/
 /tmp-to-be-deleted/
