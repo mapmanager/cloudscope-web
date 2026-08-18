@@ -60,15 +60,10 @@ the sibling repository.
 ## Verification
 
 Match verification to the change. Before handing off deployment-related work,
-run:
+run the same check used by the pre-push hook and GitHub Actions:
 
 ```bash
-npm run format:check
-npm run lint
-npm run verify:samples
-npm test
-npm run build
-npm run verify:dist
+npm run check
 ```
 
 For GUI changes, also serve the production build and inspect the real browser

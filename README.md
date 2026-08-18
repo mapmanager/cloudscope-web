@@ -19,6 +19,9 @@ Install the locked dependencies:
 npm ci
 ```
 
+This also installs the repository's pre-push hook. The hook runs the complete
+local verification suite before Git sends commits to a remote.
+
 ## Local development
 
 Start the viewer with its bundled diameter sample:
@@ -57,16 +60,22 @@ npm run verify:samples
 
 ## Quality checks
 
+Run the same verification performed by the pre-push hook and GitHub Actions:
+
 ```bash
-npm run format:check
-npm run lint
-npm run verify:samples
-npm test
+npm run check
 ```
+
+The command checks formatting, linting, both bundled samples, unit tests, the
+production build, and the final `dist/` artifact. A failed check stops a push.
+If hooks ever need to be restored, run `npm run prepare` once.
+
+Run `npm ci` after initially cloning the repository or when the dependency lock
+file changes. It is not necessary before every push.
 
 ## Production build
 
-Build the static site and verify the resulting artifact:
+Build only the static site and verify the resulting artifact:
 
 ```bash
 npm run build
