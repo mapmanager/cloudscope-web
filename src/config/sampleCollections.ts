@@ -1,5 +1,5 @@
 /** A bundled, publicly deployable OME-Zarr collection. */
-export interface SampleDataset {
+export interface SampleCollection {
   /** Stable identifier used by tests and UI controls. */
   id: string
   /** Short user-facing name. */
@@ -11,7 +11,7 @@ export interface SampleDataset {
 }
 
 /** Bundled samples copied from `public/` into every production build. */
-export const sampleDatasets = [
+export const sampleCollections = [
   {
     id: 'diameter',
     name: 'Diameter sample',
@@ -24,7 +24,7 @@ export const sampleDatasets = [
     description: 'Radon-velocity and heart-rate analyses',
     url: './samples/velocity-sample-data.ome.zarr/',
   },
-] as const satisfies readonly SampleDataset[]
+] as const satisfies readonly SampleCollection[]
 
 /** Default collection shown when no explicit or local development source is selected. */
-export const defaultSampleDataset = sampleDatasets[0]
+export const defaultSampleCollection = sampleCollections[0]

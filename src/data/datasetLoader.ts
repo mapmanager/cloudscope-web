@@ -1,4 +1,16 @@
-import type { AcqImageDocument, LoadedDocument, WebDataset } from '../models/webDataset'
+import type {
+  AcqImageCollection,
+  AcqImageCollectionRow,
+  AcqImageDocument,
+  LoadedDocument,
+} from '../models/acqImageModels'
+
+/** Legacy AcqStore Server wire format, adapted at the transport boundary. */
+interface WebDatasetV1 extends Omit<AcqImageCollection, 'acq_images'> {
+  format: 'acqstore-web-dataset'
+  format_version: 1
+  images: AcqImageCollectionRow[]
+}
 
 async function loadJson<T>(url: string | URL, signal?: AbortSignal): Promise<LoadedDocument<T>> {
   const resolved = new URL(url, window.location.href)
@@ -12,12 +24,21 @@ async function loadJson<T>(url: string | URL, signal?: AbortSignal): Promise<Loa
 export async function loadDataset(
   url: string | URL,
   signal?: AbortSignal,
-): Promise<LoadedDocument<WebDataset>> {
-  const loaded = await loadJson<WebDataset>(url, signal)
+): Promise<LoadedDocument<AcqImageCollection>> {
+  const loaded = await loadJson<WebDatasetV1>(url, signal)
   if (loaded.data.format !== 'acqstore-web-dataset' || loaded.data.format_version !== 1) {
     throw new Error('The URL is not an AcqStore Web Dataset v1 manifest')
   }
-  return loaded
+  return {
+    data: {
+      id: loaded.data.id,
+      name: loaded.data.name,
+      acqstore_version: loaded.data.acqstore_version,
+      created_utc: loaded.data.created_utc,
+      acq_images: loaded.data.images,
+    },
+    url: loaded.url,
+  }
 }
 
 export async function loadAcqImage(

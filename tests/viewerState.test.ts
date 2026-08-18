@@ -13,37 +13,45 @@ vi.mock('../src/data/omeZarrLoader', async (importOriginal) => {
 import { loadAcqImage, loadDataset } from '../src/data/datasetLoader'
 import { loadImagePlane } from '../src/data/omeZarrLoader'
 import {
-  initialDatasetUrl,
+  initialCollectionUrl,
   readUrlSelection,
   useViewerState,
   viewerUrl,
 } from '../src/composables/useViewerState'
-import { defaultSampleDataset } from '../src/config/sampleDatasets'
+import { defaultSampleCollection } from '../src/config/sampleCollections'
 
 describe('viewer URL state', () => {
   it('uses the bundled diameter collection when no explicit source is present', () => {
     window.history.replaceState(null, '', '/')
-    expect(initialDatasetUrl()).toBe(defaultSampleDataset.url)
+    expect(initialCollectionUrl()).toBe(defaultSampleCollection.url)
   })
 
   it('prefers an explicit collection URL', () => {
-    window.history.replaceState(null, '', '/?dataset=https://data.test/collection.ome.zarr/')
-    expect(initialDatasetUrl()).toBe('https://data.test/collection.ome.zarr/')
+    window.history.replaceState(null, '', '/?collection=https://data.test/collection.ome.zarr/')
+    expect(initialCollectionUrl()).toBe('https://data.test/collection.ome.zarr/')
     window.history.replaceState(null, '', '/')
   })
 
   it('round-trips the dataset and complete selection without routing', () => {
     const href = viewerUrl('https://viewer.test/app/', {
-      dataset: 'https://data.test/study/dataset.json',
-      image: 'image-2',
+      collection: 'https://data.test/study/dataset.json',
+      acqImage: 'image-2',
       channel: 1,
       roi: 8,
       z: 3,
       t: 4,
     })
 
-    expect(new URL(href).searchParams.get('dataset')).toBe('https://data.test/study/dataset.json')
-    expect(readUrlSelection(href)).toEqual({ image: 'image-2', channel: 1, roi: 8, z: 3, t: 4 })
+    expect(new URL(href).searchParams.get('collection')).toBe(
+      'https://data.test/study/dataset.json',
+    )
+    expect(readUrlSelection(href)).toEqual({
+      acqImage: 'image-2',
+      channel: 1,
+      roi: 8,
+      z: 3,
+      t: 4,
+    })
   })
 })
 
@@ -52,13 +60,11 @@ describe('viewer selection state', () => {
     vi.mocked(loadDataset).mockResolvedValue({
       url: new URL('https://example.test/dataset.json'),
       data: {
-        format: 'acqstore-web-dataset',
-        format_version: 1,
         id: 'dataset',
         name: 'test',
         acqstore_version: '1',
         created_utc: '',
-        images: [
+        acq_images: [
           {
             id: 'image-1',
             name: 'one',
@@ -112,9 +118,9 @@ describe('viewer selection state', () => {
     state.selectedZ.value = 4
     state.selectedT.value = 3
 
-    await state.openDataset('https://example.test/dataset.json')
+    await state.openAcqImageCollection('https://example.test/dataset.json')
 
-    expect(state.selectedImageId.value).toBe('image-1')
+    expect(state.selectedAcqImageId.value).toBe('image-1')
     expect(state.selectedChannel.value).toBe(0)
     expect(state.selectedRoiId.value).toBe(7)
     expect(state.selectedZ.value).toBe(0)
@@ -132,7 +138,7 @@ describe('viewer selection state', () => {
       axes: { x: { spacing: 1, unit: 'Pixels' }, y: { spacing: 1, unit: 'Pixels' } },
     })
     const state = useViewerState({ maxBytes: 1024, maxEntries: 4 })
-    await state.openDataset('https://example.test/dataset.json')
+    await state.openAcqImageCollection('https://example.test/dataset.json')
     const document = state.acqImageDocument.value!
 
     await state.loadPlane(document.data.image, document.url, { channel: 0, z: 0, t: 0 })

@@ -1,5 +1,5 @@
 import type { ImagePlane } from './omeZarrLoader'
-import type { Roi } from '../models/webDataset'
+import type { Roi } from '../models/acqImageModels'
 
 export interface DisplayPlane extends ImagePlane {
   sourceWidth: number

@@ -1,14 +1,17 @@
 import { loadCsv, type CsvTable } from './csvLoader'
 import { loadAcqImage, loadDataset } from './datasetLoader'
 import { loadImagePlane, type ImagePlane, type PlaneIndices } from './omeZarrLoader'
-import { loadOmeZarrCollection, loadOmeZarrCollectionImage } from './omeZarrCollectionLoader'
-import type { CollectionImageEntry } from '../models/omeZarrCollection'
+import {
+  loadAcqImageCollection,
+  loadAcqImageCollectionEntry,
+} from './acqImageCollectionLoader'
+import type { AcqImageCollectionEntry } from '../models/acqImageCollectionManifest'
 import type {
   AcqImageDocument,
   LoadedDocument,
   PixelDescriptor,
-  WebDataset,
-} from '../models/webDataset'
+  AcqImageCollection,
+} from '../models/acqImageModels'
 
 export type LocalOpenKind = 'file' | 'folder' | 'csv'
 
@@ -16,10 +19,10 @@ export interface ViewerDataSource {
   readonly canUnload: boolean
   readonly persistInUrl: boolean
   readonly refreshAfterUnload: boolean
-  loadDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>>
-  refreshDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>>
-  loadImage(
-    datasetUrl: URL,
+  loadCollection(signal?: AbortSignal): Promise<LoadedDocument<AcqImageCollection>>
+  refreshCollection(signal?: AbortSignal): Promise<LoadedDocument<AcqImageCollection>>
+  loadAcqImage(
+    collectionUrl: URL,
     href: string,
     signal?: AbortSignal,
   ): Promise<LoadedDocument<AcqImageDocument>>
@@ -40,16 +43,16 @@ export class ExportedDatasetSource implements ViewerDataSource {
   readonly refreshAfterUnload = false
   constructor(private readonly datasetUrl: string) {}
 
-  loadDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>> {
+  loadCollection(signal?: AbortSignal): Promise<LoadedDocument<AcqImageCollection>> {
     return loadDataset(this.datasetUrl, signal)
   }
 
-  refreshDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>> {
-    return this.loadDataset(signal)
+  refreshCollection(signal?: AbortSignal): Promise<LoadedDocument<AcqImageCollection>> {
+    return this.loadCollection(signal)
   }
 
-  loadImage(datasetUrl: URL, href: string, signal?: AbortSignal) {
-    return loadAcqImage(datasetUrl, href, signal)
+  loadAcqImage(collectionUrl: URL, href: string, signal?: AbortSignal) {
+    return loadAcqImage(collectionUrl, href, signal)
   }
 
   loadPlane(
@@ -93,7 +96,7 @@ export class AcqStoreServerSource implements ViewerDataSource {
     private readonly kind: LocalOpenKind,
   ) {}
 
-  async loadDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>> {
+  async loadCollection(signal?: AbortSignal): Promise<LoadedDocument<AcqImageCollection>> {
     const server = new URL(this.serverUrl)
     const init: RequestInit = {
       method: 'POST',
@@ -116,13 +119,13 @@ export class AcqStoreServerSource implements ViewerDataSource {
     return loadDataset(this.manifestUrl, signal)
   }
 
-  refreshDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>> {
+  refreshCollection(signal?: AbortSignal): Promise<LoadedDocument<AcqImageCollection>> {
     if (!this.manifestUrl) return Promise.reject(new Error('No server dataset is open'))
     return loadDataset(this.manifestUrl, signal)
   }
 
-  loadImage(datasetUrl: URL, href: string, signal?: AbortSignal) {
-    return loadAcqImage(datasetUrl, href, signal)
+  loadAcqImage(collectionUrl: URL, href: string, signal?: AbortSignal) {
+    return loadAcqImage(collectionUrl, href, signal)
   }
 
   async loadPlane(
@@ -220,7 +223,7 @@ export class ServerExportedDatasetSource extends ExportedDatasetSource {
     super('')
   }
 
-  override async loadDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>> {
+  override async loadCollection(signal?: AbortSignal): Promise<LoadedDocument<AcqImageCollection>> {
     const server = new URL(this.serverUrl)
     const response = await fetch(new URL('/api/v2/web-exports/pick', server), {
       method: 'POST',
@@ -241,7 +244,7 @@ export class ServerExportedDatasetSource extends ExportedDatasetSource {
     return loadDataset(this.manifestUrl, signal)
   }
 
-  override refreshDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>> {
+  override refreshCollection(signal?: AbortSignal): Promise<LoadedDocument<AcqImageCollection>> {
     if (!this.manifestUrl) return Promise.reject(new Error('No exported dataset folder is open'))
     return loadDataset(this.manifestUrl, signal)
   }
@@ -256,28 +259,30 @@ export class ServerExportedDatasetSource extends ExportedDatasetSource {
   }
 }
 
-export class OmeZarrCollectionSource implements ViewerDataSource {
+export class AcqImageCollectionSource implements ViewerDataSource {
   readonly canUnload = true
   readonly persistInUrl = true
   readonly refreshAfterUnload = false
-  private entries = new Map<string, CollectionImageEntry>()
+  private entries = new Map<string, AcqImageCollectionEntry>()
 
   constructor(private readonly collectionUrl: string) {}
 
-  async loadDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>> {
-    const loaded = await loadOmeZarrCollection(this.collectionUrl, signal)
-    this.entries = new Map(loaded.manifest.images.map((entry) => [entry.native_manifest, entry]))
+  async loadCollection(signal?: AbortSignal): Promise<LoadedDocument<AcqImageCollection>> {
+    const loaded = await loadAcqImageCollection(this.collectionUrl, signal)
+    this.entries = new Map(
+      loaded.manifest.acq_images.map((entry) => [entry.manifest_path, entry]),
+    )
     return loaded
   }
 
-  refreshDataset(signal?: AbortSignal): Promise<LoadedDocument<WebDataset>> {
-    return this.loadDataset(signal)
+  refreshCollection(signal?: AbortSignal): Promise<LoadedDocument<AcqImageCollection>> {
+    return this.loadCollection(signal)
   }
 
-  loadImage(datasetUrl: URL, href: string, signal?: AbortSignal) {
+  loadAcqImage(collectionUrl: URL, href: string, signal?: AbortSignal) {
     const entry = this.entries.get(href)
     if (!entry) return Promise.reject(new Error(`Unknown collection image manifest: ${href}`))
-    return loadOmeZarrCollectionImage(datasetUrl, entry, signal)
+    return loadAcqImageCollectionEntry(collectionUrl, entry, signal)
   }
 
   loadPlane(

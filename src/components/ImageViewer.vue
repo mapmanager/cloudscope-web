@@ -17,7 +17,7 @@ import {
 } from '../data/imageViewport'
 import { intensityRange, type ImagePlane, type PlaneIndices } from '../data/omeZarrLoader'
 import type { AxisRange, LinkedAxisUpdate } from '../models/viewState'
-import type { PrimaryImageDescriptor, Roi } from '../models/webDataset'
+import type { PrimaryImageDescriptor, Roi } from '../models/acqImageModels'
 
 const props = defineProps<{
   image: PrimaryImageDescriptor

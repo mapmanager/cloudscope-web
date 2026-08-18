@@ -2,20 +2,21 @@ import { readFile, readdir, stat } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { sampleDatasets } from '../src/config/sampleDatasets.ts'
+import { sampleCollections } from '../src/config/sampleCollections.ts'
 
 interface CollectionEntry {
   id: string
-  path: string
-  native_manifest: string
-  sidecar: string
-  reference_image?: string
+  ome_zarr_path: string
+  manifest_path: string
+  sidecar_path: string
+  reference_image_path?: string
 }
 
 interface CollectionManifest {
   format: string
   version: number
-  images: CollectionEntry[]
+  acq_images: CollectionEntry[]
+  analysis_tables: Record<string, string>
 }
 
 interface NativeManifest {
@@ -71,24 +72,24 @@ function collectionPath(sampleUrl: string): string {
   return resolved
 }
 
-async function verifyCollection(sample: (typeof sampleDatasets)[number]): Promise<number> {
+async function verifyCollection(sample: (typeof sampleCollections)[number]): Promise<number> {
   const root = collectionPath(sample.url)
   const manifest = await loadJson<CollectionManifest>(
-    path.join(root, 'acqstore', 'manifest.json'),
+    path.join(root, 'acqstore', 'acq_image_collection.json'),
     `${sample.name} collection manifest`,
   )
-  if (manifest.format !== 'acqstore-multi-image-ome-zarr' || manifest.version !== 2) {
-    throw new Error(`${sample.name} is not an AcqStore multi-image OME-Zarr v2 collection`)
+  if (manifest.format !== 'acqstore-acq-image-collection' || manifest.version !== 1) {
+    throw new Error(`${sample.name} is not an AcqImageCollection v1 OME-Zarr wrapper`)
   }
   await requireFile(path.join(root, 'zarr.json'), `${sample.name} root Zarr metadata`)
 
-  for (const image of manifest.images) {
-    const imageRoot = path.join(root, image.path)
+  for (const image of manifest.acq_images) {
+    const imageRoot = path.join(root, image.ome_zarr_path)
     await requireFile(path.join(imageRoot, 'zarr.json'), `${sample.name}/${image.id} Zarr metadata`)
-    await requireFile(path.join(root, image.sidecar), `${sample.name}/${image.id} sidecar`)
+    await requireFile(path.join(root, image.sidecar_path), `${sample.name}/${image.id} sidecar`)
 
     const native = await loadJson<NativeManifest>(
-      path.join(root, image.native_manifest),
+      path.join(root, image.manifest_path),
       `${sample.name}/${image.id} native manifest`,
     )
     if (native.format !== 'acqstore-native-ome-zarr' || native.version !== 2) {
@@ -115,13 +116,16 @@ async function verifyCollection(sample: (typeof sampleDatasets)[number]): Promis
       }
     }
   }
-  return manifest.images.length
+  for (const [name, tablePath] of Object.entries(manifest.analysis_tables)) {
+    await requireFile(path.join(root, tablePath), `${sample.name} ${name} collection table`)
+  }
+  return manifest.acq_images.length
 }
 
 async function main(): Promise<void> {
   const ids = new Set<string>()
   const urls = new Set<string>()
-  for (const sample of sampleDatasets) {
+  for (const sample of sampleCollections) {
     if (ids.has(sample.id)) throw new Error(`Duplicate sample ID: ${sample.id}`)
     if (urls.has(sample.url)) throw new Error(`Duplicate sample URL: ${sample.url}`)
     ids.add(sample.id)
@@ -138,9 +142,9 @@ async function main(): Promise<void> {
   }
 
   let imageCount = 0
-  for (const sample of sampleDatasets) imageCount += await verifyCollection(sample)
+  for (const sample of sampleCollections) imageCount += await verifyCollection(sample)
   console.log(
-    `Verified ${sampleDatasets.length} sample collections containing ${imageCount} images.`,
+    `Verified ${sampleCollections.length} sample collections containing ${imageCount} AcqImages.`,
   )
 }
 

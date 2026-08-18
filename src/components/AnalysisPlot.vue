@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 
 import type { CsvTable } from '../data/csvLoader'
-import type { ExportedAnalysis } from '../models/webDataset'
+import type { ExportedAnalysis } from '../models/acqImageModels'
 import type { AxisRange, LinkedAxisUpdate } from '../models/viewState'
 import { plotsForAnalysis } from '../plots/analysisPlotRegistry'
 import type { XYPlotOverlaySpec, XYPlotSpec } from '../plots/xyPlot'

@@ -1,14 +1,11 @@
 {
-  "acqstore_version": "0.2.0",
-  "created_utc": "2026-08-18T05:18:50Z",
-  "format": "acqstore-multi-image-ome-zarr",
-  "images": [
+  "acq_images": [
     {
-      "id": "image_000",
+      "id": "acq_image_000",
+      "manifest_path": "acq_images/acq_image_000/acqstore/manifest.json",
       "name": "220110n_0003.tif",
-      "native_manifest": "images/image_000/acqstore/manifest.json",
-      "path": "images/image_000",
-      "sidecar": "images/image_000/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_000",
+      "sidecar_path": "acq_images/acq_image_000/acqstore/acq_image.json",
       "source": {
         "filename": "220110n_0003.tif",
         "relative_path": "Control/220110n_0003.tif.frames/220110n_0003.tif"
@@ -42,11 +39,11 @@
       }
     },
     {
-      "id": "image_001",
+      "id": "acq_image_001",
+      "manifest_path": "acq_images/acq_image_001/acqstore/manifest.json",
       "name": "220110n_0005.tif",
-      "native_manifest": "images/image_001/acqstore/manifest.json",
-      "path": "images/image_001",
-      "sidecar": "images/image_001/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_001",
+      "sidecar_path": "acq_images/acq_image_001/acqstore/acq_image.json",
       "source": {
         "filename": "220110n_0005.tif",
         "relative_path": "Control/220110n_0005.tif.frames/220110n_0005.tif"
@@ -80,11 +77,11 @@
       }
     },
     {
-      "id": "image_002",
+      "id": "acq_image_002",
+      "manifest_path": "acq_images/acq_image_002/acqstore/manifest.json",
       "name": "220110n_0009.tif",
-      "native_manifest": "images/image_002/acqstore/manifest.json",
-      "path": "images/image_002",
-      "sidecar": "images/image_002/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_002",
+      "sidecar_path": "acq_images/acq_image_002/acqstore/acq_image.json",
       "source": {
         "filename": "220110n_0009.tif",
         "relative_path": "Control/220110n_0009.tif.frames/220110n_0009.tif"
@@ -117,11 +114,11 @@
       }
     },
     {
-      "id": "image_003",
+      "id": "acq_image_003",
+      "manifest_path": "acq_images/acq_image_003/acqstore/manifest.json",
       "name": "220110n_0020.tif",
-      "native_manifest": "images/image_003/acqstore/manifest.json",
-      "path": "images/image_003",
-      "sidecar": "images/image_003/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_003",
+      "sidecar_path": "acq_images/acq_image_003/acqstore/acq_image.json",
       "source": {
         "filename": "220110n_0020.tif",
         "relative_path": "Control/220110n_0020.tif.frames/220110n_0020.tif"
@@ -155,11 +152,11 @@
       }
     },
     {
-      "id": "image_004",
+      "id": "acq_image_004",
+      "manifest_path": "acq_images/acq_image_004/acqstore/manifest.json",
       "name": "220110n_0022.tif",
-      "native_manifest": "images/image_004/acqstore/manifest.json",
-      "path": "images/image_004",
-      "sidecar": "images/image_004/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_004",
+      "sidecar_path": "acq_images/acq_image_004/acqstore/acq_image.json",
       "source": {
         "filename": "220110n_0022.tif",
         "relative_path": "Control/220110n_0022.tif.frames/220110n_0022.tif"
@@ -193,11 +190,11 @@
       }
     },
     {
-      "id": "image_005",
+      "id": "acq_image_005",
+      "manifest_path": "acq_images/acq_image_005/acqstore/manifest.json",
       "name": "220110n_0023.tif",
-      "native_manifest": "images/image_005/acqstore/manifest.json",
-      "path": "images/image_005",
-      "sidecar": "images/image_005/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_005",
+      "sidecar_path": "acq_images/acq_image_005/acqstore/acq_image.json",
       "source": {
         "filename": "220110n_0023.tif",
         "relative_path": "Control/220110n_0023.tif.frames/220110n_0023.tif"
@@ -231,11 +228,11 @@
       }
     },
     {
-      "id": "image_006",
+      "id": "acq_image_006",
+      "manifest_path": "acq_images/acq_image_006/acqstore/manifest.json",
       "name": "220110n_0036.tif",
-      "native_manifest": "images/image_006/acqstore/manifest.json",
-      "path": "images/image_006",
-      "sidecar": "images/image_006/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_006",
+      "sidecar_path": "acq_images/acq_image_006/acqstore/acq_image.json",
       "source": {
         "filename": "220110n_0036.tif",
         "relative_path": "Control/220110n_0036.tif.frames/220110n_0036.tif"
@@ -269,11 +266,11 @@
       }
     },
     {
-      "id": "image_007",
+      "id": "acq_image_007",
+      "manifest_path": "acq_images/acq_image_007/acqstore/manifest.json",
       "name": "220110n_0049.tif",
-      "native_manifest": "images/image_007/acqstore/manifest.json",
-      "path": "images/image_007",
-      "sidecar": "images/image_007/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_007",
+      "sidecar_path": "acq_images/acq_image_007/acqstore/acq_image.json",
       "source": {
         "filename": "220110n_0049.tif",
         "relative_path": "Control/220110n_0049.tif.frames/220110n_0049.tif"
@@ -307,11 +304,11 @@
       }
     },
     {
-      "id": "image_008",
+      "id": "acq_image_008",
+      "manifest_path": "acq_images/acq_image_008/acqstore/manifest.json",
       "name": "220110n_0055.tif",
-      "native_manifest": "images/image_008/acqstore/manifest.json",
-      "path": "images/image_008",
-      "sidecar": "images/image_008/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_008",
+      "sidecar_path": "acq_images/acq_image_008/acqstore/acq_image.json",
       "source": {
         "filename": "220110n_0055.tif",
         "relative_path": "Treatment/220110n_0055.tif.frames/220110n_0055.tif"
@@ -344,11 +341,11 @@
       }
     },
     {
-      "id": "image_009",
+      "id": "acq_image_009",
+      "manifest_path": "acq_images/acq_image_009/acqstore/manifest.json",
       "name": "220110n_0056.tif",
-      "native_manifest": "images/image_009/acqstore/manifest.json",
-      "path": "images/image_009",
-      "sidecar": "images/image_009/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_009",
+      "sidecar_path": "acq_images/acq_image_009/acqstore/acq_image.json",
       "source": {
         "filename": "220110n_0056.tif",
         "relative_path": "Treatment/220110n_0056.tif.frames/220110n_0056.tif"
@@ -381,11 +378,11 @@
       }
     },
     {
-      "id": "image_010",
+      "id": "acq_image_010",
+      "manifest_path": "acq_images/acq_image_010/acqstore/manifest.json",
       "name": "220110n_0060.tif",
-      "native_manifest": "images/image_010/acqstore/manifest.json",
-      "path": "images/image_010",
-      "sidecar": "images/image_010/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_010",
+      "sidecar_path": "acq_images/acq_image_010/acqstore/acq_image.json",
       "source": {
         "filename": "220110n_0060.tif",
         "relative_path": "Treatment/220110n_0060.tif.frames/220110n_0060.tif"
@@ -418,11 +415,11 @@
       }
     },
     {
-      "id": "image_011",
+      "id": "acq_image_011",
+      "manifest_path": "acq_images/acq_image_011/acqstore/manifest.json",
       "name": "220110n_0064.tif",
-      "native_manifest": "images/image_011/acqstore/manifest.json",
-      "path": "images/image_011",
-      "sidecar": "images/image_011/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_011",
+      "sidecar_path": "acq_images/acq_image_011/acqstore/acq_image.json",
       "source": {
         "filename": "220110n_0064.tif",
         "relative_path": "Treatment/220110n_0064.tif.frames/220110n_0064.tif"
@@ -455,11 +452,11 @@
       }
     },
     {
-      "id": "image_012",
+      "id": "acq_image_012",
+      "manifest_path": "acq_images/acq_image_012/acqstore/manifest.json",
       "name": "220110n_0065.tif",
-      "native_manifest": "images/image_012/acqstore/manifest.json",
-      "path": "images/image_012",
-      "sidecar": "images/image_012/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_012",
+      "sidecar_path": "acq_images/acq_image_012/acqstore/acq_image.json",
       "source": {
         "filename": "220110n_0065.tif",
         "relative_path": "Treatment/220110n_0065.tif.frames/220110n_0065.tif"
@@ -492,11 +489,11 @@
       }
     },
     {
-      "id": "image_013",
+      "id": "acq_image_013",
+      "manifest_path": "acq_images/acq_image_013/acqstore/manifest.json",
       "name": "220110n_0067.tif",
-      "native_manifest": "images/image_013/acqstore/manifest.json",
-      "path": "images/image_013",
-      "sidecar": "images/image_013/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_013",
+      "sidecar_path": "acq_images/acq_image_013/acqstore/acq_image.json",
       "source": {
         "filename": "220110n_0067.tif",
         "relative_path": "Treatment/220110n_0067.tif.frames/220110n_0067.tif"
@@ -529,11 +526,11 @@
       }
     },
     {
-      "id": "image_014",
+      "id": "acq_image_014",
+      "manifest_path": "acq_images/acq_image_014/acqstore/manifest.json",
       "name": "220110n_0068.tif",
-      "native_manifest": "images/image_014/acqstore/manifest.json",
-      "path": "images/image_014",
-      "sidecar": "images/image_014/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_014",
+      "sidecar_path": "acq_images/acq_image_014/acqstore/acq_image.json",
       "source": {
         "filename": "220110n_0068.tif",
         "relative_path": "Treatment/220110n_0068.tif.frames/220110n_0068.tif"
@@ -566,11 +563,11 @@
       }
     },
     {
-      "id": "image_015",
+      "id": "acq_image_015",
+      "manifest_path": "acq_images/acq_image_015/acqstore/manifest.json",
       "name": "220110n_0077.tif",
-      "native_manifest": "images/image_015/acqstore/manifest.json",
-      "path": "images/image_015",
-      "sidecar": "images/image_015/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_015",
+      "sidecar_path": "acq_images/acq_image_015/acqstore/acq_image.json",
       "source": {
         "filename": "220110n_0077.tif",
         "relative_path": "Treatment/220110n_0077.tif.frames/220110n_0077.tif"
@@ -604,11 +601,11 @@
       }
     },
     {
-      "id": "image_016",
+      "id": "acq_image_016",
+      "manifest_path": "acq_images/acq_image_016/acqstore/manifest.json",
       "name": "220110n_0078.tif",
-      "native_manifest": "images/image_016/acqstore/manifest.json",
-      "path": "images/image_016",
-      "sidecar": "images/image_016/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_016",
+      "sidecar_path": "acq_images/acq_image_016/acqstore/acq_image.json",
       "source": {
         "filename": "220110n_0078.tif",
         "relative_path": "Treatment/220110n_0078.tif.frames/220110n_0078.tif"
@@ -639,11 +636,11 @@
       }
     },
     {
-      "id": "image_017",
+      "id": "acq_image_017",
+      "manifest_path": "acq_images/acq_image_017/acqstore/manifest.json",
       "name": "220110n_0080.tif",
-      "native_manifest": "images/image_017/acqstore/manifest.json",
-      "path": "images/image_017",
-      "sidecar": "images/image_017/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_017",
+      "sidecar_path": "acq_images/acq_image_017/acqstore/acq_image.json",
       "source": {
         "filename": "220110n_0080.tif",
         "relative_path": "Treatment/220110n_0080.tif.frames/220110n_0080.tif"
@@ -677,11 +674,14 @@
       }
     }
   ],
-  "name": "diameter-sample-data",
-  "tables": {
-    "sum_intensity": "acqstore/tables/sum_intensity.csv",
-    "velocity": "acqstore/tables/velocity.csv"
+  "acqstore_version": "0.2.0",
+  "analysis_tables": {
+    "sum_intensity": "acqstore/analysis_tables/sum_intensity.csv",
+    "velocity": "acqstore/analysis_tables/velocity.csv"
   },
-  "version": 2,
+  "created_utc": "2026-08-18T19:24:06Z",
+  "format": "acqstore-acq-image-collection",
+  "name": "diameter-sample-data",
+  "version": 1,
   "zarr_format": 3
 }

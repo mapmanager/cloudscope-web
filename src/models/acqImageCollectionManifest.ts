@@ -1,4 +1,5 @@
-export interface CollectionImageSummary {
+/** Denormalized fields used to build one collection-table row. */
+export interface AcqImageSummary {
   shape: number[]
   dims: string[]
   sizes: Record<string, number>
@@ -11,26 +12,28 @@ export interface CollectionImageSummary {
   has_reference_image: boolean
 }
 
-export interface CollectionImageEntry {
+/** One AcqImage member declared by an AcqImageCollection manifest. */
+export interface AcqImageCollectionEntry {
   id: string
   name: string
   source: { filename: string | null; relative_path: string | null }
-  path: string
-  sidecar: string
-  native_manifest: string
-  reference_image?: string
-  summary: CollectionImageSummary
+  ome_zarr_path: string
+  sidecar_path: string
+  manifest_path: string
+  reference_image_path?: string
+  summary: AcqImageSummary
 }
 
-export interface OmeZarrCollectionManifest {
-  format: 'acqstore-multi-image-ome-zarr'
-  version: 2
+/** AcqStore-owned wrapper manifest around independent native OME-Zarr images. */
+export interface AcqImageCollectionManifest {
+  format: 'acqstore-acq-image-collection'
+  version: 1
   zarr_format: 3
   name: string
   created_utc: string
   acqstore_version: string
-  images: CollectionImageEntry[]
-  tables: Record<string, string>
+  acq_images: AcqImageCollectionEntry[]
+  analysis_tables: Record<string, string>
 }
 
 export interface AnalysisResourceEntry {
@@ -41,6 +44,7 @@ export interface AnalysisResourceEntry {
   resources: { table: string | null; peaks: string | null }
 }
 
+/** Existing native single-AcqImage manifest; collection export must not alter it. */
 export interface NativeImageManifest {
   format: 'acqstore-native-ome-zarr'
   version: 2
@@ -50,6 +54,7 @@ export interface NativeImageManifest {
   analyses: AnalysisResourceEntry[]
 }
 
+/** Existing AcqImage sidecar stored inside each independent child image. */
 export interface NativeAcqImageSidecar {
   accepted: boolean
   analysis: Array<{

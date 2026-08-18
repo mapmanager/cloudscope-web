@@ -1,21 +1,21 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import {
-  loadOmeZarrCollection,
-  loadOmeZarrCollectionImage,
-} from '../src/data/omeZarrCollectionLoader'
-import type { CollectionImageEntry } from '../src/models/omeZarrCollection'
+  loadAcqImageCollection,
+  loadAcqImageCollectionEntry,
+} from '../src/data/acqImageCollectionLoader'
+import type { AcqImageCollectionEntry } from '../src/models/acqImageCollectionManifest'
 
 afterEach(() => vi.unstubAllGlobals())
 
-const entry: CollectionImageEntry = {
-  id: 'image_000',
+const entry: AcqImageCollectionEntry = {
+  id: 'acq_image_000',
   name: 'sample.oir',
   source: { filename: 'sample.oir', relative_path: 'nested/sample.oir' },
-  path: 'images/image_000',
-  sidecar: 'images/image_000/acqstore/acq_image.json',
-  native_manifest: 'images/image_000/acqstore/manifest.json',
-  reference_image: 'images/image_000/reference',
+  ome_zarr_path: 'acq_images/acq_image_000',
+  sidecar_path: 'acq_images/acq_image_000/acqstore/acq_image.json',
+  manifest_path: 'acq_images/acq_image_000/acqstore/manifest.json',
+  reference_image_path: 'acq_images/acq_image_000/reference',
   summary: {
     shape: [30000, 14],
     dims: ['y', 'x'],
@@ -30,26 +30,26 @@ const entry: CollectionImageEntry = {
   },
 }
 
-describe('OME-Zarr collection loader', () => {
+describe('AcqImageCollection loader', () => {
   it('builds the file-table index from the root manifest', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(
         Response.json({
-          format: 'acqstore-multi-image-ome-zarr',
-          version: 2,
+          format: 'acqstore-acq-image-collection',
+          version: 1,
           zarr_format: 3,
           name: 'sample collection',
           created_utc: '2026-08-18T00:00:00Z',
           acqstore_version: '1.0',
-          images: [entry],
-          tables: {},
+          acq_images: [entry],
+          analysis_tables: {},
         }),
       ),
     )
-    const loaded = await loadOmeZarrCollection('https://example.test/sample.ome.zarr/')
-    expect(loaded.data.images[0]).toMatchObject({
-      id: 'image_000',
+    const loaded = await loadAcqImageCollection('https://example.test/sample.ome.zarr/')
+    expect(loaded.data.acq_images[0]).toMatchObject({
+      id: 'acq_image_000',
       name: 'sample.oir',
       dtype: 'uint16',
       num_rois: 1,
@@ -63,11 +63,11 @@ describe('OME-Zarr collection loader', () => {
       vi
         .fn()
         .mockResolvedValue(
-          Response.json({ format: 'acqstore-multi-image-ome-zarr', version: 1, images: [] }),
+          Response.json({ format: 'acqstore-acq-image-collection', version: 2, acq_images: [] }),
         ),
     )
-    await expect(loadOmeZarrCollection('https://example.test/stale.ome.zarr/')).rejects.toThrow(
-      'requires version 2; re-export',
+    await expect(loadAcqImageCollection('https://example.test/stale.ome.zarr/')).rejects.toThrow(
+      'requires AcqImageCollection version 1; re-export',
     )
   })
 
@@ -77,18 +77,19 @@ describe('OME-Zarr collection loader', () => {
       'fetch',
       vi.fn().mockResolvedValue(
         Response.json({
-          format: 'acqstore-multi-image-ome-zarr',
-          version: 2,
+          format: 'acqstore-acq-image-collection',
+          version: 1,
+          zarr_format: 3,
           name: 'invalid',
           created_utc: '2026-08-18T00:00:00Z',
           acqstore_version: '1.0',
-          images: [invalidEntry],
-          tables: {},
+          acq_images: [invalidEntry],
+          analysis_tables: {},
         }),
       ),
     )
-    await expect(loadOmeZarrCollection('https://example.test/invalid.ome.zarr/')).rejects.toThrow(
-      'https://example.test/invalid.ome.zarr/acqstore/manifest.json: $.images[0].source must be an object',
+    await expect(loadAcqImageCollection('https://example.test/invalid.ome.zarr/')).rejects.toThrow(
+      'https://example.test/invalid.ome.zarr/acqstore/acq_image_collection.json: $.acq_images[0].source must be an object',
     )
   })
 
@@ -134,7 +135,7 @@ describe('OME-Zarr collection loader', () => {
         }),
       )
     vi.stubGlobal('fetch', fetchMock)
-    const loaded = await loadOmeZarrCollectionImage(
+    const loaded = await loadAcqImageCollectionEntry(
       new URL('https://example.test/sample.ome.zarr/'),
       entry,
       undefined,
@@ -144,7 +145,7 @@ describe('OME-Zarr collection loader', () => {
       analysis_type: 'radon_velocity',
       resources: {
         table: {
-          href: 'https://example.test/sample.ome.zarr/images/image_000/acqstore/analysis/radon_velocity__c0__r1.table.csv',
+          href: 'https://example.test/sample.ome.zarr/acq_images/acq_image_000/acqstore/analysis/radon_velocity__c0__r1.table.csv',
         },
         peaks: null,
       },

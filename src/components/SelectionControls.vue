@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-import type { AcqImageDocument } from '../models/webDataset'
+import type { AcqImageDocument } from '../models/acqImageModels'
 
 const props = defineProps<{
   image: AcqImageDocument

@@ -2,11 +2,11 @@ import { computed, ref, shallowRef, watch } from 'vue'
 
 import type { CsvTable } from '../data/csvLoader'
 import type { ImagePlane, PlaneIndices } from '../data/omeZarrLoader'
-import { defaultSampleDataset } from '../config/sampleDatasets'
+import { defaultSampleCollection } from '../config/sampleCollections'
 import {
   AcqStoreServerSource,
   ExportedDatasetSource,
-  OmeZarrCollectionSource,
+  AcqImageCollectionSource,
   ServerExportedDatasetSource,
   type LocalOpenKind,
   type ViewerDataSource,
@@ -14,13 +14,13 @@ import {
 import { DEFAULT_PLANE_CACHE_OPTIONS, PlaneCache, type PlaneCacheOptions } from '../data/planeCache'
 import type {
   AcqImageDocument,
-  DatasetImage,
+  AcqImageCollection,
+  AcqImageCollectionRow,
   LoadedDocument,
-  WebDataset,
   PixelDescriptor,
-} from '../models/webDataset'
+} from '../models/acqImageModels'
 
-const DEFAULT_DEVELOPMENT_DATASET = '/__dev_collection__/'
+const DEFAULT_DEVELOPMENT_COLLECTION = '/__dev_collection__/'
 
 /**
  * Selects the initial collection without requiring a runtime server.
@@ -28,19 +28,19 @@ const DEFAULT_DEVELOPMENT_DATASET = '/__dev_collection__/'
  * Explicit query-string state wins, followed by a configured Vite development
  * collection and finally the bundled diameter sample.
  *
- * @returns A URL accepted by {@link openDataset}.
+ * @returns A URL accepted by {@link openAcqImageCollection}.
  */
-export function initialDatasetUrl(): string {
-  const fromUrl = new URL(window.location.href).searchParams.get('dataset')
+export function initialCollectionUrl(): string {
+  const fromUrl = new URL(window.location.href).searchParams.get('collection')
   if (fromUrl) return fromUrl
   if (import.meta.env.DEV && __ACQSTORE_DEV_DATASET_CONFIGURED__) {
-    return DEFAULT_DEVELOPMENT_DATASET
+    return DEFAULT_DEVELOPMENT_COLLECTION
   }
-  return defaultSampleDataset.url
+  return defaultSampleCollection.url
 }
 
 interface UrlSelection {
-  image: string | null
+  acqImage: string | null
   channel: number
   roi: number | null
   z: number
@@ -57,7 +57,7 @@ export function readUrlSelection(href: string): UrlSelection {
   const roiValue = params.get('roi')
   const roi = roiValue === null ? null : Number(roiValue)
   return {
-    image: params.get('image'),
+    acqImage: params.get('acq_image'),
     channel: nonNegativeInteger(params, 'channel'),
     roi: roi !== null && Number.isInteger(roi) && roi >= 0 ? roi : null,
     z: nonNegativeInteger(params, 'z'),
@@ -65,11 +65,11 @@ export function readUrlSelection(href: string): UrlSelection {
   }
 }
 
-export function viewerUrl(href: string, state: UrlSelection & { dataset: string }): string {
+export function viewerUrl(href: string, state: UrlSelection & { collection: string }): string {
   const url = new URL(href)
-  url.searchParams.set('dataset', state.dataset)
-  if (state.image === null) url.searchParams.delete('image')
-  else url.searchParams.set('image', state.image)
+  url.searchParams.set('collection', state.collection)
+  if (state.acqImage === null) url.searchParams.delete('acq_image')
+  else url.searchParams.set('acq_image', state.acqImage)
   url.searchParams.set('channel', String(state.channel))
   if (state.roi === null) url.searchParams.delete('roi')
   else url.searchParams.set('roi', String(state.roi))
@@ -79,13 +79,13 @@ export function viewerUrl(href: string, state: UrlSelection & { dataset: string 
 }
 
 export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PLANE_CACHE_OPTIONS) {
-  const hostedDatasetUrl = ref(initialDatasetUrl())
+  const hostedCollectionUrl = ref(initialCollectionUrl())
   const serverUrl = ref('http://127.0.0.1:8767')
   const planeCache = new PlaneCache(planeCacheOptions)
   const activeSource = shallowRef<ViewerDataSource | null>(null)
-  const datasetDocument = shallowRef<LoadedDocument<WebDataset> | null>(null)
+  const acqImageCollectionDocument = shallowRef<LoadedDocument<AcqImageCollection> | null>(null)
   const acqImageDocument = shallowRef<LoadedDocument<AcqImageDocument> | null>(null)
-  const selectedImageId = ref<string | null>(null)
+  const selectedAcqImageId = ref<string | null>(null)
   const selectedChannel = ref(0)
   const selectedRoiId = ref<number | null>(null)
   const selectedZ = ref(0)
@@ -104,13 +104,13 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     imageId: string,
     patch: Partial<{ pixels: boolean; analysisCsv: boolean }>,
   ) {
-    const document = datasetDocument.value
+    const document = acqImageCollectionDocument.value
     if (!document) return
-    datasetDocument.value = {
+    acqImageCollectionDocument.value = {
       ...document,
       data: {
         ...document.data,
-        images: document.data.images.map((image) =>
+        acq_images: document.data.acq_images.map((image) =>
           image.id === imageId
             ? {
                 ...image,
@@ -122,10 +122,11 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     }
   }
 
-  const selectedIndexImage = computed<DatasetImage | null>(
+  const selectedIndexImage = computed<AcqImageCollectionRow | null>(
     () =>
-      datasetDocument.value?.data.images.find((image) => image.id === selectedImageId.value) ??
-      null,
+      acqImageCollectionDocument.value?.data.acq_images.find(
+        (image) => image.id === selectedAcqImageId.value,
+      ) ?? null,
   )
 
   async function activateSource(source: ViewerDataSource): Promise<void> {
@@ -133,18 +134,20 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     error.value = null
     const previous = activeSource.value
     try {
-      const document = await source.loadDataset()
+      const document = await source.loadCollection()
       planeCache.clear()
       activeSource.value = source
-      datasetDocument.value = document
+      acqImageCollectionDocument.value = document
       if (previous && previous !== source) await previous.close().catch(() => undefined)
       const requested = source.persistInUrl
         ? readUrlSelection(window.location.href)
-        : { image: null, channel: 0, roi: null, z: 0, t: 0 }
-      const first = datasetDocument.value.data.images[0] ?? null
+        : { acqImage: null, channel: 0, roi: null, z: 0, t: 0 }
+      const first = acqImageCollectionDocument.value.data.acq_images[0] ?? null
       const target =
-        datasetDocument.value.data.images.find((image) => image.id === requested.image) ?? first
-      await selectImage(target?.id ?? null)
+        acqImageCollectionDocument.value.data.acq_images.find(
+          (image) => image.id === requested.acqImage,
+        ) ?? first
+      await selectAcqImage(target?.id ?? null)
       const image = acqImageDocument.value?.data
       if (image) {
         if (image.image.channels.some(({ index }) => index === requested.channel)) {
@@ -158,9 +161,9 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
       }
     } catch (reason) {
       await source.close().catch(() => undefined)
-      datasetDocument.value = null
+      acqImageCollectionDocument.value = null
       acqImageDocument.value = null
-      selectedImageId.value = null
+      selectedAcqImageId.value = null
       error.value = errorMessage(reason)
     } finally {
       loading.value = false
@@ -168,15 +171,15 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
   }
 
   /** Opens a hosted, bundled, or development-served collection URL. */
-  async function openDataset(url = hostedDatasetUrl.value): Promise<void> {
+  async function openAcqImageCollection(url = hostedCollectionUrl.value): Promise<void> {
     if (!url.trim()) return
     const resolved = url.trim()
-    hostedDatasetUrl.value = resolved
+    hostedCollectionUrl.value = resolved
     // Temporary migration compatibility: remove this Web Dataset v1 branch
     // after hosted and server-backed collection loading reach feature parity.
     const source = resolved.endsWith('.json')
       ? new ExportedDatasetSource(resolved)
-      : new OmeZarrCollectionSource(resolved)
+      : new AcqImageCollectionSource(resolved)
     await activateSource(source)
   }
 
@@ -191,12 +194,19 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
   }
 
   watch(
-    [selectedImageId, selectedChannel, selectedRoiId, selectedZ, selectedT, datasetDocument],
+    [
+      selectedAcqImageId,
+      selectedChannel,
+      selectedRoiId,
+      selectedZ,
+      selectedT,
+      acqImageCollectionDocument,
+    ],
     () => {
-      if (!datasetDocument.value) return
+      if (!acqImageCollectionDocument.value) return
       if (!activeSource.value?.persistInUrl) {
         const url = new URL(window.location.href)
-        for (const key of ['dataset', 'image', 'channel', 'roi', 'z', 't']) {
+        for (const key of ['collection', 'acq_image', 'channel', 'roi', 'z', 't']) {
           url.searchParams.delete(key)
         }
         window.history.replaceState(null, '', url)
@@ -206,8 +216,8 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
         null,
         '',
         viewerUrl(window.location.href, {
-          dataset: datasetDocument.value.url.href,
-          image: selectedImageId.value,
+          collection: acqImageCollectionDocument.value.url.href,
+          acqImage: selectedAcqImageId.value,
           channel: selectedChannel.value,
           roi: selectedRoiId.value,
           z: selectedZ.value,
@@ -218,27 +228,29 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     { flush: 'post' },
   )
 
-  async function selectImage(imageId: string | null): Promise<void> {
+  async function selectAcqImage(imageId: string | null): Promise<void> {
     const request = ++selectionRequest
-    selectedImageId.value = imageId
+    selectedAcqImageId.value = imageId
     selectedChannel.value = 0
     selectedRoiId.value = null
     selectedZ.value = 0
     selectedT.value = 0
     acqImageDocument.value = null
     error.value = null
-    if (imageId === null || datasetDocument.value === null) return
-    const image = datasetDocument.value.data.images.find((candidate) => candidate.id === imageId)
+    if (imageId === null || acqImageCollectionDocument.value === null) return
+    const image = acqImageCollectionDocument.value.data.acq_images.find(
+      (candidate) => candidate.id === imageId,
+    )
     if (!image) {
       error.value = `Unknown image ID: ${imageId}`
       return
     }
     loading.value = true
     try {
-      if (!activeSource.value) throw new Error('No dataset source is active')
+      if (!activeSource.value) throw new Error('No collection source is active')
       const source = activeSource.value
-      const loaded = await source.loadImage(datasetDocument.value.url, image.href)
-      if (request !== selectionRequest || selectedImageId.value !== imageId) return
+      const loaded = await source.loadAcqImage(acqImageCollectionDocument.value.url, image.href)
+      if (request !== selectionRequest || selectedAcqImageId.value !== imageId) return
       acqImageDocument.value = loaded
       if (loaded.data.load_state) {
         updateLoadState(imageId, loaded.data.load_state)
@@ -259,12 +271,12 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     indices: PlaneIndices,
     signal?: AbortSignal,
   ): Promise<ImagePlane> {
-    if (!activeSource.value) throw new Error('No dataset source is active')
+    if (!activeSource.value) throw new Error('No collection source is active')
     const source = activeSource.value
     const imageId = acqImageDocument.value?.data.id
     if (!imageId) throw new Error('No image is selected')
     const key = [
-      datasetDocument.value?.url.href ?? '',
+      acqImageCollectionDocument.value?.url.href ?? '',
       imageId,
       new URL(descriptor.href, documentUrl).href,
       indices.channel,
@@ -285,7 +297,7 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
   }
 
   async function loadTable(url: URL, signal?: AbortSignal): Promise<CsvTable> {
-    if (!activeSource.value) throw new Error('No dataset source is active')
+    if (!activeSource.value) throw new Error('No collection source is active')
     const source = activeSource.value
     const imageId = acqImageDocument.value?.data.id
     const table = await source.loadTable(url, signal)
@@ -303,7 +315,7 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
       await activeSource.value.unloadImage(imageId)
       planeCache.invalidateImage(imageId)
       if (activeSource.value.refreshAfterUnload) {
-        datasetDocument.value = await activeSource.value.refreshDataset()
+        acqImageCollectionDocument.value = await activeSource.value.refreshCollection()
       } else {
         updateLoadState(imageId, { pixels: false, analysisCsv: false })
       }
@@ -314,26 +326,28 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     }
   }
 
-  async function closeDataset(): Promise<void> {
+  async function closeAcqImageCollection(): Promise<void> {
     const source = activeSource.value
     activeSource.value = null
     planeCache.clear()
     if (source) await source.close().catch(() => undefined)
-    datasetDocument.value = null
+    acqImageCollectionDocument.value = null
     acqImageDocument.value = null
-    selectedImageId.value = null
-    hostedDatasetUrl.value = ''
+    selectedAcqImageId.value = null
+    hostedCollectionUrl.value = ''
     const url = new URL(window.location.href)
-    for (const key of ['dataset', 'image', 'channel', 'roi', 'z', 't']) url.searchParams.delete(key)
+    for (const key of ['collection', 'acq_image', 'channel', 'roi', 'z', 't']) {
+      url.searchParams.delete(key)
+    }
     window.history.replaceState(null, '', url)
   }
 
   return {
-    hostedDatasetUrl,
+    hostedCollectionUrl,
     serverUrl,
-    datasetDocument,
+    acqImageCollectionDocument,
     acqImageDocument,
-    selectedImageId,
+    selectedAcqImageId,
     selectedIndexImage,
     selectedChannel,
     selectedRoiId,
@@ -342,13 +356,13 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     loading,
     error,
     canUnload,
-    openDataset,
+    openAcqImageCollection,
     openServer,
     openExportedFolder,
-    selectImage,
+    selectAcqImage,
     loadPlane,
     loadTable,
     unloadImage,
-    closeDataset,
+    closeAcqImageCollection,
   }
 }

@@ -1,18 +1,18 @@
 import type {
   AcqImageDocument,
-  DatasetImage,
+  AcqImageCollection,
+  AcqImageCollectionRow,
   ExportedAnalysis,
   ImageChannel,
   LoadedDocument,
   Roi,
-  WebDataset,
-} from '../models/webDataset'
+} from '../models/acqImageModels'
 import type {
-  CollectionImageEntry,
+  AcqImageCollectionEntry,
+  AcqImageCollectionManifest,
   NativeAcqImageSidecar,
   NativeImageManifest,
-  OmeZarrCollectionManifest,
-} from '../models/omeZarrCollection'
+} from '../models/acqImageCollectionManifest'
 
 async function loadJson<T>(url: URL, signal?: AbortSignal): Promise<T> {
   const response = await fetch(url, signal ? { signal } : undefined)
@@ -26,7 +26,7 @@ async function loadJson<T>(url: URL, signal?: AbortSignal): Promise<T> {
 
 function collectionRoot(url: string | URL): URL {
   const resolved = new URL(url, window.location.href)
-  if (resolved.pathname.endsWith('/acqstore/manifest.json')) {
+  if (resolved.pathname.endsWith('/acqstore/acq_image_collection.json')) {
     return new URL('../../', resolved)
   }
   return new URL(resolved.href.replace(/\/?$/, '/'))
@@ -67,39 +67,52 @@ const isStringArray = (value: unknown): value is string[] =>
 const isIntegerArray = (value: unknown): value is number[] =>
   Array.isArray(value) && value.every(isInteger)
 
-function validateCollection(data: unknown, url: URL): asserts data is OmeZarrCollectionManifest {
+function validateCollection(data: unknown, url: URL): asserts data is AcqImageCollectionManifest {
   if (!isObject(data)) invalidManifest(url, '$', 'must be an object')
-  if (data.format !== 'acqstore-multi-image-ome-zarr') {
-    invalidManifest(url, '$.format', "must equal 'acqstore-multi-image-ome-zarr'")
+  if (data.format !== 'acqstore-acq-image-collection') {
+    invalidManifest(url, '$.format', "must equal 'acqstore-acq-image-collection'")
   }
-  if (data.version !== 2) {
+  if (data.version !== 1) {
     throw new Error(
       `Unsupported AcqStore OME-Zarr collection version ${String(data.version)} at ${url.href}. ` +
-        'Cloudscope requires version 2; re-export the collection with the current AcqStore exporter.',
+        'CloudScope requires AcqImageCollection version 1; re-export with the current AcqStore exporter.',
     )
   }
   requireField(data, 'name', '$', url, isString, 'a string')
+  if (data.zarr_format !== 3) invalidManifest(url, '$.zarr_format', 'must equal 3')
   requireField(data, 'created_utc', '$', url, isString, 'a string')
   requireField(data, 'acqstore_version', '$', url, isString, 'a string')
-  const images = data.images
-  if (!Array.isArray(images)) invalidManifest(url, '$.images', 'must be an array')
+  const images = data.acq_images
+  if (!Array.isArray(images)) invalidManifest(url, '$.acq_images', 'must be an array')
+  const ids = new Set<string>()
+  const paths = new Set<string>()
   images.forEach((raw, index) => {
-    const path = `$.images[${index}]`
+    const path = `$.acq_images[${index}]`
     if (!isObject(raw)) invalidManifest(url, path, 'must be an object')
     const id = requireField(raw, 'id', path, url, isString, 'a string')
+    if (!id || ids.has(id)) invalidManifest(url, `${path}.id`, 'must be unique and non-empty')
+    ids.add(id)
     requireField(raw, 'name', path, url, isString, 'a string')
     const source = requireField(raw, 'source', path, url, isObject, 'an object')
     const nullableString = (value: unknown): value is string | null => value === null || isString(value)
     requireField(source, 'filename', `${path}.source`, url, nullableString, 'a string or null')
     requireField(source, 'relative_path', `${path}.source`, url, nullableString, 'a string or null')
-    const imagePath = requireField(raw, 'path', path, url, isString, 'a string')
-    const sidecar = requireField(raw, 'sidecar', path, url, isString, 'a string')
+    const imagePath = requireField(raw, 'ome_zarr_path', path, url, isString, 'a string')
+    const sidecar = requireField(raw, 'sidecar_path', path, url, isString, 'a string')
     const nativeManifest = requireField(
-      raw, 'native_manifest', path, url, isString, 'a string',
+      raw, 'manifest_path', path, url, isString, 'a string',
     )
     assertRelativePath(imagePath, `Image ${id} path`, url)
+    if (paths.has(imagePath)) invalidManifest(url, `${path}.ome_zarr_path`, 'must be unique')
+    paths.add(imagePath)
     assertRelativePath(sidecar, `Image ${id} sidecar`, url)
     assertRelativePath(nativeManifest, `Image ${id} native manifest`, url)
+    if (raw.reference_image_path !== undefined) {
+      if (!isString(raw.reference_image_path)) {
+        invalidManifest(url, `${path}.reference_image_path`, 'must be a string')
+      }
+      assertRelativePath(raw.reference_image_path, `Image ${id} reference image`, url)
+    }
     const summary = requireField(raw, 'summary', path, url, isObject, 'an object')
     requireField(summary, 'shape', `${path}.summary`, url, isIntegerArray, 'an integer array')
     requireField(summary, 'dims', `${path}.summary`, url, isStringArray, 'a string array')
@@ -116,14 +129,26 @@ function validateCollection(data: unknown, url: URL): asserts data is OmeZarrCol
       summary, 'has_reference_image', `${path}.summary`, url, isBoolean, 'a boolean',
     )
   })
+  const analysisTables = requireField(
+    data,
+    'analysis_tables',
+    '$',
+    url,
+    isObject,
+    'an object',
+  )
+  for (const [name, tablePath] of Object.entries(analysisTables)) {
+    if (!isString(tablePath)) invalidManifest(url, `$.analysis_tables.${name}`, 'must be a string')
+    assertRelativePath(tablePath, `Analysis table ${name}`, url)
+  }
 }
 
-function indexRow(entry: CollectionImageEntry): DatasetImage {
+function indexRow(entry: AcqImageCollectionEntry): AcqImageCollectionRow {
   const summary = entry.summary
   return {
     id: entry.id,
     name: entry.name || entry.source.filename || entry.id,
-    href: entry.native_manifest,
+    href: entry.manifest_path,
     shape: summary.shape,
     dims: summary.dims,
     sizes: summary.sizes,
@@ -144,23 +169,21 @@ function indexRow(entry: CollectionImageEntry): DatasetImage {
   }
 }
 
-export async function loadOmeZarrCollection(
+export async function loadAcqImageCollection(
   url: string | URL,
   signal?: AbortSignal,
-): Promise<LoadedDocument<WebDataset> & { manifest: OmeZarrCollectionManifest }> {
+): Promise<LoadedDocument<AcqImageCollection> & { manifest: AcqImageCollectionManifest }> {
   const root = collectionRoot(url)
-  const manifestUrl = new URL('acqstore/manifest.json', root)
+  const manifestUrl = new URL('acqstore/acq_image_collection.json', root)
   const manifest = await loadJson<unknown>(manifestUrl, signal)
   validateCollection(manifest, manifestUrl)
   return {
     data: {
-      format: 'acqstore-web-dataset',
-      format_version: 1,
       id: root.href,
       name: manifest.name,
       acqstore_version: manifest.acqstore_version,
       created_utc: manifest.created_utc,
-      images: manifest.images.map(indexRow),
+      acq_images: manifest.acq_images.map(indexRow),
     },
     url: root,
     manifest,
@@ -201,18 +224,18 @@ function channels(count: number, contrast: Record<string, unknown>): ImageChanne
   })
 }
 
-export async function loadOmeZarrCollectionImage(
+export async function loadAcqImageCollectionEntry(
   root: URL,
-  entry: CollectionImageEntry,
+  entry: AcqImageCollectionEntry,
   signal?: AbortSignal,
 ): Promise<LoadedDocument<AcqImageDocument>> {
-  const manifestUrl = new URL(entry.native_manifest, root)
+  const manifestUrl = new URL(entry.manifest_path, root)
   const manifest = await loadJson<NativeImageManifest>(manifestUrl, signal)
   if (manifest.format !== 'acqstore-native-ome-zarr' || manifest.version !== 2) {
     throw new Error(`Image ${entry.id} does not have an AcqStore native manifest v2`)
   }
-  const childRoot = new URL(`${entry.path.replace(/\/$/, '')}/`, root)
-  const sidecar = await loadJson<NativeAcqImageSidecar>(new URL(entry.sidecar, root), signal)
+  const childRoot = new URL(`${entry.ome_zarr_path.replace(/\/$/, '')}/`, root)
+  const sidecar = await loadJson<NativeAcqImageSidecar>(new URL(entry.sidecar_path, root), signal)
   const summaries = new Map(
     sidecar.analysis.map((item) => [
       `${item.analysis_name}|${item.channel}|${item.roi_id}`,

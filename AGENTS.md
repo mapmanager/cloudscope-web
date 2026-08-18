@@ -3,7 +3,7 @@
 ## Repository role
 
 `cloudscope-web` is an independent Vue 3 and TypeScript single-page viewer for
-AcqStore OME-Zarr collections. It must remain buildable as a static site. A
+AcqStore AcqImageCollection OME-Zarr stores. It must remain buildable as a static site. A
 Python runtime or AcqStore Server may enhance local development, but neither is
 required to use the production viewer.
 
@@ -30,7 +30,7 @@ the sibling repository.
 - Inspect metadata before adding a sample to `public/samples/`; GitHub Pages is
   public even when some repository plans permit private source repositories.
 - Never commit `.DS_Store` or other operating-system metadata.
-- Register every bundled sample in `src/config/sampleDatasets.ts` and run
+- Register every bundled sample in `src/config/sampleCollections.ts` and run
   `npm run verify:samples` after changing a sample or catalog entry.
 
 ## Static-hosting invariants
@@ -52,8 +52,12 @@ the sibling repository.
 - Use TSDoc-compatible `/** ... */` comments for exported APIs and non-obvious
   contracts. Prefer `@param`, `@returns`, and `@throws` where they add useful
   information; do not restate obvious types.
-- Preserve the distinction between a domain collection, its serialized
-  OME-Zarr representation, and an active viewer/data-source session.
+- Use `AcqImageCollection` for the domain/serialized multi-image collection,
+  `AcqImage` for one member, and `dataset` only where a legacy transport or the
+  OME-NGFF specification uses that term.
+- Preserve the distinction between an `AcqImageCollection`, its additive
+  AcqStore wrapper metadata, each unchanged native child OME-Zarr image, and
+  an active viewer/data-source session.
 - Format with Prettier and lint with ESLint. Do not make broad formatting-only
   changes outside the task's scope.
 

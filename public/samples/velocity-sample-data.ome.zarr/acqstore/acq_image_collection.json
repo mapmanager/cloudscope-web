@@ -1,15 +1,12 @@
 {
-  "acqstore_version": "0.2.0",
-  "created_utc": "2026-08-18T05:18:35Z",
-  "format": "acqstore-multi-image-ome-zarr",
-  "images": [
+  "acq_images": [
     {
-      "id": "image_000",
+      "id": "acq_image_000",
+      "manifest_path": "acq_images/acq_image_000/acqstore/manifest.json",
       "name": "20251029_A105_0002.oir",
-      "native_manifest": "images/image_000/acqstore/manifest.json",
-      "path": "images/image_000",
-      "reference_image": "images/image_000/reference",
-      "sidecar": "images/image_000/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_000",
+      "reference_image_path": "acq_images/acq_image_000/reference",
+      "sidecar_path": "acq_images/acq_image_000/acqstore/acq_image.json",
       "source": {
         "filename": "20251029_A105_0002.oir",
         "relative_path": "14d Control/20251029/20251029_A105_0002.oir"
@@ -43,12 +40,12 @@
       }
     },
     {
-      "id": "image_001",
+      "id": "acq_image_001",
+      "manifest_path": "acq_images/acq_image_001/acqstore/manifest.json",
       "name": "20251029_A105_0003.oir",
-      "native_manifest": "images/image_001/acqstore/manifest.json",
-      "path": "images/image_001",
-      "reference_image": "images/image_001/reference",
-      "sidecar": "images/image_001/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_001",
+      "reference_image_path": "acq_images/acq_image_001/reference",
+      "sidecar_path": "acq_images/acq_image_001/acqstore/acq_image.json",
       "source": {
         "filename": "20251029_A105_0003.oir",
         "relative_path": "14d Control/20251029/20251029_A105_0003.oir"
@@ -82,12 +79,12 @@
       }
     },
     {
-      "id": "image_002",
+      "id": "acq_image_002",
+      "manifest_path": "acq_images/acq_image_002/acqstore/manifest.json",
       "name": "20251030_A106_0002.oir",
-      "native_manifest": "images/image_002/acqstore/manifest.json",
-      "path": "images/image_002",
-      "reference_image": "images/image_002/reference",
-      "sidecar": "images/image_002/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_002",
+      "reference_image_path": "acq_images/acq_image_002/reference",
+      "sidecar_path": "acq_images/acq_image_002/acqstore/acq_image.json",
       "source": {
         "filename": "20251030_A106_0002.oir",
         "relative_path": "14d Control/20251030/20251030_A106_0002.oir"
@@ -121,12 +118,12 @@
       }
     },
     {
-      "id": "image_003",
+      "id": "acq_image_003",
+      "manifest_path": "acq_images/acq_image_003/acqstore/manifest.json",
       "name": "20250717_A87_0004.oir",
-      "native_manifest": "images/image_003/acqstore/manifest.json",
-      "path": "images/image_003",
-      "reference_image": "images/image_003/reference",
-      "sidecar": "images/image_003/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_003",
+      "reference_image_path": "acq_images/acq_image_003/reference",
+      "sidecar_path": "acq_images/acq_image_003/acqstore/acq_image.json",
       "source": {
         "filename": "20250717_A87_0004.oir",
         "relative_path": "14d Treatment/20250717/20250717_A87_0004.oir"
@@ -160,12 +157,12 @@
       }
     },
     {
-      "id": "image_004",
+      "id": "acq_image_004",
+      "manifest_path": "acq_images/acq_image_004/acqstore/manifest.json",
       "name": "20250717_A87_0005.oir",
-      "native_manifest": "images/image_004/acqstore/manifest.json",
-      "path": "images/image_004",
-      "reference_image": "images/image_004/reference",
-      "sidecar": "images/image_004/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_004",
+      "reference_image_path": "acq_images/acq_image_004/reference",
+      "sidecar_path": "acq_images/acq_image_004/acqstore/acq_image.json",
       "source": {
         "filename": "20250717_A87_0005.oir",
         "relative_path": "14d Treatment/20250717/20250717_A87_0005.oir"
@@ -199,12 +196,12 @@
       }
     },
     {
-      "id": "image_005",
+      "id": "acq_image_005",
+      "manifest_path": "acq_images/acq_image_005/acqstore/manifest.json",
       "name": "20260102_A118_0002.oir",
-      "native_manifest": "images/image_005/acqstore/manifest.json",
-      "path": "images/image_005",
-      "reference_image": "images/image_005/reference",
-      "sidecar": "images/image_005/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_005",
+      "reference_image_path": "acq_images/acq_image_005/reference",
+      "sidecar_path": "acq_images/acq_image_005/acqstore/acq_image.json",
       "source": {
         "filename": "20260102_A118_0002.oir",
         "relative_path": "14d Treatment/20260102/20260102_A118_0002.oir"
@@ -238,12 +235,12 @@
       }
     },
     {
-      "id": "image_006",
+      "id": "acq_image_006",
+      "manifest_path": "acq_images/acq_image_006/acqstore/manifest.json",
       "name": "20260102_A118_0003.oir",
-      "native_manifest": "images/image_006/acqstore/manifest.json",
-      "path": "images/image_006",
-      "reference_image": "images/image_006/reference",
-      "sidecar": "images/image_006/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_006",
+      "reference_image_path": "acq_images/acq_image_006/reference",
+      "sidecar_path": "acq_images/acq_image_006/acqstore/acq_image.json",
       "source": {
         "filename": "20260102_A118_0003.oir",
         "relative_path": "14d Treatment/20260102/20260102_A118_0003.oir"
@@ -277,12 +274,12 @@
       }
     },
     {
-      "id": "image_007",
+      "id": "acq_image_007",
+      "manifest_path": "acq_images/acq_image_007/acqstore/manifest.json",
       "name": "20251014_A98_0002.oir",
-      "native_manifest": "images/image_007/acqstore/manifest.json",
-      "path": "images/image_007",
-      "reference_image": "images/image_007/reference",
-      "sidecar": "images/image_007/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_007",
+      "reference_image_path": "acq_images/acq_image_007/reference",
+      "sidecar_path": "acq_images/acq_image_007/acqstore/acq_image.json",
       "source": {
         "filename": "20251014_A98_0002.oir",
         "relative_path": "7d Control/20251014/20251014_A98_0002.oir"
@@ -316,12 +313,12 @@
       }
     },
     {
-      "id": "image_008",
+      "id": "acq_image_008",
+      "manifest_path": "acq_images/acq_image_008/acqstore/manifest.json",
       "name": "20251014_A98_0003.oir",
-      "native_manifest": "images/image_008/acqstore/manifest.json",
-      "path": "images/image_008",
-      "reference_image": "images/image_008/reference",
-      "sidecar": "images/image_008/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_008",
+      "reference_image_path": "acq_images/acq_image_008/reference",
+      "sidecar_path": "acq_images/acq_image_008/acqstore/acq_image.json",
       "source": {
         "filename": "20251014_A98_0003.oir",
         "relative_path": "7d Control/20251014/20251014_A98_0003.oir"
@@ -355,12 +352,12 @@
       }
     },
     {
-      "id": "image_009",
+      "id": "acq_image_009",
+      "manifest_path": "acq_images/acq_image_009/acqstore/manifest.json",
       "name": "20251014_A98_0004.oir",
-      "native_manifest": "images/image_009/acqstore/manifest.json",
-      "path": "images/image_009",
-      "reference_image": "images/image_009/reference",
-      "sidecar": "images/image_009/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_009",
+      "reference_image_path": "acq_images/acq_image_009/reference",
+      "sidecar_path": "acq_images/acq_image_009/acqstore/acq_image.json",
       "source": {
         "filename": "20251014_A98_0004.oir",
         "relative_path": "7d Control/20251014/20251014_A98_0004.oir"
@@ -394,12 +391,12 @@
       }
     },
     {
-      "id": "image_010",
+      "id": "acq_image_010",
+      "manifest_path": "acq_images/acq_image_010/acqstore/manifest.json",
       "name": "20251014_A98_0005.oir",
-      "native_manifest": "images/image_010/acqstore/manifest.json",
-      "path": "images/image_010",
-      "reference_image": "images/image_010/reference",
-      "sidecar": "images/image_010/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_010",
+      "reference_image_path": "acq_images/acq_image_010/reference",
+      "sidecar_path": "acq_images/acq_image_010/acqstore/acq_image.json",
       "source": {
         "filename": "20251014_A98_0005.oir",
         "relative_path": "7d Control/20251014/20251014_A98_0005.oir"
@@ -433,12 +430,12 @@
       }
     },
     {
-      "id": "image_011",
+      "id": "acq_image_011",
+      "manifest_path": "acq_images/acq_image_011/acqstore/manifest.json",
       "name": "20251014_A98_0006.oir",
-      "native_manifest": "images/image_011/acqstore/manifest.json",
-      "path": "images/image_011",
-      "reference_image": "images/image_011/reference",
-      "sidecar": "images/image_011/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_011",
+      "reference_image_path": "acq_images/acq_image_011/reference",
+      "sidecar_path": "acq_images/acq_image_011/acqstore/acq_image.json",
       "source": {
         "filename": "20251014_A98_0006.oir",
         "relative_path": "7d Control/20251014/20251014_A98_0006.oir"
@@ -472,12 +469,12 @@
       }
     },
     {
-      "id": "image_012",
+      "id": "acq_image_012",
+      "manifest_path": "acq_images/acq_image_012/acqstore/manifest.json",
       "name": "20251015_A99_0002.oir",
-      "native_manifest": "images/image_012/acqstore/manifest.json",
-      "path": "images/image_012",
-      "reference_image": "images/image_012/reference",
-      "sidecar": "images/image_012/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_012",
+      "reference_image_path": "acq_images/acq_image_012/reference",
+      "sidecar_path": "acq_images/acq_image_012/acqstore/acq_image.json",
       "source": {
         "filename": "20251015_A99_0002.oir",
         "relative_path": "7d Control/20251015/20251015_A99_0002.oir"
@@ -511,12 +508,12 @@
       }
     },
     {
-      "id": "image_013",
+      "id": "acq_image_013",
+      "manifest_path": "acq_images/acq_image_013/acqstore/manifest.json",
       "name": "20251015_A99_0003.oir",
-      "native_manifest": "images/image_013/acqstore/manifest.json",
-      "path": "images/image_013",
-      "reference_image": "images/image_013/reference",
-      "sidecar": "images/image_013/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_013",
+      "reference_image_path": "acq_images/acq_image_013/reference",
+      "sidecar_path": "acq_images/acq_image_013/acqstore/acq_image.json",
       "source": {
         "filename": "20251015_A99_0003.oir",
         "relative_path": "7d Control/20251015/20251015_A99_0003.oir"
@@ -550,12 +547,12 @@
       }
     },
     {
-      "id": "image_014",
+      "id": "acq_image_014",
+      "manifest_path": "acq_images/acq_image_014/acqstore/manifest.json",
       "name": "20251015_A99_0004.oir",
-      "native_manifest": "images/image_014/acqstore/manifest.json",
-      "path": "images/image_014",
-      "reference_image": "images/image_014/reference",
-      "sidecar": "images/image_014/acqstore/acq_image.json",
+      "ome_zarr_path": "acq_images/acq_image_014",
+      "reference_image_path": "acq_images/acq_image_014/reference",
+      "sidecar_path": "acq_images/acq_image_014/acqstore/acq_image.json",
       "source": {
         "filename": "20251015_A99_0004.oir",
         "relative_path": "7d Control/20251015/20251015_A99_0004.oir"
@@ -589,11 +586,14 @@
       }
     }
   ],
-  "name": "velocity-sample-data",
-  "tables": {
-    "sum_intensity": "acqstore/tables/sum_intensity.csv",
-    "velocity": "acqstore/tables/velocity.csv"
+  "acqstore_version": "0.2.0",
+  "analysis_tables": {
+    "sum_intensity": "acqstore/analysis_tables/sum_intensity.csv",
+    "velocity": "acqstore/analysis_tables/velocity.csv"
   },
-  "version": 2,
+  "created_utc": "2026-08-18T19:24:12Z",
+  "format": "acqstore-acq-image-collection",
+  "name": "velocity-sample-data",
+  "version": 1,
   "zarr_format": 3
 }

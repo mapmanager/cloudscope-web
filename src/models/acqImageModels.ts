@@ -1,3 +1,4 @@
+/** Physical and display metadata for one AcqImage axis. */
 export interface AxisDescriptor {
   name: string
   size: number
@@ -10,7 +11,8 @@ export interface AcquisitionDescriptor {
   time: string
 }
 
-export interface DatasetImage {
+/** Lightweight AcqImage row displayed before the full member is loaded. */
+export interface AcqImageCollectionRow {
   id: string
   name: string
   href: string
@@ -33,14 +35,13 @@ export interface LoadState {
   analysisCsv: boolean
 }
 
-export interface WebDataset {
-  format: 'acqstore-web-dataset'
-  format_version: 1
+/** Canonical browser model for an opened collection of acquisition images. */
+export interface AcqImageCollection {
   id: string
   name: string
   acqstore_version: string
   created_utc: string
-  images: DatasetImage[]
+  acq_images: AcqImageCollectionRow[]
 }
 
 export interface ImageContrast {

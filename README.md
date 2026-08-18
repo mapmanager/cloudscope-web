@@ -1,7 +1,7 @@
 # CloudScope Web
 
 CloudScope Web is a Vue 3 and TypeScript single-page viewer for AcqStore
-multi-image OME-Zarr collections. It displays a collection table, the selected
+AcqImageCollection OME-Zarr stores. It displays a collection table, the selected
 acquisition image, ROIs, and registered analysis plots.
 
 The production application is static: it can be hosted by GitHub Pages or any
@@ -36,7 +36,7 @@ To expose a local exported collection through Vite's development server:
 ACQSTORE_OME_ZARR_ROOT=/absolute/path/to/collection.ome.zarr npm run dev
 ```
 
-An explicit `?dataset=...` query parameter has highest startup priority. When
+An explicit `?collection=...` query parameter has highest startup priority. When
 the environment variable is set, the local development collection is next;
 otherwise the bundled diameter sample opens automatically.
 
@@ -46,11 +46,17 @@ The development UI also exposes optional controls for an AcqStore Server at
 ## Bundled public samples
 
 Deployable samples live under `public/samples/` and are registered in
-`src/config/sampleDatasets.ts`. Vite copies the directory to `dist/samples/`.
+`src/config/sampleCollections.ts`. Vite copies the directory to `dist/samples/`.
 
 `data/` remains ignored and is reserved for private, temporary, or large local
-datasets. Before publishing a new sample, inspect its manifests and sidecars
+collections. Before publishing a new sample, inspect its manifests and sidecars
 for sensitive source metadata.
+
+Each collection declares its additive AcqStore wrapper in
+`acqstore/acq_image_collection.json`. Its `acq_images` entries point to
+independent native child images under `acq_images/`. Those children retain the
+standard OME-NGFF structure and the existing native single-AcqImage
+`acqstore/manifest.json` contract.
 
 Verify the catalog and every referenced sample resource:
 
@@ -101,7 +107,7 @@ such as `https://USER.github.io/cloudscope-web/`.
 - `src/composables/`: viewer orchestration and reactive state
 - `src/config/`: bundled-site configuration
 - `src/data/`: data sources, format loaders, and caching
-- `src/models/`: browser-side data contracts
+- `src/models/`: AcqImageCollection, AcqImage, and serialized-manifest contracts
 - `src/plots/`: plot specifications and analysis registry
 - `tests/`: unit and component tests
 - `public/samples/`: public OME-Zarr samples included in production

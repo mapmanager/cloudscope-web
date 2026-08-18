@@ -1,6 +1,6 @@
 import * as zarr from 'zarrita'
 
-import type { PixelDescriptor } from '../models/webDataset'
+import type { PixelDescriptor } from '../models/acqImageModels'
 
 interface OmeDataset {
   path: string

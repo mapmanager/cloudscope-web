@@ -74,20 +74,20 @@ h3 {
 .muted {
   color: #8ca1ab;
 }
-.dataset-source {
+.collection-source {
   position: relative;
 }
-.dataset-source summary {
+.collection-source summary {
   cursor: pointer;
   color: #8ca1ab;
   font-size: 0.78rem;
   font-weight: 650;
   user-select: none;
 }
-.dataset-source[open] summary {
+.collection-source[open] summary {
   margin-bottom: 9px;
 }
-.dataset-source__popover {
+.collection-source__popover {
   position: absolute;
   z-index: 10;
   top: calc(100% + 8px);
@@ -99,27 +99,27 @@ h3 {
   background: #0a171d;
   box-shadow: 0 16px 48px rgb(0 0 0 / 45%);
 }
-.dataset-source form + form,
-.dataset-source form + details,
-.dataset-source details + form {
+.collection-source form + form,
+.collection-source form + details,
+.collection-source details + form {
   margin-top: 14px;
 }
-.dataset-source__advanced {
+.collection-source__advanced {
   margin-top: 12px;
   color: #8ca1ab;
   font-size: 0.78rem;
 }
-.dataset-source__advanced form {
+.collection-source__advanced form {
   margin-top: 10px;
 }
-.dataset-source label {
+.collection-source label {
   display: block;
   margin-bottom: 6px;
   color: #9fb4bd;
   font-size: 0.72rem;
   font-weight: 650;
 }
-.dataset-source__row {
+.collection-source__row {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -131,11 +131,11 @@ select {
   color: #d8e5ea;
   background: #0b171d;
 }
-.dataset-source input {
+.collection-source input {
   width: 100%;
   padding: 9px 11px;
 }
-.dataset-source select {
+.collection-source select {
   width: 100%;
   padding: 9px 11px;
 }

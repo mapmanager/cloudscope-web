@@ -2,8 +2,8 @@
 import { computed, onMounted, ref, watch } from 'vue'
 
 import AnalysisPlot from './components/AnalysisPlot.vue'
-import DatasetSource from './components/DatasetSource.vue'
-import FileTable from './components/FileTable.vue'
+import AcqImageCollectionSource from './components/AcqImageCollectionSource.vue'
+import AcqImageCollectionTable from './components/AcqImageCollectionTable.vue'
 import ImageViewer from './components/ImageViewer.vue'
 import SelectionControls from './components/SelectionControls.vue'
 import { useViewerState } from './composables/useViewerState'
@@ -19,7 +19,7 @@ function updateLinkedAxis(update: LinkedAxisUpdate): void {
 }
 
 watch(
-  () => viewer.selectedImageId.value,
+  () => viewer.selectedAcqImageId.value,
   () => {
     linkedTimeRange.value = null
   },
@@ -42,7 +42,7 @@ const selectedRoi = computed(() => {
 })
 
 onMounted(() => {
-  if (viewer.hostedDatasetUrl.value) void viewer.openDataset()
+  if (viewer.hostedCollectionUrl.value) void viewer.openAcqImageCollection()
 })
 </script>
 
@@ -50,13 +50,13 @@ onMounted(() => {
   <main class="app-shell">
     <header class="app-header">
       <h1>CloudScope Web</h1>
-      <DatasetSource
-        v-model="viewer.hostedDatasetUrl.value"
+      <AcqImageCollectionSource
+        v-model="viewer.hostedCollectionUrl.value"
         v-model:server-url="viewer.serverUrl.value"
         :loading="viewer.loading.value"
         :show-local-server="showLocalServer"
-        @open="viewer.openDataset()"
-        @open-sample="viewer.openDataset"
+        @open="viewer.openAcqImageCollection()"
+        @open-sample="viewer.openAcqImageCollection"
         @open-server="viewer.openServer"
         @open-exported-folder="viewer.openExportedFolder"
       />
@@ -64,18 +64,18 @@ onMounted(() => {
 
     <p v-if="viewer.error.value" class="error-message" role="alert">{{ viewer.error.value }}</p>
 
-    <section v-if="viewer.datasetDocument.value" class="panel file-panel">
+    <section v-if="viewer.acqImageCollectionDocument.value" class="panel file-panel">
       <div class="file-panel__heading">
-        <strong>{{ viewer.datasetDocument.value.data.name }}</strong>
-        <button type="button" class="secondary-action" @click="viewer.closeDataset()">
-          Close dataset
+        <strong>{{ viewer.acqImageCollectionDocument.value.data.name }}</strong>
+        <button type="button" class="secondary-action" @click="viewer.closeAcqImageCollection()">
+          Close collection
         </button>
       </div>
-      <FileTable
-        :images="viewer.datasetDocument.value.data.images"
-        :selected-image-id="viewer.selectedImageId.value"
+      <AcqImageCollectionTable
+        :acq-images="viewer.acqImageCollectionDocument.value.data.acq_images"
+        :selected-acq-image-id="viewer.selectedAcqImageId.value"
         :can-unload="viewer.canUnload.value"
-        @select="viewer.selectImage"
+        @select="viewer.selectAcqImage"
         @unload="viewer.unloadImage"
       />
     </section>

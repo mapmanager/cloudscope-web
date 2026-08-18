@@ -1,12 +1,7 @@
 <script setup lang="ts">
-import { sampleDatasets } from '../config/sampleDatasets'
+import { sampleCollections } from '../config/sampleCollections'
 
-defineProps<{
-  modelValue: string
-  serverUrl: string
-  loading: boolean
-  showLocalServer: boolean
-}>()
+defineProps<{ modelValue: string; serverUrl: string; loading: boolean; showLocalServer: boolean }>()
 const emit = defineEmits<{
   'update:modelValue': [value: string]
   'update:serverUrl': [value: string]
@@ -18,29 +13,28 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <details class="dataset-source">
-    <summary>Open dataset</summary>
-    <div class="dataset-source__popover">
+  <details class="collection-source">
+    <summary>Open collection</summary>
+    <div class="collection-source__popover">
       <form>
-        <label for="sample-dataset">Bundled sample</label>
-        <div class="dataset-source__row">
+        <label for="sample-collection">Bundled sample</label>
+        <div class="collection-source__row">
           <select
-            id="sample-dataset"
-            :value="sampleDatasets.some(({ url }) => url === modelValue) ? modelValue : ''"
+            id="sample-collection"
+            :value="sampleCollections.some(({ url }) => url === modelValue) ? modelValue : ''"
             :disabled="loading"
             @change="emit('open-sample', ($event.target as HTMLSelectElement).value)"
           >
             <option value="" disabled>Choose a sample…</option>
-            <option v-for="sample in sampleDatasets" :key="sample.id" :value="sample.url">
+            <option v-for="sample in sampleCollections" :key="sample.id" :value="sample.url">
               {{ sample.name }} — {{ sample.description }}
             </option>
           </select>
         </div>
       </form>
-
       <form v-if="showLocalServer" @submit.prevent>
         <label for="server-url">AcqStore Server</label>
-        <div class="dataset-source__row">
+        <div class="collection-source__row">
           <input
             id="server-url"
             :value="serverUrl"
@@ -76,23 +70,23 @@ const emit = defineEmits<{
             :disabled="loading || !serverUrl.trim()"
             @click="emit('open-exported-folder')"
           >
-            Open exported dataset folder
+            Open exported folder
           </button>
         </div>
         <p class="muted">The local server opens the native file or folder picker.</p>
       </form>
-      <details class="dataset-source__advanced">
-        <summary>Open hosted OME-Zarr collection</summary>
+      <details class="collection-source__advanced">
+        <summary>Open hosted AcqImageCollection</summary>
         <form @submit.prevent="emit('open')">
-          <label for="dataset-url">OME-Zarr collection root URL</label>
-          <div class="dataset-source__row">
+          <label for="collection-url">AcqImageCollection OME-Zarr root URL</label>
+          <div class="collection-source__row">
             <input
-              id="dataset-url"
+              id="collection-url"
               :value="modelValue"
               type="url"
               required
               spellcheck="false"
-              placeholder="https://example.org/dataset.ome.zarr/"
+              placeholder="https://example.org/collection.ome.zarr/"
               @input="emit('update:modelValue', ($event.target as HTMLInputElement).value)"
             />
             <button type="submit" :disabled="loading || !modelValue.trim()">

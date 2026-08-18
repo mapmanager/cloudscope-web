@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { AcqStoreServerSource, ServerExportedDatasetSource } from '../src/data/viewerDataSource'
-import type { PixelDescriptor } from '../src/models/webDataset'
+import type { PixelDescriptor } from '../src/models/acqImageModels'
 
 afterEach(() => vi.unstubAllGlobals())
 
@@ -46,7 +46,7 @@ describe('AcqStoreServerSource', () => {
     vi.stubGlobal('fetch', fetchMock)
 
     const source = new AcqStoreServerSource('http://127.0.0.1:8767', 'folder')
-    const dataset = await source.loadDataset()
+    const dataset = await source.loadCollection()
     const descriptor: PixelDescriptor = {
       href: '/api/v2/datasets/dataset-1/images/image-1/planes',
       shape: [2, 2],
@@ -100,7 +100,7 @@ describe('ServerExportedDatasetSource', () => {
     vi.stubGlobal('fetch', fetchMock)
     const source = new ServerExportedDatasetSource('http://127.0.0.1:8767')
 
-    const dataset = await source.loadDataset()
+    const dataset = await source.loadCollection()
     await source.close()
 
     expect(dataset.data.name).toBe('picked export')
