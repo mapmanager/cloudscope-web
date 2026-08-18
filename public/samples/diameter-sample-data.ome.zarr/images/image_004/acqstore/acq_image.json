@@ -1,0 +1,1297 @@
+{
+  "accepted": true,
+  "analysis": [
+    {
+      "analysis_name": "diameter",
+      "channel": 0,
+      "detection_params": {
+        "binning_method": "mean",
+        "diameter_method": "threshold_width",
+        "enable_motion_gating": true,
+        "gradient_kernel": "central_diff",
+        "gradient_min_edge_strength": 0.02,
+        "gradient_sigma": 1.5,
+        "max_center_shift_um": 2.0,
+        "max_diameter_change_um": 2.0,
+        "max_edge_shift_um": 2.0,
+        "polarity": "bright_on_dark",
+        "post_filter_kernel_size": 3,
+        "stride": 1,
+        "threshold_mode": "half_max",
+        "threshold_value": 0.0,
+        "window_rows_odd": 5
+      },
+      "roi_id": 1,
+      "summary": {
+        "analysis_date": "260630",
+        "analysis_time": "19:54:16.507",
+        "analysis_version": 1,
+        "diameter_um_cv": 0.04238907360544735,
+        "diameter_um_mean": 82.7489952,
+        "diameter_um_median": 81.972,
+        "num_qc_center_violations": 0,
+        "num_qc_diameter_violations": 0,
+        "num_qc_edge_violations": 0,
+        "num_rows": 2500,
+        "qc_score_mean": 0.75
+      }
+    },
+    {
+      "analysis_name": "sum_intensity",
+      "channel": 0,
+      "detection_params": {
+        "absolute_threshold": 0.0,
+        "baseline_method": "percentile",
+        "baseline_min_value": 1e-12,
+        "baseline_percentile": 20.0,
+        "baseline_window_ms": 100.0,
+        "derivative_threshold_per_sec": 4.0,
+        "detection_method": "derivative_threshold",
+        "detection_source": "df_f_signal",
+        "detrend_method": "single_exponential",
+        "filter_method": "median",
+        "level_fractions": "0.1,0.2,0.5,0.8,0.9",
+        "manual_f0_baseline": 1.0,
+        "median_filter_kernel_points": 3,
+        "peak_search_window_ms": 150.0,
+        "polarity": "positive",
+        "refractory_period_ms": 250.0,
+        "width_search_window_ms": 500.0,
+        "window_radius_points": 0
+      },
+      "roi_id": 1,
+      "summary": {
+        "analysis_date": "260630",
+        "analysis_time": "19:54:35.029",
+        "analysis_version": 1,
+        "baseline_method": "percentile",
+        "baseline_percentile": 20.0,
+        "baseline_window_ms": 100.0,
+        "detection_method": "derivative_threshold",
+        "detection_source": "df_f_signal",
+        "detrend_method": "single_exponential",
+        "errors": [],
+        "f0_baseline": 1422.3402020737956,
+        "manual_f0_baseline": 1.0,
+        "num_peaks": 10,
+        "num_space_pixels": 302,
+        "num_timepoints": 2500,
+        "peak_amplitude_mean": 0.8376074667701758,
+        "peak_amplitude_median": 0.8276057203660064,
+        "peak_events": [
+          {
+            "detection_method": "derivative_threshold",
+            "features": {
+              "auc": {
+                "reason": "left_10_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "baseline_mean": {
+                "reason": "",
+                "status": "ok",
+                "value": -0.047386451758314324
+              },
+              "baseline_std": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.012275247937891063
+              },
+              "decay_90_10_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "decay_time_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_decay_slope": {
+                "reason": "right_10_crossing_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_rise_slope": {
+                "reason": "",
+                "status": "ok",
+                "value": 18.487424391913386
+              },
+              "prominence": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.8148274872408245
+              },
+              "rise_10_90_sec": {
+                "reason": "left_10_or_left_90_unavailable",
+                "status": "failed",
+                "value": null
+              }
+            },
+            "intervals": {
+              "onset_to_onset_interval_sec": null,
+              "peak_to_peak_interval_sec": null
+            },
+            "level_crossings": [
+              {
+                "fraction": 0.1,
+                "left_index": 111.17494236549156,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.03800888301844465,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.2,
+                "left_index": 112.24356372758704,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.11905689995889637,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.5,
+                "left_index": 115.67614665384441,
+                "right_index": 227.82790170440498,
+                "status": "ok",
+                "value": 0.36220095078025155,
+                "width": 112.15175505056057,
+                "width_sec": 0.4630073055507342
+              },
+              {
+                "fraction": 0.8,
+                "left_index": 120.8613487630869,
+                "right_index": 184.1027023906387,
+                "status": "ok",
+                "value": 0.6053450016016068,
+                "width": 63.24135362755182,
+                "width_sec": 0.26108560431598493
+              },
+              {
+                "fraction": 0.9,
+                "left_index": 124.64072632571852,
+                "right_index": 166.61542616111245,
+                "status": "ok",
+                "value": 0.6863930185420585,
+                "width": 41.974699835393935,
+                "width_sec": 0.1732883508004403
+              }
+            ],
+            "onset": {
+              "index": 110,
+              "time_sec": 0.45412399999999997,
+              "value": -0.04303913392200708
+            },
+            "peak": {
+              "amplitude": 0.8104801694045173,
+              "index": 146,
+              "time_sec": 0.6027464,
+              "value": 0.7674410354825102
+            },
+            "peak_id": 1,
+            "status": "ok",
+            "warnings": []
+          },
+          {
+            "detection_method": "derivative_threshold",
+            "features": {
+              "auc": {
+                "reason": "left_10_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "baseline_mean": {
+                "reason": "",
+                "status": "ok",
+                "value": -0.05357203863947368
+              },
+              "baseline_std": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.006917687360554261
+              },
+              "decay_90_10_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "decay_time_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_decay_slope": {
+                "reason": "right_10_crossing_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_rise_slope": {
+                "reason": "",
+                "status": "ok",
+                "value": 23.43345513777642
+              },
+              "prominence": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.8972852587938185
+              },
+              "rise_10_90_sec": {
+                "reason": "left_10_or_left_90_unavailable",
+                "status": "failed",
+                "value": null
+              }
+            },
+            "intervals": {
+              "onset_to_onset_interval_sec": 0.9866876,
+              "peak_to_peak_interval_sec": 0.9206331999999999
+            },
+            "level_crossings": [
+              {
+                "fraction": 0.1,
+                "left_index": 350.6636198887002,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.023794481261483674,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.2,
+                "left_index": 351.8431124205518,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.11489656336069047,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.5,
+                "left_index": 354.9024495508441,
+                "right_index": 467.470684232191,
+                "status": "ok",
+                "value": 0.38820280965831083,
+                "width": 112.5682346813469,
+                "width_sec": 0.4647267000584725
+              },
+              {
+                "fraction": 0.8,
+                "left_index": 359.00068924132125,
+                "right_index": 409.0849380854992,
+                "status": "ok",
+                "value": 0.6615090559559312,
+                "width": 50.08424884417792,
+                "width_sec": 0.20676781292830412
+              },
+              {
+                "fraction": 0.9,
+                "left_index": 361.54301266806345,
+                "right_index": 384.2343586029272,
+                "status": "ok",
+                "value": 0.752611138055138,
+                "width": 22.69134593486376,
+                "width_sec": 0.09367895255749155
+              }
+            ],
+            "onset": {
+              "index": 349,
+              "time_sec": 1.4408116,
+              "value": -0.06730760083772312
+            },
+            "peak": {
+              "amplitude": 0.9110208209920679,
+              "index": 369,
+              "time_sec": 1.5233796,
+              "value": 0.8437132201543448
+            },
+            "peak_id": 2,
+            "status": "ok",
+            "warnings": []
+          },
+          {
+            "detection_method": "derivative_threshold",
+            "features": {
+              "auc": {
+                "reason": "left_10_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "baseline_mean": {
+                "reason": "",
+                "status": "ok",
+                "value": -0.07032920743633442
+              },
+              "baseline_std": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.011197868975700012
+              },
+              "decay_90_10_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "decay_time_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_decay_slope": {
+                "reason": "right_10_crossing_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_rise_slope": {
+                "reason": "",
+                "status": "ok",
+                "value": 19.657529972057006
+              },
+              "prominence": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.8577552443875114
+              },
+              "rise_10_90_sec": {
+                "reason": "left_10_or_left_90_unavailable",
+                "status": "failed",
+                "value": null
+              }
+            },
+            "intervals": {
+              "onset_to_onset_interval_sec": 0.9908160000000001,
+              "peak_to_peak_interval_sec": 1.0155864
+            },
+            "level_crossings": [
+              {
+                "fraction": 0.1,
+                "left_index": 590.2437120648883,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.010941551259809487,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.2,
+                "left_index": 591.3549652254371,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.09721760522551699,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.5,
+                "left_index": 594.916915748884,
+                "right_index": 706.3516796039609,
+                "status": "ok",
+                "value": 0.35604576712263947,
+                "width": 111.43476385507688,
+                "width_sec": 0.4600472790992994
+              },
+              {
+                "fraction": 0.8,
+                "left_index": 600.5924231825451,
+                "right_index": 657.9555761733651,
+                "status": "ok",
+                "value": 0.614873929019762,
+                "width": 57.363152990820026,
+                "width_sec": 0.2368180408073014
+              },
+              {
+                "fraction": 0.9,
+                "left_index": 604.0704817668327,
+                "right_index": 634.7355847889522,
+                "status": "ok",
+                "value": 0.7011499829854695,
+                "width": 30.665103022119524,
+                "width_sec": 0.12659781131651823
+              }
+            ],
+            "onset": {
+              "index": 589,
+              "time_sec": 2.4316276,
+              "value": -0.07533450270589802
+            },
+            "peak": {
+              "amplitude": 0.862760539657075,
+              "index": 615,
+              "time_sec": 2.538966,
+              "value": 0.787426036951177
+            },
+            "peak_id": 3,
+            "status": "ok",
+            "warnings": []
+          },
+          {
+            "detection_method": "derivative_threshold",
+            "features": {
+              "auc": {
+                "reason": "left_10_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "baseline_mean": {
+                "reason": "",
+                "status": "ok",
+                "value": -0.0844847718867821
+              },
+              "baseline_std": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.009680797238691603
+              },
+              "decay_90_10_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "decay_time_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_decay_slope": {
+                "reason": "right_10_crossing_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_rise_slope": {
+                "reason": "",
+                "status": "ok",
+                "value": 20.260909726595393
+              },
+              "prominence": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.8943543200742237
+              },
+              "rise_10_90_sec": {
+                "reason": "left_10_or_left_90_unavailable",
+                "status": "failed",
+                "value": null
+              }
+            },
+            "intervals": {
+              "onset_to_onset_interval_sec": 0.9866875999999998,
+              "peak_to_peak_interval_sec": 0.9743024
+            },
+            "level_crossings": [
+              {
+                "fraction": 0.1,
+                "left_index": 830.0688229443087,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": -0.0035055916971298423,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.2,
+                "left_index": 831.1969550508779,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.08686942384560033,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.5,
+                "left_index": 834.7044963976475,
+                "right_index": 948.2760153867691,
+                "status": "ok",
+                "value": 0.3579944704737908,
+                "width": 113.57151898912161,
+                "width_sec": 0.46886865899468966
+              },
+              {
+                "fraction": 0.8,
+                "left_index": 839.557528171647,
+                "right_index": 894.6514598942867,
+                "status": "ok",
+                "value": 0.6291195171019813,
+                "width": 55.093931722639695,
+                "width_sec": 0.22744978772374572
+              },
+              {
+                "fraction": 0.9,
+                "left_index": 842.2606086469779,
+                "right_index": 868.7902413297414,
+                "status": "ok",
+                "value": 0.7194945326447114,
+                "width": 26.529632682763577,
+                "width_sec": 0.10952493556752115
+              }
+            ],
+            "onset": {
+              "index": 828,
+              "time_sec": 3.4183152,
+              "value": -0.09388060723986001
+            },
+            "peak": {
+              "amplitude": 0.9037501554273016,
+              "index": 851,
+              "time_sec": 3.5132684,
+              "value": 0.8098695481874416
+            },
+            "peak_id": 4,
+            "status": "ok",
+            "warnings": []
+          },
+          {
+            "detection_method": "derivative_threshold",
+            "features": {
+              "auc": {
+                "reason": "left_10_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "baseline_mean": {
+                "reason": "",
+                "status": "ok",
+                "value": -0.08112137902513995
+              },
+              "baseline_std": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.011174513724445353
+              },
+              "decay_90_10_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "decay_time_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_decay_slope": {
+                "reason": "right_10_crossing_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_rise_slope": {
+                "reason": "",
+                "status": "ok",
+                "value": 18.817305612947443
+              },
+              "prominence": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.8475196310586124
+              },
+              "rise_10_90_sec": {
+                "reason": "left_10_or_left_90_unavailable",
+                "status": "failed",
+                "value": null
+              }
+            },
+            "intervals": {
+              "onset_to_onset_interval_sec": 0.9949444000000001,
+              "peak_to_peak_interval_sec": 0.9866876000000002
+            },
+            "level_crossings": [
+              {
+                "fraction": 0.1,
+                "left_index": 1070.2269750200594,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.015813097493012185,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.2,
+                "left_index": 1071.395511291692,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.09921144799750778,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.5,
+                "left_index": 1074.848918187747,
+                "right_index": 1188.1504011373522,
+                "status": "ok",
+                "value": 0.34940649951099456,
+                "width": 113.30148294960532,
+                "width_sec": 0.46775384220915056
+              },
+              {
+                "fraction": 0.8,
+                "left_index": 1080.2485765446352,
+                "right_index": 1141.4709773500986,
+                "status": "ok",
+                "value": 0.5996015510244813,
+                "width": 61.222400805463394,
+                "width_sec": 0.2527505594852751
+              },
+              {
+                "fraction": 0.9,
+                "left_index": 1083.7198856720602,
+                "right_index": 1114.9661071048874,
+                "status": "ok",
+                "value": 0.6829999015289768,
+                "width": 31.24622143282727,
+                "width_sec": 0.12899690056328408
+              }
+            ],
+            "onset": {
+              "index": 1069,
+              "time_sec": 4.4132596,
+              "value": -0.06758525301148341
+            },
+            "peak": {
+              "amplitude": 0.8339835050449559,
+              "index": 1090,
+              "time_sec": 4.499956,
+              "value": 0.7663982520334724
+            },
+            "peak_id": 5,
+            "status": "ok",
+            "warnings": []
+          },
+          {
+            "detection_method": "derivative_threshold",
+            "features": {
+              "auc": {
+                "reason": "left_10_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "baseline_mean": {
+                "reason": "",
+                "status": "ok",
+                "value": -0.07596788024676988
+              },
+              "baseline_std": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.005570233773646214
+              },
+              "decay_90_10_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "decay_time_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_decay_slope": {
+                "reason": "right_10_crossing_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_rise_slope": {
+                "reason": "",
+                "status": "ok",
+                "value": 20.562597894183718
+              },
+              "prominence": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.8578395556002579
+              },
+              "rise_10_90_sec": {
+                "reason": "left_10_or_left_90_unavailable",
+                "status": "failed",
+                "value": null
+              }
+            },
+            "intervals": {
+              "onset_to_onset_interval_sec": 0.9866875999999998,
+              "peak_to_peak_interval_sec": 0.9866875999999998
+            },
+            "level_crossings": [
+              {
+                "fraction": 0.1,
+                "left_index": 1309.7763043055327,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.0054398308913871235,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.2,
+                "left_index": 1311.1944689630373,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.09171003583162056,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.5,
+                "left_index": 1314.4430725999039,
+                "right_index": 1429.4566567189,
+                "status": "ok",
+                "value": 0.35052065065232085,
+                "width": 115.01358411899605,
+                "width_sec": 0.47482208067686327
+              },
+              {
+                "fraction": 0.8,
+                "left_index": 1319.7644525071191,
+                "right_index": 1378.8575933933855,
+                "status": "ok",
+                "value": 0.6093312654730212,
+                "width": 59.09314088626638,
+                "width_sec": 0.24396012283486213
+              },
+              {
+                "fraction": 0.9,
+                "left_index": 1322.8070016051122,
+                "right_index": 1351.9928535467404,
+                "status": "ok",
+                "value": 0.6956014704132546,
+                "width": 29.185851941628243,
+                "width_sec": 0.12049087115581804
+              }
+            ],
+            "onset": {
+              "index": 1308,
+              "time_sec": 5.3999472,
+              "value": -0.08083037404884631
+            },
+            "peak": {
+              "amplitude": 0.8627020494023343,
+              "index": 1329,
+              "time_sec": 5.4866436,
+              "value": 0.781871675353488
+            },
+            "peak_id": 6,
+            "status": "ok",
+            "warnings": []
+          },
+          {
+            "detection_method": "derivative_threshold",
+            "features": {
+              "auc": {
+                "reason": "left_10_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "baseline_mean": {
+                "reason": "",
+                "status": "ok",
+                "value": -0.07342216124044425
+              },
+              "baseline_std": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.00801051305996883
+              },
+              "decay_90_10_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "decay_time_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_decay_slope": {
+                "reason": "right_10_crossing_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_rise_slope": {
+                "reason": "",
+                "status": "ok",
+                "value": 18.762322328756255
+              },
+              "prominence": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.8221659733340654
+              },
+              "rise_10_90_sec": {
+                "reason": "left_10_or_left_90_unavailable",
+                "status": "failed",
+                "value": null
+              }
+            },
+            "intervals": {
+              "onset_to_onset_interval_sec": 0.9908160000000006,
+              "peak_to_peak_interval_sec": 1.0032012000000003
+            },
+            "level_crossings": [
+              {
+                "fraction": 0.1,
+                "left_index": 1549.5819741444413,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.009638669975269909,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.2,
+                "left_index": 1550.8505412366328,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.09176146354397562,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.5,
+                "left_index": 1554.2501553303152,
+                "right_index": 1670.994444746834,
+                "status": "ok",
+                "value": 0.3381298442500927,
+                "width": 116.74428941651877,
+                "width_sec": 0.48196712442715606
+              },
+              {
+                "fraction": 0.8,
+                "left_index": 1559.2511042248964,
+                "right_index": 1626.8430734050603,
+                "status": "ok",
+                "value": 0.5844982249562098,
+                "width": 67.59196918016391,
+                "width_sec": 0.2790466855633887
+              },
+              {
+                "fraction": 0.9,
+                "left_index": 1562.4132427136528,
+                "right_index": 1599.9913939415599,
+                "status": "ok",
+                "value": 0.6666210185249155,
+                "width": 37.57815122790703,
+                "width_sec": 0.15513763952929138
+              }
+            ],
+            "onset": {
+              "index": 1548,
+              "time_sec": 6.3907632,
+              "value": -0.0724841235934358
+            },
+            "peak": {
+              "amplitude": 0.821227935687057,
+              "index": 1572,
+              "time_sec": 6.4898448,
+              "value": 0.7487438120936212
+            },
+            "peak_id": 7,
+            "status": "ok",
+            "warnings": []
+          },
+          {
+            "detection_method": "derivative_threshold",
+            "features": {
+              "auc": {
+                "reason": "left_10_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "baseline_mean": {
+                "reason": "",
+                "status": "ok",
+                "value": -0.06672514830124054
+              },
+              "baseline_std": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.014803622807770925
+              },
+              "decay_90_10_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "decay_time_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_decay_slope": {
+                "reason": "right_10_crossing_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_rise_slope": {
+                "reason": "",
+                "status": "ok",
+                "value": 17.439958294230205
+              },
+              "prominence": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.8163712481921256
+              },
+              "rise_10_90_sec": {
+                "reason": "left_10_or_left_90_unavailable",
+                "status": "failed",
+                "value": null
+              }
+            },
+            "intervals": {
+              "onset_to_onset_interval_sec": 0.9908159999999997,
+              "peak_to_peak_interval_sec": 0.9866875999999998
+            },
+            "level_crossings": [
+              {
+                "fraction": 0.1,
+                "left_index": 1789.7153302472811,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.014490549403300357,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.2,
+                "left_index": 1791.108564772674,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.09617449945747644,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.5,
+                "left_index": 1795.00986657665,
+                "right_index": 1913.553786229674,
+                "status": "ok",
+                "value": 0.34122634962000464,
+                "width": 118.54391965302398,
+                "width_sec": 0.4893967178955442
+              },
+              {
+                "fraction": 0.8,
+                "left_index": 1800.0782660924601,
+                "right_index": 1868.905043919188,
+                "status": "ok",
+                "value": 0.5862781997825329,
+                "width": 68.82677782672795,
+                "width_sec": 0.28414446957986367
+              },
+              {
+                "fraction": 0.9,
+                "left_index": 1802.8345663019336,
+                "right_index": 1840.6769037194586,
+                "status": "ok",
+                "value": 0.667962149836709,
+                "width": 37.84233741752496,
+                "width_sec": 0.15622830579451005
+              }
+            ],
+            "onset": {
+              "index": 1788,
+              "time_sec": 7.3815792,
+              "value": -0.06719340065087573
+            },
+            "peak": {
+              "amplitude": 0.8168395005417608,
+              "index": 1811,
+              "time_sec": 7.4765324,
+              "value": 0.749646099890885
+            },
+            "peak_id": 8,
+            "status": "ok",
+            "warnings": []
+          },
+          {
+            "detection_method": "derivative_threshold",
+            "features": {
+              "auc": {
+                "reason": "left_10_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "baseline_mean": {
+                "reason": "",
+                "status": "ok",
+                "value": -0.05560135717831923
+              },
+              "baseline_std": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.01386036394714759
+              },
+              "decay_90_10_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "decay_time_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_decay_slope": {
+                "reason": "right_10_crossing_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_rise_slope": {
+                "reason": "",
+                "status": "ok",
+                "value": 16.667967883284913
+              },
+              "prominence": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.783131262235067
+              },
+              "rise_10_90_sec": {
+                "reason": "left_10_or_left_90_unavailable",
+                "status": "failed",
+                "value": null
+              }
+            },
+            "intervals": {
+              "onset_to_onset_interval_sec": 0.9908159999999997,
+              "peak_to_peak_interval_sec": 0.9949443999999996
+            },
+            "level_crossings": [
+              {
+                "fraction": 0.1,
+                "left_index": 2029.615529293553,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.028305611511389377,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.2,
+                "left_index": 2031.244354214545,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.10599719968309587,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.5,
+                "left_index": 2034.8915280489443,
+                "right_index": 2154.6324388299668,
+                "status": "ok",
+                "value": 0.3390719641982153,
+                "width": 119.74091078102242,
+                "width_sec": 0.49433837606837294
+              },
+              {
+                "fraction": 0.8,
+                "left_index": 2040.0193082560404,
+                "right_index": 2113.0624598625104,
+                "status": "ok",
+                "value": 0.5721467287133348,
+                "width": 73.04315160647002,
+                "width_sec": 0.3015513470921508
+              },
+              {
+                "fraction": 0.9,
+                "left_index": 2042.9923680866423,
+                "right_index": 2088.2255196896194,
+                "status": "ok",
+                "value": 0.6498383168850412,
+                "width": 45.23315160297716,
+                "width_sec": 0.18674054307773091
+              }
+            ],
+            "onset": {
+              "index": 2028,
+              "time_sec": 8.3723952,
+              "value": -0.04938597666031711
+            },
+            "peak": {
+              "amplitude": 0.7769158817170648,
+              "index": 2052,
+              "time_sec": 8.4714768,
+              "value": 0.7275299050567477
+            },
+            "peak_id": 9,
+            "status": "ok",
+            "warnings": []
+          },
+          {
+            "detection_method": "derivative_threshold",
+            "features": {
+              "auc": {
+                "reason": "left_10_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "baseline_mean": {
+                "reason": "",
+                "status": "ok",
+                "value": -0.04268667101102679
+              },
+              "baseline_std": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.01269825433761295
+              },
+              "decay_90_10_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "decay_time_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_decay_slope": {
+                "reason": "right_10_crossing_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_rise_slope": {
+                "reason": "",
+                "status": "ok",
+                "value": 14.03874842387646
+              },
+              "prominence": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.7706065656745025
+              },
+              "rise_10_90_sec": {
+                "reason": "left_10_or_left_90_unavailable",
+                "status": "failed",
+                "value": null
+              }
+            },
+            "intervals": {
+              "onset_to_onset_interval_sec": 0.9866875999999998,
+              "peak_to_peak_interval_sec": 1.0073296000000003
+            },
+            "level_crossings": [
+              {
+                "fraction": 0.1,
+                "left_index": 2269.2013930290154,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.02916519581861504,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.2,
+                "left_index": 2270.6859458389727,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.10680460680137735,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.5,
+                "left_index": 2274.9770882857024,
+                "right_index": 2396.0244207464402,
+                "status": "ok",
+                "value": 0.3397228397496642,
+                "width": 121.04733246073783,
+                "width_sec": 0.49973180733091005
+              },
+              {
+                "fraction": 0.8,
+                "left_index": 2280.280504347238,
+                "right_index": 2356.1044471265445,
+                "status": "ok",
+                "value": 0.5726410726979512,
+                "width": 75.82394277930644,
+                "width_sec": 0.3130315653700887
+              },
+              {
+                "fraction": 0.9,
+                "left_index": 2283.303680550337,
+                "right_index": 2328.9680653781597,
+                "status": "ok",
+                "value": 0.6502804836807135,
+                "width": 45.66438482782269,
+                "width_sec": 0.18852084632318317
+              }
+            ],
+            "onset": {
+              "index": 2267,
+              "time_sec": 9.3590828,
+              "value": -0.048474215164147266
+            },
+            "peak": {
+              "amplitude": 0.776394109827623,
+              "index": 2296,
+              "time_sec": 9.4788064,
+              "value": 0.7279198946634757
+            },
+            "peak_id": 10,
+            "status": "ok",
+            "warnings": []
+          }
+        ],
+        "peak_search_window_ms": 150.0,
+        "seconds_per_line": 0.0041284,
+        "status": "ok",
+        "warnings": [],
+        "width_search_window_ms": 500.0
+      }
+    }
+  ],
+  "experiment_metadata": {
+    "age": "",
+    "branch_order": null,
+    "cell_type": "",
+    "condition": "",
+    "condition2": "",
+    "date": "",
+    "depth": null,
+    "direction": "",
+    "genotype": "",
+    "note": "",
+    "region": "",
+    "sex": "",
+    "species": "",
+    "treatment": "",
+    "treatment2": ""
+  },
+  "image_contrast": {
+    "0": {
+      "color_lut": "Green",
+      "img_max": 4095,
+      "img_min": 130,
+      "value_max": 4080,
+      "value_min": 147
+    }
+  },
+  "image_header_metadata": {
+    "date": "20220111",
+    "dims": "('Y', 'X')",
+    "dtype": "uint16",
+    "num_channels": 1,
+    "num_scenes": 1,
+    "physical_label_x": "um",
+    "physical_label_y": "seconds",
+    "physical_unit_x": 0.414,
+    "physical_unit_y": 0.0041284,
+    "shape": "(2500, 302)",
+    "sizes": "{'Y': 2500, 'X': 302}",
+    "time": "13:54:26"
+  },
+  "rois": [
+    {
+      "data": {
+        "col_start": 0,
+        "col_stop": 302,
+        "row_start": 0,
+        "row_stop": 2500
+      },
+      "name": "",
+      "note": "",
+      "roi_id": 1,
+      "roi_type": "rectroi",
+      "version": "1.0"
+    }
+  ],
+  "version": 2
+}

@@ -1,0 +1,160 @@
+{
+  "accepted": true,
+  "analysis": [
+    {
+      "analysis_name": "radon_velocity",
+      "channel": 0,
+      "detection_params": {
+        "window_width": 64
+      },
+      "roi_id": 1,
+      "summary": {
+        "analysis_date": "260625",
+        "analysis_time": "01:54:07.960",
+        "analysis_version": 1,
+        "num_windows": 1872,
+        "velocity_cv": -22.760033788125245,
+        "velocity_mean": -266.5753545415927,
+        "velocity_median": -1925.3047185664275
+      }
+    },
+    {
+      "analysis_name": "heart_rate",
+      "channel": 0,
+      "detection_params": {
+        "agree_tol_bpm": 30.0,
+        "bandpass_order": 3,
+        "bpm_max": 600.0,
+        "bpm_min": 240.0,
+        "do_segments": false,
+        "edge_margin_hz": -1.0,
+        "interp_max_gap_sec": 0.05,
+        "lomb_n_freq": 512,
+        "nperseg_sec": 2.0,
+        "outlier_k_mad": 4.0,
+        "peak_half_width_hz": 0.5,
+        "seg_min_valid_frac": 0.5,
+        "seg_step_sec": 1.0,
+        "seg_win_sec": 6.0,
+        "use_abs": true
+      },
+      "roi_id": 1,
+      "summary": {
+        "agreement": null,
+        "analysis_date": "260625",
+        "analysis_time": "11:04:34.012",
+        "analysis_version": 1,
+        "lomb": {
+          "band_concentration": null,
+          "bpm": null,
+          "edge_flag": null,
+          "edge_hz_distance": null,
+          "f_hz": null,
+          "method": "lombscargle",
+          "n_samples": null,
+          "n_valid": null,
+          "reason": "not_enough_valid_samples",
+          "snr": null,
+          "status": "insufficient_valid",
+          "status_note": "not enough valid samples for reliable HR estimate",
+          "t_end": null,
+          "t_start": null
+        },
+        "n_total": 1872,
+        "n_valid": 8,
+        "status": "insufficient_valid",
+        "status_note": "not enough valid samples for reliable HR estimate",
+        "t_max": 29.9417056,
+        "t_min": 6.6477072,
+        "valid_frac": 0.004273504273504274,
+        "version": 1,
+        "welch": {
+          "band_concentration": null,
+          "bpm": null,
+          "edge_flag": null,
+          "edge_hz_distance": null,
+          "f_hz": null,
+          "method": "welch",
+          "n_samples": null,
+          "n_valid": null,
+          "reason": "not_enough_valid_samples",
+          "snr": null,
+          "status": "insufficient_valid",
+          "status_note": "not enough valid samples for reliable HR estimate",
+          "t_end": null,
+          "t_start": null
+        }
+      }
+    }
+  ],
+  "experiment_metadata": {
+    "age": "young",
+    "branch_order": 2,
+    "cell_type": "",
+    "condition": "",
+    "condition2": "",
+    "date": "",
+    "depth": null,
+    "direction": "Away",
+    "genotype": "WT + 14d Saline",
+    "note": "",
+    "region": "",
+    "sex": "male",
+    "species": "",
+    "treatment": "",
+    "treatment2": ""
+  },
+  "image_contrast": {},
+  "image_header_metadata": {
+    "date": "20251015",
+    "dims": "('Y', 'X')",
+    "dtype": "uint16",
+    "num_channels": 1,
+    "num_scenes": 1,
+    "physical_label_x": "um",
+    "physical_label_y": "seconds",
+    "physical_unit_x": 0.45,
+    "physical_unit_y": 0.0011259666666666667,
+    "shape": "(30000, 16)",
+    "sizes": "{'Y': 30000, 'X': 16}",
+    "time": "12:18:49"
+  },
+  "reference_image_metadata": {
+    "dims": "('Y', 'X')",
+    "dtype": "uint16",
+    "has_scan_path": true,
+    "line_roi": "(282.0, 360.0, 271.0, 370.0)",
+    "num_channels": 1,
+    "physical_label_x": "um",
+    "physical_label_y": "um",
+    "physical_unit_x": 0.449940683730127,
+    "physical_unit_y": 0.449940683730127,
+    "scan_path_num_points": 2,
+    "scan_path_x_pixels": [
+      282.0,
+      271.0
+    ],
+    "scan_path_y_pixels": [
+      360.0,
+      370.0
+    ],
+    "shape": "(512, 512)",
+    "sizes": "{'Y': 512, 'X': 512}"
+  },
+  "rois": [
+    {
+      "data": {
+        "col_start": 0,
+        "col_stop": 16,
+        "row_start": 0,
+        "row_stop": 30000
+      },
+      "name": "",
+      "note": "",
+      "roi_id": 1,
+      "roi_type": "rectroi",
+      "version": "1.0"
+    }
+  ],
+  "version": 2
+}

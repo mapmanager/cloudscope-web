@@ -1,0 +1,46 @@
+{
+  "accepted": true,
+  "analysis": [],
+  "experiment_metadata": {
+    "age": "",
+    "branch_order": null,
+    "cell_type": "",
+    "condition": "",
+    "condition2": "",
+    "date": "",
+    "depth": null,
+    "direction": "",
+    "genotype": "",
+    "note": "",
+    "region": "",
+    "sex": "",
+    "species": "",
+    "treatment": "",
+    "treatment2": ""
+  },
+  "image_contrast": {
+    "0": {
+      "color_lut": "Green",
+      "img_max": 3243,
+      "img_min": 129,
+      "value_max": 2649,
+      "value_min": 145
+    }
+  },
+  "image_header_metadata": {
+    "date": "20220111",
+    "dims": "('Y', 'X')",
+    "dtype": "uint16",
+    "num_channels": 1,
+    "num_scenes": 1,
+    "physical_label_x": "um",
+    "physical_label_y": "seconds",
+    "physical_unit_x": 0.414,
+    "physical_unit_y": 0.004688,
+    "shape": "(2500, 357)",
+    "sizes": "{'Y': 2500, 'X': 357}",
+    "time": "15:05:35"
+  },
+  "rois": [],
+  "version": 2
+}

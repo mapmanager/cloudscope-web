@@ -1,0 +1,104 @@
+{
+  "attributes": {
+    "ome": {
+      "version": "0.5",
+      "multiscales": [
+        {
+          "name": "reference",
+          "axes": [
+            {
+              "name": "y",
+              "type": "space",
+              "unit": "micrometer"
+            },
+            {
+              "name": "x",
+              "type": "space",
+              "unit": "micrometer"
+            }
+          ],
+          "datasets": [
+            {
+              "path": "0",
+              "coordinateTransformations": [
+                {
+                  "type": "scale",
+                  "scale": [
+                    0.352613089022546,
+                    0.352613089022546
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "1",
+              "coordinateTransformations": [
+                {
+                  "type": "scale",
+                  "scale": [
+                    0.705226178045092,
+                    0.705226178045092
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "2",
+              "coordinateTransformations": [
+                {
+                  "type": "scale",
+                  "scale": [
+                    1.410452356090184,
+                    1.410452356090184
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "3",
+              "coordinateTransformations": [
+                {
+                  "type": "scale",
+                  "scale": [
+                    2.820904712180368,
+                    2.820904712180368
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "4",
+              "coordinateTransformations": [
+                {
+                  "type": "scale",
+                  "scale": [
+                    5.641809424360736,
+                    5.641809424360736
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "5",
+              "coordinateTransformations": [
+                {
+                  "type": "scale",
+                  "scale": [
+                    11.283618848721472,
+                    11.283618848721472
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "_creator": {
+        "name": "acqstore",
+        "version": "0.1"
+      }
+    }
+  },
+  "zarr_format": 3,
+  "node_type": "group"
+}

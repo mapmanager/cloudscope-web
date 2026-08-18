@@ -1,0 +1,599 @@
+{
+  "acqstore_version": "0.2.0",
+  "created_utc": "2026-08-18T05:18:35Z",
+  "format": "acqstore-multi-image-ome-zarr",
+  "images": [
+    {
+      "id": "image_000",
+      "name": "20251029_A105_0002.oir",
+      "native_manifest": "images/image_000/acqstore/manifest.json",
+      "path": "images/image_000",
+      "reference_image": "images/image_000/reference",
+      "sidecar": "images/image_000/acqstore/acq_image.json",
+      "source": {
+        "filename": "20251029_A105_0002.oir",
+        "relative_path": "14d Control/20251029/20251029_A105_0002.oir"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20251029",
+          "time": "15:30:55"
+        },
+        "analysis_types": [
+          "heart_rate",
+          "radon_velocity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": true,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          30000,
+          14
+        ],
+        "sizes": {
+          "x": 14,
+          "y": 30000
+        }
+      }
+    },
+    {
+      "id": "image_001",
+      "name": "20251029_A105_0003.oir",
+      "native_manifest": "images/image_001/acqstore/manifest.json",
+      "path": "images/image_001",
+      "reference_image": "images/image_001/reference",
+      "sidecar": "images/image_001/acqstore/acq_image.json",
+      "source": {
+        "filename": "20251029_A105_0003.oir",
+        "relative_path": "14d Control/20251029/20251029_A105_0003.oir"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20251029",
+          "time": "15:32:10"
+        },
+        "analysis_types": [
+          "heart_rate",
+          "radon_velocity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": true,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          30000,
+          14
+        ],
+        "sizes": {
+          "x": 14,
+          "y": 30000
+        }
+      }
+    },
+    {
+      "id": "image_002",
+      "name": "20251030_A106_0002.oir",
+      "native_manifest": "images/image_002/acqstore/manifest.json",
+      "path": "images/image_002",
+      "reference_image": "images/image_002/reference",
+      "sidecar": "images/image_002/acqstore/acq_image.json",
+      "source": {
+        "filename": "20251030_A106_0002.oir",
+        "relative_path": "14d Control/20251030/20251030_A106_0002.oir"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20251030",
+          "time": "14:54:36"
+        },
+        "analysis_types": [
+          "heart_rate",
+          "radon_velocity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": true,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          30000,
+          24
+        ],
+        "sizes": {
+          "x": 24,
+          "y": 30000
+        }
+      }
+    },
+    {
+      "id": "image_003",
+      "name": "20250717_A87_0004.oir",
+      "native_manifest": "images/image_003/acqstore/manifest.json",
+      "path": "images/image_003",
+      "reference_image": "images/image_003/reference",
+      "sidecar": "images/image_003/acqstore/acq_image.json",
+      "source": {
+        "filename": "20250717_A87_0004.oir",
+        "relative_path": "14d Treatment/20250717/20250717_A87_0004.oir"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20250717",
+          "time": "11:17:27"
+        },
+        "analysis_types": [
+          "heart_rate",
+          "radon_velocity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": true,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          30000,
+          9
+        ],
+        "sizes": {
+          "x": 9,
+          "y": 30000
+        }
+      }
+    },
+    {
+      "id": "image_004",
+      "name": "20250717_A87_0005.oir",
+      "native_manifest": "images/image_004/acqstore/manifest.json",
+      "path": "images/image_004",
+      "reference_image": "images/image_004/reference",
+      "sidecar": "images/image_004/acqstore/acq_image.json",
+      "source": {
+        "filename": "20250717_A87_0005.oir",
+        "relative_path": "14d Treatment/20250717/20250717_A87_0005.oir"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20250717",
+          "time": "11:18:39"
+        },
+        "analysis_types": [
+          "heart_rate",
+          "radon_velocity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": true,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          30000,
+          12
+        ],
+        "sizes": {
+          "x": 12,
+          "y": 30000
+        }
+      }
+    },
+    {
+      "id": "image_005",
+      "name": "20260102_A118_0002.oir",
+      "native_manifest": "images/image_005/acqstore/manifest.json",
+      "path": "images/image_005",
+      "reference_image": "images/image_005/reference",
+      "sidecar": "images/image_005/acqstore/acq_image.json",
+      "source": {
+        "filename": "20260102_A118_0002.oir",
+        "relative_path": "14d Treatment/20260102/20260102_A118_0002.oir"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20260102",
+          "time": "13:27:52"
+        },
+        "analysis_types": [
+          "heart_rate",
+          "radon_velocity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": true,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          30000,
+          20
+        ],
+        "sizes": {
+          "x": 20,
+          "y": 30000
+        }
+      }
+    },
+    {
+      "id": "image_006",
+      "name": "20260102_A118_0003.oir",
+      "native_manifest": "images/image_006/acqstore/manifest.json",
+      "path": "images/image_006",
+      "reference_image": "images/image_006/reference",
+      "sidecar": "images/image_006/acqstore/acq_image.json",
+      "source": {
+        "filename": "20260102_A118_0003.oir",
+        "relative_path": "14d Treatment/20260102/20260102_A118_0003.oir"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20260102",
+          "time": "13:30:50"
+        },
+        "analysis_types": [
+          "heart_rate",
+          "radon_velocity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": true,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          30000,
+          19
+        ],
+        "sizes": {
+          "x": 19,
+          "y": 30000
+        }
+      }
+    },
+    {
+      "id": "image_007",
+      "name": "20251014_A98_0002.oir",
+      "native_manifest": "images/image_007/acqstore/manifest.json",
+      "path": "images/image_007",
+      "reference_image": "images/image_007/reference",
+      "sidecar": "images/image_007/acqstore/acq_image.json",
+      "source": {
+        "filename": "20251014_A98_0002.oir",
+        "relative_path": "7d Control/20251014/20251014_A98_0002.oir"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20251014",
+          "time": "15:52:30"
+        },
+        "analysis_types": [
+          "heart_rate",
+          "radon_velocity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": true,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          30000,
+          20
+        ],
+        "sizes": {
+          "x": 20,
+          "y": 30000
+        }
+      }
+    },
+    {
+      "id": "image_008",
+      "name": "20251014_A98_0003.oir",
+      "native_manifest": "images/image_008/acqstore/manifest.json",
+      "path": "images/image_008",
+      "reference_image": "images/image_008/reference",
+      "sidecar": "images/image_008/acqstore/acq_image.json",
+      "source": {
+        "filename": "20251014_A98_0003.oir",
+        "relative_path": "7d Control/20251014/20251014_A98_0003.oir"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20251014",
+          "time": "15:54:27"
+        },
+        "analysis_types": [
+          "heart_rate",
+          "radon_velocity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": true,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          30000,
+          19
+        ],
+        "sizes": {
+          "x": 19,
+          "y": 30000
+        }
+      }
+    },
+    {
+      "id": "image_009",
+      "name": "20251014_A98_0004.oir",
+      "native_manifest": "images/image_009/acqstore/manifest.json",
+      "path": "images/image_009",
+      "reference_image": "images/image_009/reference",
+      "sidecar": "images/image_009/acqstore/acq_image.json",
+      "source": {
+        "filename": "20251014_A98_0004.oir",
+        "relative_path": "7d Control/20251014/20251014_A98_0004.oir"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20251014",
+          "time": "15:55:55"
+        },
+        "analysis_types": [
+          "heart_rate",
+          "radon_velocity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": true,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          30000,
+          20
+        ],
+        "sizes": {
+          "x": 20,
+          "y": 30000
+        }
+      }
+    },
+    {
+      "id": "image_010",
+      "name": "20251014_A98_0005.oir",
+      "native_manifest": "images/image_010/acqstore/manifest.json",
+      "path": "images/image_010",
+      "reference_image": "images/image_010/reference",
+      "sidecar": "images/image_010/acqstore/acq_image.json",
+      "source": {
+        "filename": "20251014_A98_0005.oir",
+        "relative_path": "7d Control/20251014/20251014_A98_0005.oir"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20251014",
+          "time": "15:57:12"
+        },
+        "analysis_types": [
+          "heart_rate",
+          "radon_velocity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": true,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          30000,
+          26
+        ],
+        "sizes": {
+          "x": 26,
+          "y": 30000
+        }
+      }
+    },
+    {
+      "id": "image_011",
+      "name": "20251014_A98_0006.oir",
+      "native_manifest": "images/image_011/acqstore/manifest.json",
+      "path": "images/image_011",
+      "reference_image": "images/image_011/reference",
+      "sidecar": "images/image_011/acqstore/acq_image.json",
+      "source": {
+        "filename": "20251014_A98_0006.oir",
+        "relative_path": "7d Control/20251014/20251014_A98_0006.oir"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20251014",
+          "time": "16:01:45"
+        },
+        "analysis_types": [
+          "heart_rate",
+          "radon_velocity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": true,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          30000,
+          22
+        ],
+        "sizes": {
+          "x": 22,
+          "y": 30000
+        }
+      }
+    },
+    {
+      "id": "image_012",
+      "name": "20251015_A99_0002.oir",
+      "native_manifest": "images/image_012/acqstore/manifest.json",
+      "path": "images/image_012",
+      "reference_image": "images/image_012/reference",
+      "sidecar": "images/image_012/acqstore/acq_image.json",
+      "source": {
+        "filename": "20251015_A99_0002.oir",
+        "relative_path": "7d Control/20251015/20251015_A99_0002.oir"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20251015",
+          "time": "12:17:27"
+        },
+        "analysis_types": [
+          "heart_rate",
+          "radon_velocity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": true,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          30000,
+          16
+        ],
+        "sizes": {
+          "x": 16,
+          "y": 30000
+        }
+      }
+    },
+    {
+      "id": "image_013",
+      "name": "20251015_A99_0003.oir",
+      "native_manifest": "images/image_013/acqstore/manifest.json",
+      "path": "images/image_013",
+      "reference_image": "images/image_013/reference",
+      "sidecar": "images/image_013/acqstore/acq_image.json",
+      "source": {
+        "filename": "20251015_A99_0003.oir",
+        "relative_path": "7d Control/20251015/20251015_A99_0003.oir"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20251015",
+          "time": "12:18:49"
+        },
+        "analysis_types": [
+          "heart_rate",
+          "radon_velocity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": true,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          30000,
+          16
+        ],
+        "sizes": {
+          "x": 16,
+          "y": 30000
+        }
+      }
+    },
+    {
+      "id": "image_014",
+      "name": "20251015_A99_0004.oir",
+      "native_manifest": "images/image_014/acqstore/manifest.json",
+      "path": "images/image_014",
+      "reference_image": "images/image_014/reference",
+      "sidecar": "images/image_014/acqstore/acq_image.json",
+      "source": {
+        "filename": "20251015_A99_0004.oir",
+        "relative_path": "7d Control/20251015/20251015_A99_0004.oir"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20251015",
+          "time": "12:19:54"
+        },
+        "analysis_types": [
+          "heart_rate",
+          "radon_velocity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": true,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          30000,
+          19
+        ],
+        "sizes": {
+          "x": 19,
+          "y": 30000
+        }
+      }
+    }
+  ],
+  "name": "velocity-sample-data",
+  "tables": {
+    "sum_intensity": "acqstore/tables/sum_intensity.csv",
+    "velocity": "acqstore/tables/velocity.csv"
+  },
+  "version": 2,
+  "zarr_format": 3
+}

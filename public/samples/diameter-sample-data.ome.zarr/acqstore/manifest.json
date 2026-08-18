@@ -1,0 +1,687 @@
+{
+  "acqstore_version": "0.2.0",
+  "created_utc": "2026-08-18T05:18:50Z",
+  "format": "acqstore-multi-image-ome-zarr",
+  "images": [
+    {
+      "id": "image_000",
+      "name": "220110n_0003.tif",
+      "native_manifest": "images/image_000/acqstore/manifest.json",
+      "path": "images/image_000",
+      "sidecar": "images/image_000/acqstore/acq_image.json",
+      "source": {
+        "filename": "220110n_0003.tif",
+        "relative_path": "Control/220110n_0003.tif.frames/220110n_0003.tif"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20220111",
+          "time": "13:26:44"
+        },
+        "analysis_types": [
+          "diameter",
+          "sum_intensity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": false,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          2500,
+          281
+        ],
+        "sizes": {
+          "x": 281,
+          "y": 2500
+        }
+      }
+    },
+    {
+      "id": "image_001",
+      "name": "220110n_0005.tif",
+      "native_manifest": "images/image_001/acqstore/manifest.json",
+      "path": "images/image_001",
+      "sidecar": "images/image_001/acqstore/acq_image.json",
+      "source": {
+        "filename": "220110n_0005.tif",
+        "relative_path": "Control/220110n_0005.tif.frames/220110n_0005.tif"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20220111",
+          "time": "13:30:11"
+        },
+        "analysis_types": [
+          "diameter",
+          "sum_intensity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": false,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          2500,
+          332
+        ],
+        "sizes": {
+          "x": 332,
+          "y": 2500
+        }
+      }
+    },
+    {
+      "id": "image_002",
+      "name": "220110n_0009.tif",
+      "native_manifest": "images/image_002/acqstore/manifest.json",
+      "path": "images/image_002",
+      "sidecar": "images/image_002/acqstore/acq_image.json",
+      "source": {
+        "filename": "220110n_0009.tif",
+        "relative_path": "Control/220110n_0009.tif.frames/220110n_0009.tif"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20220111",
+          "time": "13:33:07"
+        },
+        "analysis_types": [
+          "sum_intensity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": false,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          2500,
+          330
+        ],
+        "sizes": {
+          "x": 330,
+          "y": 2500
+        }
+      }
+    },
+    {
+      "id": "image_003",
+      "name": "220110n_0020.tif",
+      "native_manifest": "images/image_003/acqstore/manifest.json",
+      "path": "images/image_003",
+      "sidecar": "images/image_003/acqstore/acq_image.json",
+      "source": {
+        "filename": "220110n_0020.tif",
+        "relative_path": "Control/220110n_0020.tif.frames/220110n_0020.tif"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20220111",
+          "time": "13:50:16"
+        },
+        "analysis_types": [
+          "diameter",
+          "sum_intensity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": false,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          2500,
+          305
+        ],
+        "sizes": {
+          "x": 305,
+          "y": 2500
+        }
+      }
+    },
+    {
+      "id": "image_004",
+      "name": "220110n_0022.tif",
+      "native_manifest": "images/image_004/acqstore/manifest.json",
+      "path": "images/image_004",
+      "sidecar": "images/image_004/acqstore/acq_image.json",
+      "source": {
+        "filename": "220110n_0022.tif",
+        "relative_path": "Control/220110n_0022.tif.frames/220110n_0022.tif"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20220111",
+          "time": "13:54:26"
+        },
+        "analysis_types": [
+          "diameter",
+          "sum_intensity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": false,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          2500,
+          302
+        ],
+        "sizes": {
+          "x": 302,
+          "y": 2500
+        }
+      }
+    },
+    {
+      "id": "image_005",
+      "name": "220110n_0023.tif",
+      "native_manifest": "images/image_005/acqstore/manifest.json",
+      "path": "images/image_005",
+      "sidecar": "images/image_005/acqstore/acq_image.json",
+      "source": {
+        "filename": "220110n_0023.tif",
+        "relative_path": "Control/220110n_0023.tif.frames/220110n_0023.tif"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20220111",
+          "time": "13:54:38"
+        },
+        "analysis_types": [
+          "diameter",
+          "sum_intensity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": false,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          2500,
+          302
+        ],
+        "sizes": {
+          "x": 302,
+          "y": 2500
+        }
+      }
+    },
+    {
+      "id": "image_006",
+      "name": "220110n_0036.tif",
+      "native_manifest": "images/image_006/acqstore/manifest.json",
+      "path": "images/image_006",
+      "sidecar": "images/image_006/acqstore/acq_image.json",
+      "source": {
+        "filename": "220110n_0036.tif",
+        "relative_path": "Control/220110n_0036.tif.frames/220110n_0036.tif"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20220111",
+          "time": "14:13:22"
+        },
+        "analysis_types": [
+          "diameter",
+          "sum_intensity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": false,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          2500,
+          327
+        ],
+        "sizes": {
+          "x": 327,
+          "y": 2500
+        }
+      }
+    },
+    {
+      "id": "image_007",
+      "name": "220110n_0049.tif",
+      "native_manifest": "images/image_007/acqstore/manifest.json",
+      "path": "images/image_007",
+      "sidecar": "images/image_007/acqstore/acq_image.json",
+      "source": {
+        "filename": "220110n_0049.tif",
+        "relative_path": "Control/220110n_0049.tif.frames/220110n_0049.tif"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20220111",
+          "time": "14:26:12"
+        },
+        "analysis_types": [
+          "diameter",
+          "sum_intensity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": false,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          2500,
+          289
+        ],
+        "sizes": {
+          "x": 289,
+          "y": 2500
+        }
+      }
+    },
+    {
+      "id": "image_008",
+      "name": "220110n_0055.tif",
+      "native_manifest": "images/image_008/acqstore/manifest.json",
+      "path": "images/image_008",
+      "sidecar": "images/image_008/acqstore/acq_image.json",
+      "source": {
+        "filename": "220110n_0055.tif",
+        "relative_path": "Treatment/220110n_0055.tif.frames/220110n_0055.tif"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20220111",
+          "time": "14:42:42"
+        },
+        "analysis_types": [
+          "sum_intensity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": false,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          2500,
+          289
+        ],
+        "sizes": {
+          "x": 289,
+          "y": 2500
+        }
+      }
+    },
+    {
+      "id": "image_009",
+      "name": "220110n_0056.tif",
+      "native_manifest": "images/image_009/acqstore/manifest.json",
+      "path": "images/image_009",
+      "sidecar": "images/image_009/acqstore/acq_image.json",
+      "source": {
+        "filename": "220110n_0056.tif",
+        "relative_path": "Treatment/220110n_0056.tif.frames/220110n_0056.tif"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20220111",
+          "time": "14:43:58"
+        },
+        "analysis_types": [
+          "sum_intensity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": false,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          2500,
+          166
+        ],
+        "sizes": {
+          "x": 166,
+          "y": 2500
+        }
+      }
+    },
+    {
+      "id": "image_010",
+      "name": "220110n_0060.tif",
+      "native_manifest": "images/image_010/acqstore/manifest.json",
+      "path": "images/image_010",
+      "sidecar": "images/image_010/acqstore/acq_image.json",
+      "source": {
+        "filename": "220110n_0060.tif",
+        "relative_path": "Treatment/220110n_0060.tif.frames/220110n_0060.tif"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20220111",
+          "time": "14:49:42"
+        },
+        "analysis_types": [
+          "sum_intensity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": false,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          2500,
+          160
+        ],
+        "sizes": {
+          "x": 160,
+          "y": 2500
+        }
+      }
+    },
+    {
+      "id": "image_011",
+      "name": "220110n_0064.tif",
+      "native_manifest": "images/image_011/acqstore/manifest.json",
+      "path": "images/image_011",
+      "sidecar": "images/image_011/acqstore/acq_image.json",
+      "source": {
+        "filename": "220110n_0064.tif",
+        "relative_path": "Treatment/220110n_0064.tif.frames/220110n_0064.tif"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20220111",
+          "time": "14:52:42"
+        },
+        "analysis_types": [
+          "sum_intensity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": false,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          2500,
+          329
+        ],
+        "sizes": {
+          "x": 329,
+          "y": 2500
+        }
+      }
+    },
+    {
+      "id": "image_012",
+      "name": "220110n_0065.tif",
+      "native_manifest": "images/image_012/acqstore/manifest.json",
+      "path": "images/image_012",
+      "sidecar": "images/image_012/acqstore/acq_image.json",
+      "source": {
+        "filename": "220110n_0065.tif",
+        "relative_path": "Treatment/220110n_0065.tif.frames/220110n_0065.tif"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20220111",
+          "time": "14:53:35"
+        },
+        "analysis_types": [
+          "sum_intensity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": false,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          2500,
+          318
+        ],
+        "sizes": {
+          "x": 318,
+          "y": 2500
+        }
+      }
+    },
+    {
+      "id": "image_013",
+      "name": "220110n_0067.tif",
+      "native_manifest": "images/image_013/acqstore/manifest.json",
+      "path": "images/image_013",
+      "sidecar": "images/image_013/acqstore/acq_image.json",
+      "source": {
+        "filename": "220110n_0067.tif",
+        "relative_path": "Treatment/220110n_0067.tif.frames/220110n_0067.tif"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20220111",
+          "time": "14:54:52"
+        },
+        "analysis_types": [
+          "sum_intensity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": false,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          2500,
+          293
+        ],
+        "sizes": {
+          "x": 293,
+          "y": 2500
+        }
+      }
+    },
+    {
+      "id": "image_014",
+      "name": "220110n_0068.tif",
+      "native_manifest": "images/image_014/acqstore/manifest.json",
+      "path": "images/image_014",
+      "sidecar": "images/image_014/acqstore/acq_image.json",
+      "source": {
+        "filename": "220110n_0068.tif",
+        "relative_path": "Treatment/220110n_0068.tif.frames/220110n_0068.tif"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20220111",
+          "time": "14:55:12"
+        },
+        "analysis_types": [
+          "sum_intensity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": false,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          2500,
+          293
+        ],
+        "sizes": {
+          "x": 293,
+          "y": 2500
+        }
+      }
+    },
+    {
+      "id": "image_015",
+      "name": "220110n_0077.tif",
+      "native_manifest": "images/image_015/acqstore/manifest.json",
+      "path": "images/image_015",
+      "sidecar": "images/image_015/acqstore/acq_image.json",
+      "source": {
+        "filename": "220110n_0077.tif",
+        "relative_path": "Treatment/220110n_0077.tif.frames/220110n_0077.tif"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20220111",
+          "time": "15:05:18"
+        },
+        "analysis_types": [
+          "diameter",
+          "sum_intensity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": false,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          2500,
+          357
+        ],
+        "sizes": {
+          "x": 357,
+          "y": 2500
+        }
+      }
+    },
+    {
+      "id": "image_016",
+      "name": "220110n_0078.tif",
+      "native_manifest": "images/image_016/acqstore/manifest.json",
+      "path": "images/image_016",
+      "sidecar": "images/image_016/acqstore/acq_image.json",
+      "source": {
+        "filename": "220110n_0078.tif",
+        "relative_path": "Treatment/220110n_0078.tif.frames/220110n_0078.tif"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20220111",
+          "time": "15:05:35"
+        },
+        "analysis_types": [],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": false,
+        "num_channels": 1,
+        "num_rois": 0,
+        "shape": [
+          2500,
+          357
+        ],
+        "sizes": {
+          "x": 357,
+          "y": 2500
+        }
+      }
+    },
+    {
+      "id": "image_017",
+      "name": "220110n_0080.tif",
+      "native_manifest": "images/image_017/acqstore/manifest.json",
+      "path": "images/image_017",
+      "sidecar": "images/image_017/acqstore/acq_image.json",
+      "source": {
+        "filename": "220110n_0080.tif",
+        "relative_path": "Treatment/220110n_0080.tif.frames/220110n_0080.tif"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20220111",
+          "time": "15:06:45"
+        },
+        "analysis_types": [
+          "diameter",
+          "sum_intensity"
+        ],
+        "dims": [
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": false,
+        "num_channels": 1,
+        "num_rois": 1,
+        "shape": [
+          2500,
+          398
+        ],
+        "sizes": {
+          "x": 398,
+          "y": 2500
+        }
+      }
+    }
+  ],
+  "name": "diameter-sample-data",
+  "tables": {
+    "sum_intensity": "acqstore/tables/sum_intensity.csv",
+    "velocity": "acqstore/tables/velocity.csv"
+  },
+  "version": 2,
+  "zarr_format": 3
+}

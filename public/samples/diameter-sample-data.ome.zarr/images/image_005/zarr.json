@@ -1,0 +1,127 @@
+{
+  "attributes": {
+    "ome": {
+      "version": "0.5",
+      "multiscales": [
+        {
+          "name": "image_005",
+          "axes": [
+            {
+              "name": "y",
+              "type": "space",
+              "unit": "seconds"
+            },
+            {
+              "name": "x",
+              "type": "space",
+              "unit": "um"
+            }
+          ],
+          "datasets": [
+            {
+              "path": "0",
+              "coordinateTransformations": [
+                {
+                  "type": "scale",
+                  "scale": [
+                    0.0041284,
+                    0.414
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "1",
+              "coordinateTransformations": [
+                {
+                  "type": "scale",
+                  "scale": [
+                    0.0082568,
+                    0.828
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "2",
+              "coordinateTransformations": [
+                {
+                  "type": "scale",
+                  "scale": [
+                    0.0165136,
+                    1.6670399999999999
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "3",
+              "coordinateTransformations": [
+                {
+                  "type": "scale",
+                  "scale": [
+                    0.033080128205128206,
+                    3.379135135135135
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "4",
+              "coordinateTransformations": [
+                {
+                  "type": "scale",
+                  "scale": [
+                    0.06616025641025641,
+                    6.946
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "_creator": {
+        "name": "acqstore",
+        "version": "0.1"
+      }
+    },
+    "acqstore_pixels": {
+      "header": {
+        "path": "/Users/cudmore/Sites/cs_project/cloudscope-data/data-samples/diameter-sample-data/Control/220110n_0023.tif.frames/220110n_0023.tif",
+        "shape": [
+          2500,
+          302
+        ],
+        "dims": [
+          "Y",
+          "X"
+        ],
+        "sizes": {
+          "Y": 2500,
+          "X": 302
+        },
+        "dtype": "uint16",
+        "num_channels": 1,
+        "physical_units": [
+          0.0041284,
+          0.414
+        ],
+        "physical_units_labels": [
+          "seconds",
+          "um"
+        ],
+        "date": "20220111",
+        "time": "13:54:38",
+        "file_size": "1.5 MB"
+      },
+      "source_path": "/Users/cudmore/Sites/cs_project/cloudscope-data/data-samples/diameter-sample-data/Control/220110n_0023.tif.frames/220110n_0023.tif",
+      "acquisition_metadata": {},
+      "source_metadata": {
+        "loader": "TiffFileLoader"
+      }
+    }
+  },
+  "zarr_format": 3,
+  "node_type": "group"
+}

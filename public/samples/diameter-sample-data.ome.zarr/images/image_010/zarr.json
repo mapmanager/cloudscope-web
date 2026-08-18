@@ -1,0 +1,115 @@
+{
+  "attributes": {
+    "ome": {
+      "version": "0.5",
+      "multiscales": [
+        {
+          "name": "image_010",
+          "axes": [
+            {
+              "name": "y",
+              "type": "space",
+              "unit": "seconds"
+            },
+            {
+              "name": "x",
+              "type": "space",
+              "unit": "um"
+            }
+          ],
+          "datasets": [
+            {
+              "path": "0",
+              "coordinateTransformations": [
+                {
+                  "type": "scale",
+                  "scale": [
+                    0.0027088,
+                    0.414
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "1",
+              "coordinateTransformations": [
+                {
+                  "type": "scale",
+                  "scale": [
+                    0.0054176,
+                    0.828
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "2",
+              "coordinateTransformations": [
+                {
+                  "type": "scale",
+                  "scale": [
+                    0.0108352,
+                    1.656
+                  ]
+                }
+              ]
+            },
+            {
+              "path": "3",
+              "coordinateTransformations": [
+                {
+                  "type": "scale",
+                  "scale": [
+                    0.021705128205128203,
+                    3.312
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "_creator": {
+        "name": "acqstore",
+        "version": "0.1"
+      }
+    },
+    "acqstore_pixels": {
+      "header": {
+        "path": "/Users/cudmore/Sites/cs_project/cloudscope-data/data-samples/diameter-sample-data/Treatment/220110n_0060.tif.frames/220110n_0060.tif",
+        "shape": [
+          2500,
+          160
+        ],
+        "dims": [
+          "Y",
+          "X"
+        ],
+        "sizes": {
+          "Y": 2500,
+          "X": 160
+        },
+        "dtype": "uint16",
+        "num_channels": 1,
+        "physical_units": [
+          0.0027088,
+          0.414
+        ],
+        "physical_units_labels": [
+          "seconds",
+          "um"
+        ],
+        "date": "20220111",
+        "time": "14:49:42",
+        "file_size": "800 KB"
+      },
+      "source_path": "/Users/cudmore/Sites/cs_project/cloudscope-data/data-samples/diameter-sample-data/Treatment/220110n_0060.tif.frames/220110n_0060.tif",
+      "acquisition_metadata": {},
+      "source_metadata": {
+        "loader": "TiffFileLoader"
+      }
+    }
+  },
+  "zarr_format": 3,
+  "node_type": "group"
+}

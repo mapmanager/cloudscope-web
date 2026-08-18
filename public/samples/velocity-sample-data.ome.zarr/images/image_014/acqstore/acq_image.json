@@ -1,0 +1,166 @@
+{
+  "accepted": true,
+  "analysis": [
+    {
+      "analysis_name": "radon_velocity",
+      "channel": 0,
+      "detection_params": {
+        "window_width": 64
+      },
+      "roi_id": 1,
+      "summary": {
+        "analysis_date": "260625",
+        "analysis_time": "01:54:12.790",
+        "analysis_version": 1,
+        "num_windows": 1872,
+        "velocity_cv": 0.24313663073269104,
+        "velocity_mean": 194.74310924317277,
+        "velocity_median": 189.28156887107687
+      }
+    },
+    {
+      "analysis_name": "heart_rate",
+      "channel": 0,
+      "detection_params": {
+        "agree_tol_bpm": 30.0,
+        "bandpass_order": 3,
+        "bpm_max": 600.0,
+        "bpm_min": 240.0,
+        "do_segments": false,
+        "edge_margin_hz": -1.0,
+        "interp_max_gap_sec": 0.05,
+        "lomb_n_freq": 512,
+        "nperseg_sec": 2.0,
+        "outlier_k_mad": 4.0,
+        "peak_half_width_hz": 0.5,
+        "seg_min_valid_frac": 0.5,
+        "seg_step_sec": 1.0,
+        "seg_win_sec": 6.0,
+        "use_abs": true
+      },
+      "roi_id": 1,
+      "summary": {
+        "agreement": {
+          "abs_delta_bpm": 10.502816171158372,
+          "agree_ok": true,
+          "agree_tol_bpm": 30.0,
+          "delta_bpm": -10.502816171158372,
+          "delta_hz": -0.17504693618597233
+        },
+        "analysis_date": "260625",
+        "analysis_time": "11:04:34.038",
+        "analysis_version": 1,
+        "lomb": {
+          "band_concentration": 0.3784262321368789,
+          "bpm": 423.8747553816047,
+          "edge_flag": false,
+          "edge_hz_distance": 2.935420743639922,
+          "f_hz": 7.064579256360078,
+          "method": "lombscargle",
+          "n_samples": 1872,
+          "n_valid": 1862,
+          "reason": null,
+          "snr": 35.33611568218982,
+          "status": "ok",
+          "status_note": "",
+          "t_end": 33.98271306666667,
+          "t_start": 0.0362869333333333
+        },
+        "n_total": 1872,
+        "n_valid": 1862,
+        "status": "ok",
+        "status_note": "",
+        "t_max": 33.98271306666667,
+        "t_min": 0.0362869333333333,
+        "valid_frac": 0.9946581196581197,
+        "version": 1,
+        "welch": {
+          "band_concentration": 0.47708408265574276,
+          "bpm": 413.3719392104463,
+          "edge_flag": false,
+          "edge_hz_distance": 2.889532320174106,
+          "f_hz": 6.889532320174106,
+          "method": "welch",
+          "n_samples": 1872,
+          "n_valid": 1868,
+          "reason": null,
+          "snr": 3.882690480064988,
+          "status": "ok",
+          "status_note": "",
+          "t_end": 33.98271306666667,
+          "t_start": 0.0362869333333333
+        }
+      }
+    }
+  ],
+  "experiment_metadata": {
+    "age": "young",
+    "branch_order": 3,
+    "cell_type": "",
+    "condition": "",
+    "condition2": "",
+    "date": "",
+    "depth": null,
+    "direction": "Away",
+    "genotype": "WT + 14d Saline",
+    "note": "",
+    "region": "",
+    "sex": "male",
+    "species": "",
+    "treatment": "",
+    "treatment2": ""
+  },
+  "image_contrast": {},
+  "image_header_metadata": {
+    "date": "20251015",
+    "dims": "('Y', 'X')",
+    "dtype": "uint16",
+    "num_channels": 1,
+    "num_scenes": 1,
+    "physical_label_x": "um",
+    "physical_label_y": "seconds",
+    "physical_unit_x": 0.45,
+    "physical_unit_y": 0.0011339666666666667,
+    "shape": "(30000, 19)",
+    "sizes": "{'Y': 30000, 'X': 19}",
+    "time": "12:19:54"
+  },
+  "reference_image_metadata": {
+    "dims": "('Y', 'X')",
+    "dtype": "uint16",
+    "has_scan_path": true,
+    "line_roi": "(277.0, 321.0, 294.0, 314.0)",
+    "num_channels": 1,
+    "physical_label_x": "um",
+    "physical_label_y": "um",
+    "physical_unit_x": 0.449940683730127,
+    "physical_unit_y": 0.449940683730127,
+    "scan_path_num_points": 2,
+    "scan_path_x_pixels": [
+      277.0,
+      294.0
+    ],
+    "scan_path_y_pixels": [
+      321.0,
+      314.0
+    ],
+    "shape": "(512, 512)",
+    "sizes": "{'Y': 512, 'X': 512}"
+  },
+  "rois": [
+    {
+      "data": {
+        "col_start": 0,
+        "col_stop": 19,
+        "row_start": 0,
+        "row_stop": 30000
+      },
+      "name": "",
+      "note": "",
+      "roi_id": 1,
+      "roi_type": "rectroi",
+      "version": "1.0"
+    }
+  ],
+  "version": 2
+}

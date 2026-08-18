@@ -1,0 +1,79 @@
+{
+  "attributes": {
+    "ome": {
+      "version": "0.5",
+      "multiscales": [
+        {
+          "name": "image_006",
+          "axes": [
+            {
+              "name": "y",
+              "type": "space",
+              "unit": "seconds"
+            },
+            {
+              "name": "x",
+              "type": "space",
+              "unit": "um"
+            }
+          ],
+          "datasets": [
+            {
+              "path": "0",
+              "coordinateTransformations": [
+                {
+                  "type": "scale",
+                  "scale": [
+                    0.0011339666666666667,
+                    0.353
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "_creator": {
+        "name": "acqstore",
+        "version": "0.1"
+      }
+    },
+    "acqstore_pixels": {
+      "header": {
+        "path": "/Users/cudmore/Sites/cs_project/cloudscope-data/data-samples/velocity-sample-data/14d Treatment/20260102/20260102_A118_0003.oir",
+        "shape": [
+          30000,
+          19
+        ],
+        "dims": [
+          "Y",
+          "X"
+        ],
+        "sizes": {
+          "Y": 30000,
+          "X": 19
+        },
+        "dtype": "uint16",
+        "num_channels": 1,
+        "physical_units": [
+          0.0011339666666666667,
+          0.353
+        ],
+        "physical_units_labels": [
+          "seconds",
+          "um"
+        ],
+        "date": "20260102",
+        "time": "13:30:50",
+        "file_size": "5.6 MB"
+      },
+      "source_path": "/Users/cudmore/Sites/cs_project/cloudscope-data/data-samples/velocity-sample-data/14d Treatment/20260102/20260102_A118_0003.oir",
+      "acquisition_metadata": {},
+      "source_metadata": {
+        "loader": "OirFileLoader"
+      }
+    }
+  },
+  "zarr_format": 3,
+  "node_type": "group"
+}

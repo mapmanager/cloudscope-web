@@ -1,0 +1,722 @@
+{
+  "accepted": true,
+  "analysis": [
+    {
+      "analysis_name": "sum_intensity",
+      "channel": 0,
+      "detection_params": {
+        "absolute_threshold": 0.0,
+        "baseline_method": "percentile",
+        "baseline_min_value": 1e-12,
+        "baseline_percentile": 20.0,
+        "baseline_window_ms": 100.0,
+        "derivative_threshold_per_sec": 3.0,
+        "detection_method": "derivative_threshold",
+        "detection_source": "df_f_signal",
+        "detrend_method": "single_exponential",
+        "filter_method": "median",
+        "level_fractions": "0.1,0.2,0.5,0.8,0.9",
+        "manual_f0_baseline": 1.0,
+        "median_filter_kernel_points": 3,
+        "peak_search_window_ms": 200.0,
+        "polarity": "positive",
+        "refractory_period_ms": 250.0,
+        "width_search_window_ms": 500.0,
+        "window_radius_points": 0
+      },
+      "roi_id": 1,
+      "summary": {
+        "analysis_date": "260630",
+        "analysis_time": "21:06:37.192",
+        "analysis_version": 1,
+        "baseline_method": "percentile",
+        "baseline_percentile": 20.0,
+        "baseline_window_ms": 100.0,
+        "detection_method": "derivative_threshold",
+        "detection_source": "df_f_signal",
+        "detrend_method": "single_exponential",
+        "errors": [],
+        "f0_baseline": 1188.4397929210463,
+        "manual_f0_baseline": 1.0,
+        "num_peaks": 5,
+        "num_space_pixels": 289,
+        "num_timepoints": 2500,
+        "peak_amplitude_mean": 1.068416799472111,
+        "peak_amplitude_median": 1.0657240934128993,
+        "peak_events": [
+          {
+            "detection_method": "derivative_threshold",
+            "features": {
+              "auc": {
+                "reason": "left_10_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "baseline_mean": {
+                "reason": "",
+                "status": "ok",
+                "value": -0.04432598752437416
+              },
+              "baseline_std": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.005874172774075102
+              },
+              "decay_90_10_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "decay_time_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_decay_slope": {
+                "reason": "right_10_crossing_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_rise_slope": {
+                "reason": "",
+                "status": "ok",
+                "value": 21.087640412039157
+              },
+              "prominence": {
+                "reason": "",
+                "status": "ok",
+                "value": 1.1958074615542864
+              },
+              "rise_10_90_sec": {
+                "reason": "left_10_or_left_90_unavailable",
+                "status": "failed",
+                "value": null
+              }
+            },
+            "intervals": {
+              "onset_to_onset_interval_sec": null,
+              "peak_to_peak_interval_sec": null
+            },
+            "level_crossings": [
+              {
+                "fraction": 0.1,
+                "left_index": 218.47619479017885,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.08564886869070322,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.2,
+                "left_index": 219.92286609089436,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.20407471372839311,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.5,
+                "left_index": 225.21479283788253,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.5593522488414628,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.8,
+                "left_index": 236.52436562383502,
+                "right_index": 347.7929324915209,
+                "status": "ok",
+                "value": 0.9146297839545325,
+                "width": 111.26856686768588,
+                "width_sec": 0.44600892343243215
+              },
+              {
+                "fraction": 0.9,
+                "left_index": 246.58293253526486,
+                "right_index": 322.5154066664445,
+                "status": "ok",
+                "value": 1.0330556289922224,
+                "width": 75.93247413117965,
+                "width_sec": 0.3043677293074205
+              }
+            ],
+            "onset": {
+              "index": 216,
+              "time_sec": 0.8658144000000001,
+              "value": -0.032776976346986675
+            },
+            "peak": {
+              "amplitude": 1.184258450376899,
+              "index": 266,
+              "time_sec": 1.0662344000000001,
+              "value": 1.1514814740299122
+            },
+            "peak_id": 1,
+            "status": "ok",
+            "warnings": []
+          },
+          {
+            "detection_method": "derivative_threshold",
+            "features": {
+              "auc": {
+                "reason": "left_10_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "baseline_mean": {
+                "reason": "",
+                "status": "ok",
+                "value": -0.10977670721564184
+              },
+              "baseline_std": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.004015459306564901
+              },
+              "decay_90_10_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "decay_time_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_decay_slope": {
+                "reason": "right_10_crossing_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_rise_slope": {
+                "reason": "",
+                "status": "ok",
+                "value": 17.68789338794457
+              },
+              "prominence": {
+                "reason": "",
+                "status": "ok",
+                "value": 1.0293682674938756
+              },
+              "rise_10_90_sec": {
+                "reason": "left_10_or_left_90_unavailable",
+                "status": "failed",
+                "value": null
+              }
+            },
+            "intervals": {
+              "onset_to_onset_interval_sec": 1.9801496000000003,
+              "peak_to_peak_interval_sec": 1.9801496
+            },
+            "level_crossings": [
+              {
+                "fraction": 0.1,
+                "left_index": 711.8180082238761,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.012432611499755483,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.2,
+                "left_index": 713.2903445447107,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.11322805025291972,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.5,
+                "left_index": 719.0472135953087,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.4156143665124124,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.8,
+                "left_index": 730.2085379072323,
+                "right_index": 862.5183694170214,
+                "status": "ok",
+                "value": 0.7180006827719052,
+                "width": 132.3098315097891,
+                "width_sec": 0.5303507286238387
+              },
+              {
+                "fraction": 0.9,
+                "left_index": 740.3441888811094,
+                "right_index": 833.1593501711261,
+                "status": "ok",
+                "value": 0.8187961215250694,
+                "width": 92.8151612900167,
+                "width_sec": 0.372040292514903
+              }
+            ],
+            "onset": {
+              "index": 710,
+              "time_sec": 2.8459640000000004,
+              "value": -0.08836282725340876
+            },
+            "peak": {
+              "amplitude": 1.0079543875316423,
+              "index": 760,
+              "time_sec": 3.046384,
+              "value": 0.9195915602782336
+            },
+            "peak_id": 2,
+            "status": "ok",
+            "warnings": []
+          },
+          {
+            "detection_method": "derivative_threshold",
+            "features": {
+              "auc": {
+                "reason": "left_10_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "baseline_mean": {
+                "reason": "",
+                "status": "ok",
+                "value": -0.013140235869721916
+              },
+              "baseline_std": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.00685361048600401
+              },
+              "decay_90_10_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "decay_time_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_decay_slope": {
+                "reason": "right_10_crossing_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_rise_slope": {
+                "reason": "",
+                "status": "ok",
+                "value": 13.439753966710773
+              },
+              "prominence": {
+                "reason": "",
+                "status": "ok",
+                "value": 1.0805251717290014
+              },
+              "rise_10_90_sec": {
+                "reason": "left_10_or_left_90_unavailable",
+                "status": "failed",
+                "value": null
+              }
+            },
+            "intervals": {
+              "onset_to_onset_interval_sec": 1.9801495999999998,
+              "peak_to_peak_interval_sec": 1.9801496000000003
+            },
+            "level_crossings": [
+              {
+                "fraction": 0.1,
+                "left_index": 1206.5789487362542,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.10608653124701006,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.2,
+                "left_index": 1208.9364304393523,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.21289746509281776,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.5,
+                "left_index": 1217.3856593074502,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.5333302666302409,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.8,
+                "left_index": 1232.0608002697895,
+                "right_index": 1336.0055559396287,
+                "status": "ok",
+                "value": 0.853763068167664,
+                "width": 103.9447556698392,
+                "width_sec": 0.41665215862698346
+              },
+              {
+                "fraction": 0.9,
+                "left_index": 1239.8297415465324,
+                "right_index": 1315.0325839692748,
+                "status": "ok",
+                "value": 0.9605740020134718,
+                "width": 75.20284242274238,
+                "width_sec": 0.3014430735673206
+              }
+            ],
+            "onset": {
+              "index": 1204,
+              "time_sec": 4.8261136,
+              "value": -0.0007244025987976518
+            },
+            "peak": {
+              "amplitude": 1.068109338458077,
+              "index": 1254,
+              "time_sec": 5.0265336000000005,
+              "value": 1.0673849358592795
+            },
+            "peak_id": 3,
+            "status": "ok",
+            "warnings": []
+          },
+          {
+            "detection_method": "derivative_threshold",
+            "features": {
+              "auc": {
+                "reason": "left_10_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "baseline_mean": {
+                "reason": "",
+                "status": "ok",
+                "value": -0.10597398495792276
+              },
+              "baseline_std": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.003729728503295081
+              },
+              "decay_90_10_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "decay_time_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_decay_slope": {
+                "reason": "right_10_crossing_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_rise_slope": {
+                "reason": "",
+                "status": "ok",
+                "value": 15.295608886375092
+              },
+              "prominence": {
+                "reason": "",
+                "status": "ok",
+                "value": 1.0719694660057528
+              },
+              "rise_10_90_sec": {
+                "reason": "left_10_or_left_90_unavailable",
+                "status": "failed",
+                "value": null
+              }
+            },
+            "intervals": {
+              "onset_to_onset_interval_sec": 1.9761412000000007,
+              "peak_to_peak_interval_sec": 1.9761412000000007
+            },
+            "level_crossings": [
+              {
+                "fraction": 0.1,
+                "left_index": 1699.5806923650412,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.006843796976220867,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.2,
+                "left_index": 1701.410535969218,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.1134162063175108,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.5,
+                "left_index": 1708.3485915320875,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.4331334343413806,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.8,
+                "left_index": 1724.3728371561465,
+                "right_index": 1834.7003165955462,
+                "status": "ok",
+                "value": 0.7528506623652504,
+                "width": 110.32747943939967,
+                "width_sec": 0.4422366685848897
+              },
+              {
+                "fraction": 0.9,
+                "left_index": 1732.9066239446147,
+                "right_index": 1812.3274065026076,
+                "status": "ok",
+                "value": 0.8594230717065404,
+                "width": 79.42078255799288,
+                "width_sec": 0.3183502648054587
+              }
+            ],
+            "onset": {
+              "index": 1697,
+              "time_sec": 6.802254800000001,
+              "value": -0.09972861236506907
+            },
+            "peak": {
+              "amplitude": 1.0657240934128993,
+              "index": 1747,
+              "time_sec": 7.002674800000001,
+              "value": 0.9659954810478302
+            },
+            "peak_id": 4,
+            "status": "ok",
+            "warnings": []
+          },
+          {
+            "detection_method": "derivative_threshold",
+            "features": {
+              "auc": {
+                "reason": "left_10_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "baseline_mean": {
+                "reason": "",
+                "status": "ok",
+                "value": -0.07630709156923825
+              },
+              "baseline_std": {
+                "reason": "",
+                "status": "ok",
+                "value": 0.0052838062410055725
+              },
+              "decay_90_10_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "decay_time_sec": {
+                "reason": "right_90_or_right_10_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_decay_slope": {
+                "reason": "right_10_crossing_unavailable",
+                "status": "failed",
+                "value": null
+              },
+              "max_rise_slope": {
+                "reason": "",
+                "status": "ok",
+                "value": 12.205292650472282
+              },
+              "prominence": {
+                "reason": "",
+                "status": "ok",
+                "value": 1.0199108207062595
+              },
+              "rise_10_90_sec": {
+                "reason": "left_10_or_left_90_unavailable",
+                "status": "failed",
+                "value": null
+              }
+            },
+            "intervals": {
+              "onset_to_onset_interval_sec": 1.9801495999999998,
+              "peak_to_peak_interval_sec": 1.9801496000000007
+            },
+            "level_crossings": [
+              {
+                "fraction": 0.1,
+                "left_index": 2193.9268704270676,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.029169774314088112,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.2,
+                "left_index": 2196.1256563748316,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.1307735470721918,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.5,
+                "left_index": 2204.0777692173224,
+                "right_index": null,
+                "status": "right_not_found_within_width_search_window",
+                "value": 0.43558486534650287,
+                "width": null,
+                "width_sec": null
+              },
+              {
+                "fraction": 0.8,
+                "left_index": 2217.9060153096657,
+                "right_index": 2336.53564058241,
+                "status": "ok",
+                "value": 0.7403961836208139,
+                "width": 118.6296252727443,
+                "width_sec": 0.47551498994326835
+              },
+              {
+                "fraction": 0.9,
+                "left_index": 2225.4412744549754,
+                "right_index": 2314.922075013087,
+                "status": "ok",
+                "value": 0.8419999563789177,
+                "width": 89.4808005581117,
+                "width_sec": 0.358674840957135
+              }
+            ],
+            "onset": {
+              "index": 2191,
+              "time_sec": 8.7824044,
+              "value": -0.07243399844401557
+            },
+            "peak": {
+              "amplitude": 1.0160377275810368,
+              "index": 2241,
+              "time_sec": 8.982824400000002,
+              "value": 0.9436037291370212
+            },
+            "peak_id": 5,
+            "status": "ok",
+            "warnings": []
+          }
+        ],
+        "peak_search_window_ms": 200.0,
+        "seconds_per_line": 0.0040084000000000005,
+        "status": "ok",
+        "warnings": [],
+        "width_search_window_ms": 500.0
+      }
+    },
+    {
+      "analysis_name": "diameter",
+      "channel": 0,
+      "detection_params": {
+        "binning_method": "mean",
+        "diameter_method": "threshold_width",
+        "enable_motion_gating": true,
+        "gradient_kernel": "central_diff",
+        "gradient_min_edge_strength": 0.02,
+        "gradient_sigma": 1.5,
+        "max_center_shift_um": 2.0,
+        "max_diameter_change_um": 2.0,
+        "max_edge_shift_um": 2.0,
+        "polarity": "bright_on_dark",
+        "post_filter_kernel_size": 5,
+        "stride": 1,
+        "threshold_mode": "half_max",
+        "threshold_value": 2.0,
+        "window_rows_odd": 5
+      },
+      "roi_id": 1,
+      "summary": {
+        "analysis_date": "260710",
+        "analysis_time": "19:44:28.594",
+        "analysis_version": 1,
+        "diameter_um_cv": 0.026519430569046865,
+        "diameter_um_mean": 100.8654696,
+        "diameter_um_median": 101.42999999999999,
+        "num_qc_center_violations": 0,
+        "num_qc_diameter_violations": 0,
+        "num_qc_edge_violations": 0,
+        "num_rows": 2500,
+        "qc_score_mean": 0.75
+      }
+    }
+  ],
+  "experiment_metadata": {
+    "age": "",
+    "branch_order": null,
+    "cell_type": "",
+    "condition": "",
+    "condition2": "",
+    "date": "",
+    "depth": null,
+    "direction": "",
+    "genotype": "",
+    "note": "",
+    "region": "",
+    "sex": "",
+    "species": "",
+    "treatment": "",
+    "treatment2": ""
+  },
+  "image_contrast": {
+    "0": {
+      "color_lut": "Green",
+      "img_max": 4095,
+      "img_min": 128,
+      "value_max": 3675,
+      "value_min": 147
+    }
+  },
+  "image_header_metadata": {
+    "date": "20220111",
+    "dims": "('Y', 'X')",
+    "dtype": "uint16",
+    "num_channels": 1,
+    "num_scenes": 1,
+    "physical_label_x": "um",
+    "physical_label_y": "seconds",
+    "physical_unit_x": 0.414,
+    "physical_unit_y": 0.0040084000000000005,
+    "shape": "(2500, 289)",
+    "sizes": "{'Y': 2500, 'X': 289}",
+    "time": "14:26:12"
+  },
+  "rois": [
+    {
+      "data": {
+        "col_start": 0,
+        "col_stop": 289,
+        "row_start": 0,
+        "row_stop": 2500
+      },
+      "name": "",
+      "note": "",
+      "roi_id": 1,
+      "roi_type": "rectroi",
+      "version": "1.0"
+    }
+  ],
+  "version": 2
+}

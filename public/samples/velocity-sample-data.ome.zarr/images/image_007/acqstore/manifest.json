@@ -1,0 +1,30 @@
+{
+  "analyses": [
+    {
+      "analysis_name": "heart_rate",
+      "channel": 0,
+      "id": "heart_rate__c0__r1",
+      "resources": {
+        "peaks": null,
+        "table": null
+      },
+      "roi_id": 1
+    },
+    {
+      "analysis_name": "radon_velocity",
+      "channel": 0,
+      "id": "radon_velocity__c0__r1",
+      "resources": {
+        "peaks": null,
+        "table": "acqstore/analysis/radon_velocity__c0__r1.table.csv"
+      },
+      "roi_id": 1
+    }
+  ],
+  "format": "acqstore-native-ome-zarr",
+  "image_group": ".",
+  "reference_image": "reference",
+  "sidecar": "acqstore/acq_image.json",
+  "version": 2,
+  "zarr_format": 3
+}
