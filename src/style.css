@@ -99,7 +99,9 @@ h3 {
   background: #0a171d;
   box-shadow: 0 16px 48px rgb(0 0 0 / 45%);
 }
-.dataset-source form + form {
+.dataset-source form + form,
+.dataset-source form + details,
+.dataset-source details + form {
   margin-top: 14px;
 }
 .dataset-source__advanced {
@@ -130,6 +132,10 @@ select {
   background: #0b171d;
 }
 .dataset-source input {
+  width: 100%;
+  padding: 9px 11px;
+}
+.dataset-source select {
   width: 100%;
   padding: 9px 11px;
 }

@@ -10,6 +10,7 @@ import { useViewerState } from './composables/useViewerState'
 import { plotsForAnalysis } from './plots/analysisPlotRegistry'
 
 const viewer = useViewerState()
+const showLocalServer = import.meta.env.DEV
 
 const visibleAnalyses = computed(() => {
   const image = viewer.acqImageDocument.value?.data
@@ -40,7 +41,9 @@ onMounted(() => {
         v-model="viewer.hostedDatasetUrl.value"
         v-model:server-url="viewer.serverUrl.value"
         :loading="viewer.loading.value"
+        :show-local-server="showLocalServer"
         @open="viewer.openDataset()"
+        @open-sample="viewer.openDataset"
         @open-server="viewer.openServer"
         @open-exported-folder="viewer.openExportedFolder"
       />

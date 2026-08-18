@@ -2,6 +2,7 @@ import { computed, ref, shallowRef, watch } from 'vue'
 
 import type { CsvTable } from '../data/csvLoader'
 import type { ImagePlane, PlaneIndices } from '../data/omeZarrLoader'
+import { defaultSampleDataset } from '../config/sampleDatasets'
 import {
   AcqStoreServerSource,
   ExportedDatasetSource,
@@ -21,9 +22,21 @@ import type {
 
 const DEFAULT_DEVELOPMENT_DATASET = '/__dev_collection__/'
 
+/**
+ * Selects the initial collection without requiring a runtime server.
+ *
+ * Explicit query-string state wins, followed by a configured Vite development
+ * collection and finally the bundled diameter sample.
+ *
+ * @returns A URL accepted by {@link openDataset}.
+ */
 export function initialDatasetUrl(): string {
   const fromUrl = new URL(window.location.href).searchParams.get('dataset')
-  return fromUrl ?? (import.meta.env.DEV ? DEFAULT_DEVELOPMENT_DATASET : '')
+  if (fromUrl) return fromUrl
+  if (import.meta.env.DEV && __ACQSTORE_DEV_DATASET_CONFIGURED__) {
+    return DEFAULT_DEVELOPMENT_DATASET
+  }
+  return defaultSampleDataset.url
 }
 
 interface UrlSelection {
@@ -154,9 +167,11 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     }
   }
 
+  /** Opens a hosted, bundled, or development-served collection URL. */
   async function openDataset(url = hostedDatasetUrl.value): Promise<void> {
     if (!url.trim()) return
     const resolved = url.trim()
+    hostedDatasetUrl.value = resolved
     // Temporary migration compatibility: remove this Web Dataset v1 branch
     // after hosted and server-backed collection loading reach feature parity.
     const source = resolved.endsWith('.json')

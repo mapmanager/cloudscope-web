@@ -4,12 +4,16 @@ import vue from '@vitejs/plugin-vue'
 import sirv from 'sirv'
 import { defineConfig } from 'vitest/config'
 
+const configuredLocalDatasetRoot = process.env.ACQSTORE_OME_ZARR_ROOT
 const localDatasetRoot = path.resolve(
-  process.env.ACQSTORE_OME_ZARR_ROOT ?? path.resolve(import.meta.dirname, 'data/output'),
+  configuredLocalDatasetRoot ?? path.resolve(import.meta.dirname, 'data/output'),
 )
 
 export default defineConfig({
   base: './',
+  define: {
+    __ACQSTORE_DEV_DATASET_CONFIGURED__: JSON.stringify(Boolean(configuredLocalDatasetRoot)),
+  },
   plugins: [
     vue(),
     {

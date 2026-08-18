@@ -12,9 +12,26 @@ vi.mock('../src/data/omeZarrLoader', async (importOriginal) => {
 
 import { loadAcqImage, loadDataset } from '../src/data/datasetLoader'
 import { loadImagePlane } from '../src/data/omeZarrLoader'
-import { readUrlSelection, useViewerState, viewerUrl } from '../src/composables/useViewerState'
+import {
+  initialDatasetUrl,
+  readUrlSelection,
+  useViewerState,
+  viewerUrl,
+} from '../src/composables/useViewerState'
+import { defaultSampleDataset } from '../src/config/sampleDatasets'
 
 describe('viewer URL state', () => {
+  it('uses the bundled diameter collection when no explicit source is present', () => {
+    window.history.replaceState(null, '', '/')
+    expect(initialDatasetUrl()).toBe(defaultSampleDataset.url)
+  })
+
+  it('prefers an explicit collection URL', () => {
+    window.history.replaceState(null, '', '/?dataset=https://data.test/collection.ome.zarr/')
+    expect(initialDatasetUrl()).toBe('https://data.test/collection.ome.zarr/')
+    window.history.replaceState(null, '', '/')
+  })
+
   it('round-trips the dataset and complete selection without routing', () => {
     const href = viewerUrl('https://viewer.test/app/', {
       dataset: 'https://data.test/study/dataset.json',

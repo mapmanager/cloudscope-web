@@ -1,9 +1,17 @@
 <script setup lang="ts">
-defineProps<{ modelValue: string; serverUrl: string; loading: boolean }>()
+import { sampleDatasets } from '../config/sampleDatasets'
+
+defineProps<{
+  modelValue: string
+  serverUrl: string
+  loading: boolean
+  showLocalServer: boolean
+}>()
 const emit = defineEmits<{
   'update:modelValue': [value: string]
   'update:serverUrl': [value: string]
   open: []
+  'open-sample': [url: string]
   'open-server': [kind: 'file' | 'folder' | 'csv']
   'open-exported-folder': []
 }>()
@@ -13,7 +21,24 @@ const emit = defineEmits<{
   <details class="dataset-source">
     <summary>Open dataset</summary>
     <div class="dataset-source__popover">
-      <form @submit.prevent>
+      <form>
+        <label for="sample-dataset">Bundled sample</label>
+        <div class="dataset-source__row">
+          <select
+            id="sample-dataset"
+            :value="sampleDatasets.some(({ url }) => url === modelValue) ? modelValue : ''"
+            :disabled="loading"
+            @change="emit('open-sample', ($event.target as HTMLSelectElement).value)"
+          >
+            <option value="" disabled>Choose a sample…</option>
+            <option v-for="sample in sampleDatasets" :key="sample.id" :value="sample.url">
+              {{ sample.name }} — {{ sample.description }}
+            </option>
+          </select>
+        </div>
+      </form>
+
+      <form v-if="showLocalServer" @submit.prevent>
         <label for="server-url">AcqStore Server</label>
         <div class="dataset-source__row">
           <input
