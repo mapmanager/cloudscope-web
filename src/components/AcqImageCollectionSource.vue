@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from 'vue'
+
 import { sampleCollections } from '../config/sampleCollections'
 
 defineProps<{ modelValue: string; serverUrl: string; loading: boolean; showLocalServer: boolean }>()
@@ -10,12 +12,42 @@ const emit = defineEmits<{
   'open-server': [kind: 'file' | 'folder' | 'csv']
   'open-exported-folder': []
 }>()
+
+const root = ref<HTMLElement | null>(null)
+const open = ref(false)
+
+/** Close the collection popover when a pointer interaction occurs outside it. */
+function handleDocumentPointerDown(event: PointerEvent): void {
+  if (open.value && !root.value?.contains(event.target as Node)) open.value = false
+}
+
+/** Support the conventional Escape-key dismissal behavior. */
+function handleDocumentKeyDown(event: KeyboardEvent): void {
+  if (event.key === 'Escape') open.value = false
+}
+
+onMounted(() => {
+  document.addEventListener('pointerdown', handleDocumentPointerDown)
+  document.addEventListener('keydown', handleDocumentKeyDown)
+})
+onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', handleDocumentPointerDown)
+  document.removeEventListener('keydown', handleDocumentKeyDown)
+})
 </script>
 
 <template>
-  <details class="collection-source">
-    <summary>Open collection</summary>
-    <div class="collection-source__popover">
+  <div ref="root" class="collection-source">
+    <button
+      type="button"
+      class="collection-source__trigger"
+      aria-haspopup="dialog"
+      :aria-expanded="open"
+      @click="open = !open"
+    >
+      Open collection
+    </button>
+    <div v-if="open" class="collection-source__popover" role="dialog" aria-label="Open collection">
       <form>
         <label for="sample-collection">Bundled sample</label>
         <div class="collection-source__row">
@@ -96,5 +128,5 @@ const emit = defineEmits<{
         </form>
       </details>
     </div>
-  </details>
+  </div>
 </template>

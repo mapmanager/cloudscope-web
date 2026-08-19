@@ -7,6 +7,7 @@ defineProps<{
   title: string
   metadata: Record<string, unknown>
   emptyMessage: string
+  loading: boolean
 }>()
 defineEmits<{ close: [] }>()
 </script>
@@ -25,7 +26,8 @@ defineEmits<{ close: [] }>()
       </button>
     </header>
     <div class="metadata-inspector__body">
-      <MetadataCard :metadata="metadata" :empty-message="emptyMessage" />
+      <p v-if="loading" class="muted metadata-empty">Loading selected AcqImage…</p>
+      <MetadataCard v-else :metadata="metadata" :empty-message="emptyMessage" />
     </div>
   </aside>
 </template>

@@ -125,6 +125,13 @@ describe('viewer selection state', () => {
     expect(state.selectedRoiId.value).toBe(7)
     expect(state.selectedZ.value).toBe(0)
     expect(state.selectedT.value).toBe(0)
+
+    const descriptorLoads = vi.mocked(loadAcqImage).mock.calls.length
+    await state.selectAcqImage('image-1')
+    expect(loadAcqImage).toHaveBeenCalledTimes(descriptorLoads)
+
+    await state.openAcqImageCollection('https://example.test/second-dataset.json')
+    expect(loadAcqImage).toHaveBeenCalledTimes(descriptorLoads + 1)
   })
 
   it('reuses a cached channel/Z/T plane', async () => {

@@ -348,18 +348,9 @@ onMounted(() => {
 
 <template>
   <section class="panel image-panel">
-    <div class="section-heading">
-      <div>
-        <p class="eyebrow">OME-Zarr raster</p>
-        <h2>Image</h2>
-      </div>
-      <div class="image-toolbar">
-        <span v-if="plane" class="muted"
-          >{{ plane.width }} × {{ plane.height }} · level {{ plane.level }}</span
-        >
-        <button type="button" class="secondary-action" @click="resetView">Reset view</button>
-      </div>
-    </div>
+    <p class="eyebrow image-heading">
+      OME-Zarr raster<span v-if="plane"> · level {{ plane.level }}</span>
+    </p>
     <div class="image-chart">
       <div class="image-y-axis" aria-hidden="true">
         <span
@@ -407,9 +398,5 @@ onMounted(() => {
         <strong>{{ xAxisLabel }}</strong>
       </div>
     </div>
-    <p class="image-help muted">
-      Drag horizontally or vertically to zoom · Space-drag to pan · scroll to zoom · double-click to
-      reset
-    </p>
   </section>
 </template>

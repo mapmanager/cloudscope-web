@@ -23,6 +23,7 @@ describe('bundled sample catalog', () => {
         showLocalServer: false,
       },
     })
+    await wrapper.get('.collection-source__trigger').trigger('click')
 
     expect(wrapper.get<HTMLSelectElement>('#sample-collection').element.value).toBe(
       defaultSampleCollection.url,

@@ -91,9 +91,20 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
   const selectedZ = ref(0)
   const selectedT = ref(0)
   const loading = ref(false)
+  const acqImageLoading = ref(false)
   const error = ref<string | null>(null)
   const canUnload = computed(() => activeSource.value?.canUnload ?? false)
   let selectionRequest = 0
+  let selectionController: AbortController | null = null
+
+  /** Cancel a descriptor request that can no longer update the active selection. */
+  function cancelSelectionRequest(): void {
+    selectionRequest += 1
+    selectionController?.abort()
+    selectionController = null
+    acqImageLoading.value = false
+    loading.value = false
+  }
 
   function errorMessage(reason: unknown): string {
     if (import.meta.env.DEV) console.error(reason)
@@ -130,6 +141,7 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
   )
 
   async function activateSource(source: ViewerDataSource): Promise<void> {
+    cancelSelectionRequest()
     loading.value = true
     error.value = null
     const previous = activeSource.value
@@ -138,6 +150,8 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
       planeCache.clear()
       activeSource.value = source
       acqImageCollectionDocument.value = document
+      acqImageDocument.value = null
+      selectedAcqImageId.value = null
       if (previous && previous !== source) await previous.close().catch(() => undefined)
       const requested = source.persistInUrl
         ? readUrlSelection(window.location.href)
@@ -148,7 +162,8 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
           (image) => image.id === requested.acqImage,
         ) ?? first
       await selectAcqImage(target?.id ?? null)
-      const image = acqImageDocument.value?.data
+      const selectedDocument = acqImageDocument.value as LoadedDocument<AcqImageDocument> | null
+      const image = selectedDocument?.data
       if (image) {
         if (image.image.channels.some(({ index }) => index === requested.channel)) {
           selectedChannel.value = requested.channel
@@ -229,7 +244,17 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
   )
 
   async function selectAcqImage(imageId: string | null): Promise<void> {
+    if (
+      imageId === selectedAcqImageId.value &&
+      (acqImageDocument.value !== null || acqImageLoading.value)
+    ) {
+      return
+    }
+    selectionController?.abort()
+    const controller = new AbortController()
+    selectionController = controller
     const request = ++selectionRequest
+    acqImageLoading.value = imageId !== null && acqImageCollectionDocument.value !== null
     selectedAcqImageId.value = imageId
     selectedChannel.value = 0
     selectedRoiId.value = null
@@ -237,11 +262,17 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     selectedT.value = 0
     acqImageDocument.value = null
     error.value = null
-    if (imageId === null || acqImageCollectionDocument.value === null) return
+    if (imageId === null || acqImageCollectionDocument.value === null) {
+      selectionController = null
+      acqImageLoading.value = false
+      return
+    }
     const image = acqImageCollectionDocument.value.data.acq_images.find(
       (candidate) => candidate.id === imageId,
     )
     if (!image) {
+      selectionController = null
+      acqImageLoading.value = false
       error.value = `Unknown image ID: ${imageId}`
       return
     }
@@ -249,7 +280,11 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     try {
       if (!activeSource.value) throw new Error('No collection source is active')
       const source = activeSource.value
-      const loaded = await source.loadAcqImage(acqImageCollectionDocument.value.url, image.href)
+      const loaded = await source.loadAcqImage(
+        acqImageCollectionDocument.value.url,
+        image.href,
+        controller.signal,
+      )
       if (request !== selectionRequest || selectedAcqImageId.value !== imageId) return
       acqImageDocument.value = loaded
       if (loaded.data.load_state) {
@@ -257,11 +292,18 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
       }
       selectedRoiId.value = loaded.data.rois[0]?.id ?? null
     } catch (reason) {
-      if (request === selectionRequest) {
+      if (
+        request === selectionRequest &&
+        !(reason instanceof DOMException && reason.name === 'AbortError')
+      ) {
         error.value = errorMessage(reason)
       }
     } finally {
-      if (request === selectionRequest) loading.value = false
+      if (request === selectionRequest) {
+        selectionController = null
+        acqImageLoading.value = false
+        loading.value = false
+      }
     }
   }
 
@@ -327,6 +369,7 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
   }
 
   async function closeAcqImageCollection(): Promise<void> {
+    cancelSelectionRequest()
     const source = activeSource.value
     activeSource.value = null
     planeCache.clear()
@@ -354,6 +397,7 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     selectedZ,
     selectedT,
     loading,
+    acqImageLoading,
     error,
     canUnload,
     openAcqImageCollection,

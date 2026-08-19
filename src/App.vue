@@ -96,6 +96,9 @@ onMounted(() => {
     <header class="app-header">
       <h1>CloudScope Web</h1>
       <div class="app-header__actions">
+        <span v-if="viewer.acqImageCollectionDocument.value" class="app-header__collection-name">
+          {{ viewer.acqImageCollectionDocument.value.data.name }}
+        </span>
         <AcqImageCollectionSource
           v-model="viewer.hostedCollectionUrl.value"
           v-model:server-url="viewer.serverUrl.value"
@@ -128,6 +131,7 @@ onMounted(() => {
       :title="inspector.title"
       :metadata="inspector.metadata"
       :empty-message="inspector.emptyMessage"
+      :loading="viewer.acqImageLoading.value"
       @close="activeInspector = null"
     />
 
@@ -141,16 +145,6 @@ onMounted(() => {
           :maximum-height="600"
         >
           <section class="panel file-panel">
-            <div class="file-panel__heading">
-              <strong>{{ viewer.acqImageCollectionDocument.value.data.name }}</strong>
-              <button
-                type="button"
-                class="secondary-action"
-                @click="viewer.closeAcqImageCollection()"
-              >
-                Close collection
-              </button>
-            </div>
             <AcqImageCollectionTable
               :acq-images="viewer.acqImageCollectionDocument.value.data.acq_images"
               :selected-acq-image-id="viewer.selectedAcqImageId.value"

@@ -21,7 +21,6 @@ function dimensions(acqImage: AcqImageCollectionRow): string {
         <tr>
           <th>File</th>
           <th>Dimensions</th>
-          <th>Type</th>
           <th>Channels</th>
           <th>ROIs</th>
           <th>Analyses</th>
@@ -43,7 +42,6 @@ function dimensions(acqImage: AcqImageCollectionRow): string {
         >
           <td class="file-name">{{ acqImage.name }}</td>
           <td>{{ dimensions(acqImage) }}</td>
-          <td>{{ acqImage.dtype }}</td>
           <td>{{ acqImage.num_channels }}</td>
           <td>{{ acqImage.num_rois }}</td>
           <td>{{ acqImage.analysis_types.join(', ') || '—' }}</td>
