@@ -282,7 +282,8 @@ onMounted(() => {
   viewer = new RasterViewer(root, {
     theme: 'dark',
     roiChromeEnabled: true,
-    roiToolbarVisible: false,
+    roiToolbarVisible: true,
+    roiEditingEnabled: false,
     roiHostMode: 'delegated',
     hostClipboardBridge: false,
     loadSourcePlane,

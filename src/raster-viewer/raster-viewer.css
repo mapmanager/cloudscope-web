@@ -196,6 +196,10 @@
   gap: 4px;
 }
 
+.rv-layout-controls[hidden] {
+  display: none;
+}
+
 .rv-icon-radio {
   position: relative;
   display: grid;
@@ -302,6 +306,10 @@
   border-left: 1px solid var(--rv-line);
   color: var(--rv-muted);
   font-size: 11px;
+}
+
+.rv-sliding-z-controls[hidden] {
+  display: none;
 }
 
 .rv-sliding-z {

@@ -73,6 +73,7 @@ export interface RasterViewerOptions {
   roiHostMode?: 'local' | 'delegated'
   roiToolbarVisible?: boolean
   roiChromeEnabled?: boolean
+  roiEditingEnabled?: boolean
   hostClipboardBridge?: boolean
   loadSourcePlane?: LoadSourcePlane
 }

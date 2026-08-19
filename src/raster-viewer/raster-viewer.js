@@ -197,6 +197,7 @@ export class RasterViewer {
    *   wheelZoomFactor?:number,
    *   roiHostMode?:'local'|'delegated',
    *   roiToolbarVisible?:boolean,
+   *   roiEditingEnabled?:boolean,
    *   hostClipboardBridge?:boolean,
    * }} [options]
    *   Initial presentation and interaction options. `wheelZoomFactor` defaults
@@ -204,6 +205,8 @@ export class RasterViewer {
    *   valid range is greater than 1 through 2 inclusive. `roiHostMode` defaults
    *   to `local` (JS mutates its own ROI list). Use `delegated` when a host owns
    *   ROI truth and must accept request events before silent `*Roi` APIs run.
+   *   `roiEditingEnabled` defaults to true; set false for a display-only ROI
+   *   strip (dropdown, no add/delete/edit/commit/cancel).
    *   `hostClipboardBridge` enables Copy view when the browser Clipboard API is
    *   unavailable (NiceGUI native / pywebview) by emitting PNG bytes to Python.
    *   `loadSourcePlane` is required in this CloudScope Web copy: it returns one
@@ -222,6 +225,9 @@ export class RasterViewer {
     // NiceGUI/Vue may deliver booleans as real bools or as "true"/"false" strings.
     this.hostClipboardBridge = options.hostClipboardBridge === true
       || options.hostClipboardBridge === 'true';
+    this.roiEditingEnabled = this.roiChromeEnabled
+      && options.roiEditingEnabled !== false
+      && options.roiEditingEnabled !== 'false';
     this.showRoiToolbar = this.roiChromeEnabled && options.roiToolbarVisible !== false;
     this.dataset = null;
     this.channels = [];
@@ -601,8 +607,9 @@ export class RasterViewer {
   }
 
   /**
-   * Build the top-toolbar ROI strip: dropdown + add/delete/edit/commit/cancel.
+   * Build the top-toolbar ROI strip: dropdown, plus optional CRUD controls.
    *
+   * When `roiEditingEnabled` is false the strip is display-only (dropdown).
    * Visibility is independent of per-pane channel toolbars but belongs to the
    * same conceptual chrome toolbar. In `delegated` mode, action buttons emit
    * request events only; in `local` mode they mutate the in-viewer ROI list.
@@ -631,28 +638,30 @@ export class RasterViewer {
     this.roiSelect = select;
     this.roiIdleControls.push(select);
 
-    const addButton = this.roiIconButton('plus', 'Add ROI', () => this.requestRoiAdd());
-    const deleteButton = this.roiIconButton('trash-2', 'Delete ROI', () => this.requestRoiDelete());
-    const editButton = this.roiIconButton('pencil', 'Edit ROI', () => this.requestRoiEdit());
-    this.roiAddButton = addButton;
-    this.roiDeleteButton = deleteButton;
-    this.roiEditButton = editButton;
-    this.roiIdleControls.push(addButton, deleteButton, editButton);
-    strip.append(addButton, deleteButton, editButton);
+    if (this.roiEditingEnabled) {
+      const addButton = this.roiIconButton('plus', 'Add ROI', () => this.requestRoiAdd());
+      const deleteButton = this.roiIconButton('trash-2', 'Delete ROI', () => this.requestRoiDelete());
+      const editButton = this.roiIconButton('pencil', 'Edit ROI', () => this.requestRoiEdit());
+      this.roiAddButton = addButton;
+      this.roiDeleteButton = deleteButton;
+      this.roiEditButton = editButton;
+      this.roiIdleControls.push(addButton, deleteButton, editButton);
+      strip.append(addButton, deleteButton, editButton);
 
-    const commitButton = this.roiIconButton('check', 'Commit ROI edit', () => {
-      this.requestRoiEditCommit();
-    });
-    commitButton.classList.add('rv-toolbar-icon-button--commit');
-    const cancelButton = this.roiIconButton('x', 'Cancel ROI edit', () => {
-      if (this.roiHostMode === 'delegated') this.requestRoiEditCancel();
-      else this.cancelRoiEdit();
-    });
-    cancelButton.classList.add('rv-toolbar-icon-button--cancel');
-    this.roiCommitButton = commitButton;
-    this.roiCancelButton = cancelButton;
-    this.roiEditControls.push(commitButton, cancelButton);
-    strip.append(commitButton, cancelButton);
+      const commitButton = this.roiIconButton('check', 'Commit ROI edit', () => {
+        this.requestRoiEditCommit();
+      });
+      commitButton.classList.add('rv-toolbar-icon-button--commit');
+      const cancelButton = this.roiIconButton('x', 'Cancel ROI edit', () => {
+        if (this.roiHostMode === 'delegated') this.requestRoiEditCancel();
+        else this.cancelRoiEdit();
+      });
+      cancelButton.classList.add('rv-toolbar-icon-button--cancel');
+      this.roiCommitButton = commitButton;
+      this.roiCancelButton = cancelButton;
+      this.roiEditControls.push(commitButton, cancelButton);
+      strip.append(commitButton, cancelButton);
+    }
 
     this.toolbar.append(divider, strip);
     this.syncRoiToolbar();
@@ -760,6 +769,7 @@ export class RasterViewer {
    * @returns {boolean} Whether a request was emitted or a local ROI was added.
    */
   requestRoiAdd() {
+    if (!this.roiEditingEnabled) return false;
     if (!this.dataset || this.roiState !== RoiInteractionState.IDLE) return false;
     if (this.roiHostMode === 'delegated') {
       this.dispatch('raster-roi-add-request', {
@@ -780,6 +790,7 @@ export class RasterViewer {
    * @returns {boolean} Whether a request was emitted or a local ROI was removed.
    */
   requestRoiDelete() {
+    if (!this.roiEditingEnabled) return false;
     if (!this.dataset || this.roiState !== RoiInteractionState.IDLE || this.selectedRoiId == null) {
       return false;
     }
@@ -808,6 +819,7 @@ export class RasterViewer {
    * @returns {boolean} Whether a request was emitted or local edit started.
    */
   requestRoiEdit() {
+    if (!this.roiEditingEnabled) return false;
     if (!this.dataset || this.roiState !== RoiInteractionState.IDLE || this.selectedRoiId == null) {
       return false;
     }
@@ -1635,6 +1647,7 @@ export class RasterViewer {
    * @returns {boolean} False when another ROI interaction is already active.
    */
   beginRoiCreate(specification) {
+    if (!this.roiEditingEnabled) return false;
     if (this.roiState !== RoiInteractionState.IDLE) return false;
     const roiType = String(specification.roi_type);
     if (![RoiType.RECT, RoiType.LINE].includes(roiType)) {
@@ -1671,6 +1684,7 @@ export class RasterViewer {
    * @returns {boolean} Whether editing started.
    */
   beginRoiEdit(roiId) {
+    if (!this.roiEditingEnabled) return false;
     if (this.roiState !== RoiInteractionState.IDLE) return false;
     const roi = this.rois.find(item => item.roiId === Number(roiId));
     if (!roi) return false;
