@@ -8,8 +8,8 @@ import AcqImageCollectionTable from './components/AcqImageCollectionTable.vue'
 import ImageViewer from './components/ImageViewer.vue'
 import GithubMark from './components/GithubMark.vue'
 import MetadataInspector from './components/MetadataInspector.vue'
+import ResizableSection from './components/ResizableSection.vue'
 import SelectedAcqImageBar from './components/SelectedAcqImageBar.vue'
-import VerticalSplitPane from './components/VerticalSplitPane.vue'
 import { useViewerState } from './composables/useViewerState'
 import { plotsForAnalysis } from './plots/analysisPlotRegistry'
 import type { AxisRange, LinkedAxisUpdate } from './models/viewState'
@@ -133,14 +133,13 @@ onMounted(() => {
 
     <main class="app-main">
       <p v-if="viewer.error.value" class="error-message" role="alert">{{ viewer.error.value }}</p>
-      <VerticalSplitPane
-        v-if="viewer.acqImageCollectionDocument.value"
-        label="Resize collection table"
-        :initial-primary-ratio="0.3"
-        :minimum-primary="120"
-        :minimum-secondary="260"
-      >
-        <template #primary>
+      <template v-if="viewer.acqImageCollectionDocument.value">
+        <ResizableSection
+          label="Resize collection table"
+          :initial-height="250"
+          :minimum-height="0"
+          :maximum-height="600"
+        >
           <section class="panel file-panel">
             <div class="file-panel__heading">
               <strong>{{ viewer.acqImageCollectionDocument.value.data.name }}</strong>
@@ -160,60 +159,53 @@ onMounted(() => {
               @unload="viewer.unloadImage"
             />
           </section>
-        </template>
-        <template #secondary>
-          <section v-if="viewer.acqImageDocument.value" class="selected-workspace">
-            <SelectedAcqImageBar
-              :image="viewer.acqImageDocument.value.data"
+        </ResizableSection>
+
+        <template v-if="viewer.acqImageDocument.value">
+          <SelectedAcqImageBar
+            :image="viewer.acqImageDocument.value.data"
+            :channel="viewer.selectedChannel.value"
+            :roi-id="viewer.selectedRoiId.value"
+            :z="viewer.selectedZ.value"
+            :t="viewer.selectedT.value"
+            @update:channel="viewer.selectedChannel.value = $event"
+            @update:roi-id="viewer.selectedRoiId.value = $event"
+            @update:z="viewer.selectedZ.value = $event"
+            @update:t="viewer.selectedT.value = $event"
+          />
+          <ResizableSection
+            label="Resize image viewer"
+            :initial-height="440"
+            :minimum-height="0"
+            :maximum-height="900"
+          >
+            <ImageViewer
+              :image="viewer.acqImageDocument.value.data.image"
+              :document-url="viewer.acqImageDocument.value.url"
               :channel="viewer.selectedChannel.value"
-              :roi-id="viewer.selectedRoiId.value"
+              :roi="selectedRoi"
               :z="viewer.selectedZ.value"
               :t="viewer.selectedT.value"
-              @update:channel="viewer.selectedChannel.value = $event"
-              @update:roi-id="viewer.selectedRoiId.value = $event"
-              @update:z="viewer.selectedZ.value = $event"
-              @update:t="viewer.selectedT.value = $event"
+              :load-plane="viewer.loadPlane"
+              :x-range="linkedTimeRange"
+              @x-range-change="updateLinkedAxis"
             />
-            <VerticalSplitPane
-              label="Resize image and analysis plots"
-              :initial-primary-ratio="0.56"
-              :minimum-primary="240"
-              :minimum-secondary="180"
-            >
-              <template #primary>
-                <ImageViewer
-                  :image="viewer.acqImageDocument.value.data.image"
-                  :document-url="viewer.acqImageDocument.value.url"
-                  :channel="viewer.selectedChannel.value"
-                  :roi="selectedRoi"
-                  :z="viewer.selectedZ.value"
-                  :t="viewer.selectedT.value"
-                  :load-plane="viewer.loadPlane"
-                  :x-range="linkedTimeRange"
-                  @x-range-change="updateLinkedAxis"
-                />
-              </template>
-              <template #secondary>
-                <div v-if="visibleAnalyses.length" class="analysis-list">
-                  <AnalysisPlot
-                    v-for="analysis in visibleAnalyses"
-                    :key="analysis.id"
-                    :analysis="analysis"
-                    :document-url="viewer.acqImageDocument.value.url"
-                    :load-table="viewer.loadTable"
-                    :x-range="linkedTimeRange"
-                    @x-range-change="updateLinkedAxis"
-                  />
-                </div>
-                <section v-else class="panel empty-state">
-                  No plots for this channel and ROI.
-                </section>
-              </template>
-            </VerticalSplitPane>
-          </section>
-          <section v-else class="panel empty-state">Loading selected AcqImage…</section>
+          </ResizableSection>
+          <div v-if="visibleAnalyses.length" class="analysis-list">
+            <AnalysisPlot
+              v-for="analysis in visibleAnalyses"
+              :key="analysis.id"
+              :analysis="analysis"
+              :document-url="viewer.acqImageDocument.value.url"
+              :load-table="viewer.loadTable"
+              :x-range="linkedTimeRange"
+              @x-range-change="updateLinkedAxis"
+            />
+          </div>
+          <section v-else class="panel empty-state">No plots for this channel and ROI.</section>
         </template>
-      </VerticalSplitPane>
+        <section v-else class="panel empty-state">Loading selected AcqImage…</section>
+      </template>
       <section v-else class="panel empty-state">Open an AcqImageCollection to begin.</section>
     </main>
 

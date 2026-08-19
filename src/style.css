@@ -4,7 +4,7 @@
   --app-toolbar-width: 44px;
   --inspector-width: 0px;
   --inspector-open-width: 320px;
-  --splitter-size: 8px;
+  --resize-handle-size: 8px;
   --plot-gutter-left: 64px;
   --plot-gutter-right: 20px;
   --font-ui: 0.9167rem;
@@ -78,8 +78,9 @@ button {
   min-height: 0;
   grid-column: 3;
   grid-row: 2;
-  padding: 10px;
-  overflow: hidden;
+  padding: 10px 10px 28px;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 .app-footer {
   z-index: 30;
@@ -250,6 +251,10 @@ button:disabled {
   padding: 20px;
 }
 .file-panel {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  flex-direction: column;
   padding: 0;
   overflow: hidden;
 }
@@ -279,8 +284,9 @@ button:disabled {
   margin-bottom: 0;
 }
 .table-scroll {
-  height: calc(100% - 42px);
+  height: auto;
   min-height: 0;
+  flex: 1;
   overflow: auto;
 }
 .file-table {
@@ -347,10 +353,9 @@ button:disabled {
 }
 .analysis-list {
   display: grid;
-  min-height: 0;
   gap: 10px;
-  padding-right: 4px;
-  overflow: auto;
+  margin-top: 0;
+  padding: 0 4px 4px 0;
 }
 .image-panel {
   display: flex;
@@ -560,41 +565,32 @@ button:disabled {
 .metadata-empty {
   margin: 8px 0;
 }
-.vertical-split-pane {
-  display: grid;
-  width: 100%;
-  height: 100%;
-  min-height: 0;
+.resizable-section {
+  min-width: 0;
 }
-.split-pane {
+.resizable-section__content {
   min-width: 0;
   min-height: 0;
   overflow: hidden;
 }
-.splitter {
+.resize-handle {
   z-index: 5;
   display: grid;
+  height: var(--resize-handle-size);
   cursor: row-resize;
   touch-action: none;
   place-items: center;
 }
-.splitter span {
+.resize-handle span {
   width: 44px;
   height: 2px;
   border-radius: 2px;
   background: #31505c;
 }
-.splitter:hover span,
-.splitter:focus-visible span {
+.resize-handle:hover span,
+.resize-handle:focus-visible span {
   height: 3px;
   background: #6fd4ca;
-}
-.selected-workspace {
-  display: grid;
-  height: 100%;
-  min-height: 0;
-  grid-template-rows: auto minmax(0, 1fr);
-  gap: 8px;
 }
 .selected-acq-image {
   display: flex;
@@ -658,22 +654,6 @@ button:disabled {
     left: var(--app-toolbar-width);
     width: min(var(--inspector-open-width), calc(100vw - var(--app-toolbar-width)));
     box-shadow: 10px 0 30px rgb(0 0 0 / 45%);
-  }
-  .vertical-split-pane {
-    display: block;
-    height: auto;
-  }
-  .split-pane {
-    overflow: visible;
-  }
-  .splitter {
-    display: none;
-  }
-  .selected-workspace {
-    height: auto;
-  }
-  .image-panel {
-    height: 520px;
   }
   .selected-acq-image,
   .selected-acq-image__identity {
