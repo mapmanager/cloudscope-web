@@ -1,6 +1,6 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["src/**/*.ts", "src/**/*.vue", "tests/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.vue", "src/**/*.d.ts", "tests/**/*.ts"],
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "types": ["vitest/globals", "node"],

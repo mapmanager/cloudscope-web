@@ -355,117 +355,30 @@ button:disabled {
   padding: 0 4px 4px 0;
 }
 .image-panel {
+  position: relative;
   display: flex;
   height: 100%;
   min-width: 0;
   min-height: 0;
   flex-direction: column;
-  padding: 12px;
+  padding: 8px;
 }
-.image-stage {
-  position: relative;
-  display: grid;
-  min-height: 0;
-  flex: 1;
-  place-items: center;
-  overflow: hidden;
-  border: 1px solid #1c3039;
-  border-radius: 8px;
-  background: #020608;
-  cursor: crosshair;
-  touch-action: none;
-}
-.image-chart {
-  display: grid;
+.raster-viewer-host {
+  display: flex;
   min-width: 0;
   min-height: 0;
   flex: 1;
-  grid-template-columns: var(--plot-gutter-left) minmax(0, 1fr) var(--plot-gutter-right);
-  grid-template-rows: minmax(0, 1fr) 40px;
-}
-.image-chart .image-stage {
-  grid-column: 2;
-  grid-row: 1;
-}
-.image-y-axis {
-  position: relative;
-  grid-column: 1;
-  grid-row: 1;
-  border-right: 1px solid #82949b;
-}
-.image-y-axis .image-axis-tick {
-  position: absolute;
-  right: 5px;
-  transform: translateY(-50%);
-}
-.image-y-axis strong {
-  position: absolute;
-  top: 50%;
-  left: 2px;
-  color: #aebfc5;
-  font-size: 0.68rem;
-  font-weight: 500;
-  transform: translate(-42%, -50%) rotate(-90deg);
-  white-space: nowrap;
-}
-.image-x-axis {
-  position: relative;
-  grid-column: 2;
-  grid-row: 2;
-  border-top: 1px solid #82949b;
-}
-.image-x-axis .image-axis-tick {
-  position: absolute;
-  top: 4px;
-  transform: translateX(-50%);
-}
-.image-x-axis strong {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  color: #aebfc5;
-  font-size: 0.68rem;
-  font-weight: 500;
-  text-align: center;
-}
-.image-axis-tick {
-  color: #8da2aa;
-  font-size: 0.62rem;
-  line-height: 1;
-}
-.image-stage--pan,
-.image-stage--pan:active {
-  cursor: grab;
-}
-.image-stage--pan:active {
-  cursor: grabbing;
-}
-.image-stage canvas {
-  display: block;
   width: 100%;
-  height: 100%;
-  image-rendering: pixelated;
 }
-.image-selection {
-  position: absolute;
-  pointer-events: none;
-  border: 1px solid rgb(111 204 232 / 90%);
-  background: rgb(74 166 194 / 28%);
-}
-.image-selection--x {
-  border-top: 0;
-  border-bottom: 0;
-}
-.image-selection--y {
-  border-right: 0;
-  border-left: 0;
-}
-.image-heading {
-  margin-bottom: 7px;
+.image-panel .rv-root {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 .image-status {
   position: absolute;
+  z-index: 2;
   margin: 0;
   padding: 10px 12px;
   color: #b8cbd2;

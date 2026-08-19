@@ -4,3 +4,4 @@ coverage/
 data/
 public/samples/
 tmp-to-be-deleted/
+src/raster-viewer/

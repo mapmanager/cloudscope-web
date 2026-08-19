@@ -177,12 +177,17 @@ onMounted(() => {
               :image="viewer.acqImageDocument.value.data.image"
               :document-url="viewer.acqImageDocument.value.url"
               :channel="viewer.selectedChannel.value"
+              :rois="viewer.acqImageDocument.value.data.rois"
               :roi="selectedRoi"
               :z="viewer.selectedZ.value"
               :t="viewer.selectedT.value"
               :load-plane="viewer.loadPlane"
               :x-range="linkedTimeRange"
               @x-range-change="updateLinkedAxis"
+              @update:channel="viewer.selectedChannel.value = $event"
+              @update:z="viewer.selectedZ.value = $event"
+              @update:t="viewer.selectedT.value = $event"
+              @update:roi-id="viewer.selectedRoiId.value = $event"
             />
           </ResizableSection>
           <div v-if="visibleAnalyses.length" class="analysis-list">
