@@ -30,6 +30,9 @@ const error = ref<string | null>(null)
 const loading = ref(false)
 let request: AbortController | null = null
 let plotly: typeof import('plotly.js') | null = null
+let resizeObserver: ResizeObserver | null = null
+let resizeFrame: number | null = null
+let plotReady = false
 let applyingLinkedRange = false
 let currentXRange: AxisRange | null = null
 let boundElement:
@@ -55,6 +58,19 @@ function bindRelayout(): void {
   boundElement = element
 }
 
+/** Resize Plotly when its host changes without a browser-window resize event. */
+function schedulePlotResize(): void {
+  if (!plotReady || !plotly || !plotElement.value) return
+  if (resizeFrame !== null) cancelAnimationFrame(resizeFrame)
+  resizeFrame = requestAnimationFrame(() => {
+    resizeFrame = null
+    const element = plotElement.value
+    if (element && element.clientWidth > 0 && element.clientHeight > 0) {
+      void plotly?.Plots.resize(element)
+    }
+  })
+}
+
 async function applyLinkedRange(range: AxisRange | null): Promise<void> {
   if (!plotly || !plotElement.value || sameAxisRange(range, currentXRange)) return
   currentXRange = range
@@ -72,6 +88,7 @@ async function renderPlot(): Promise<void> {
   request = currentRequest
   error.value = null
   if (!plotElement.value) return
+  plotReady = false
   loading.value = true
   try {
     const [table, ...overlayTables] = await Promise.all([
@@ -99,6 +116,13 @@ async function renderPlot(): Promise<void> {
         : []
     })
     const hasLegend = overlayTraces.length > 0
+    const fixedMargin = {
+      l: PLOT_GUTTERS.left,
+      r: PLOT_GUTTERS.right,
+      t: 18,
+      b: hasLegend ? 82 : 52,
+      autoexpand: false,
+    }
     plotly ??= (await import('plotly.js-dist-min')).default
     currentXRange = props.xRange
     await plotly.react(
@@ -114,18 +138,23 @@ async function renderPlot(): Promise<void> {
       ],
       {
         autosize: true,
-        margin: { l: PLOT_GUTTERS.left, r: PLOT_GUTTERS.right, t: 18, b: hasLegend ? 82 : 52 },
+        margin: fixedMargin,
         paper_bgcolor: 'transparent',
         plot_bgcolor: 'transparent',
         font: { color: '#d8e5ea' },
         xaxis: {
           title: { text: props.spec.presentation.xLabel },
           gridcolor: '#2a3d46',
+          automargin: false,
           ...(props.xRange
             ? { range: [props.xRange.min, props.xRange.max], autorange: false }
             : { autorange: true }),
         },
-        yaxis: { title: { text: props.spec.presentation.yLabel }, gridcolor: '#2a3d46' },
+        yaxis: {
+          title: { text: props.spec.presentation.yLabel },
+          gridcolor: '#2a3d46',
+          automargin: false,
+        },
         showlegend: hasLegend,
         legend: {
           orientation: 'h',
@@ -137,7 +166,9 @@ async function renderPlot(): Promise<void> {
       },
       { responsive: true, displaylogo: false },
     )
+    plotReady = true
     bindRelayout()
+    schedulePlotResize()
   } catch (reason) {
     if (!currentRequest.signal.aborted)
       error.value = reason instanceof Error ? reason.message : String(reason)
@@ -146,7 +177,11 @@ async function renderPlot(): Promise<void> {
   }
 }
 
-onMounted(() => void renderPlot())
+onMounted(() => {
+  resizeObserver = new ResizeObserver(schedulePlotResize)
+  if (plotElement.value) resizeObserver.observe(plotElement.value)
+  void renderPlot()
+})
 watch([() => props.spec, () => props.resourceUrl.href], renderPlot)
 watch(
   () => props.xRange,
@@ -155,6 +190,8 @@ watch(
 )
 onBeforeUnmount(() => {
   request?.abort()
+  resizeObserver?.disconnect()
+  if (resizeFrame !== null) cancelAnimationFrame(resizeFrame)
   boundElement?.removeListener('plotly_relayout', handleRelayout)
   boundElement = null
   if (plotElement.value) plotly?.purge(plotElement.value)
