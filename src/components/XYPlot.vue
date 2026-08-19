@@ -2,6 +2,7 @@
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 import type { CsvTable } from '../data/csvLoader'
+import { PLOT_GUTTERS } from '../config/viewLayout'
 import type { AxisRange, LinkedAxisUpdate } from '../models/viewState'
 import {
   plotlyXRangeUpdate,
@@ -113,7 +114,7 @@ async function renderPlot(): Promise<void> {
       ],
       {
         autosize: true,
-        margin: { l: 64, r: 20, t: 18, b: hasLegend ? 82 : 52 },
+        margin: { l: PLOT_GUTTERS.left, r: PLOT_GUTTERS.right, t: 18, b: hasLegend ? 82 : 52 },
         paper_bgcolor: 'transparent',
         plot_bgcolor: 'transparent',
         font: { color: '#d8e5ea' },

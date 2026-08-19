@@ -121,6 +121,7 @@ describe('AcqImageCollection loader', () => {
           accepted: true,
           image_contrast: {},
           image_header_metadata: {},
+          experiment_metadata: { preparation: 'arteriole' },
           reference_image_metadata: {},
           rois: [],
           analysis: [
@@ -150,5 +151,6 @@ describe('AcqImageCollection loader', () => {
         peaks: null,
       },
     })
+    expect(loaded.data.metadata.experiment).toEqual({ preparation: 'arteriole' })
   })
 })

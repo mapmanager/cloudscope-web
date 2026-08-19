@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { axisTicks, physicalAxisLabel } from '../data/axisTicks'
 import {
   orientRoiForDisplay,
   orientYxPlaneForDisplay,
@@ -75,6 +76,16 @@ const shownX = computed(() => {
   const spacing = timeSpacing.value
   return full && spacing && props.xRange ? clampAxisRange(props.xRange, full, spacing) : full
 })
+const shownY = computed(() => {
+  const p = plane.value
+  if (!p) return null
+  const range = yRange.value ?? fullAxisRange(p.height, 1)
+  return { min: range.min * p.axes.y.spacing, max: range.max * p.axes.y.spacing }
+})
+const xTicks = computed(() => (shownX.value ? axisTicks(shownX.value) : []))
+const yTicks = computed(() => (shownY.value ? axisTicks(shownY.value, 5, true) : []))
+const xAxisLabel = computed(() => (plane.value ? physicalAxisLabel('s') : ''))
+const yAxisLabel = computed(() => (plane.value ? physicalAxisLabel(plane.value.axes.y.unit) : ''))
 const selectionStyle = computed(() => {
   const selected = selection.value
   const box = stage.value
@@ -349,30 +360,52 @@ onMounted(() => {
         <button type="button" class="secondary-action" @click="resetView">Reset view</button>
       </div>
     </div>
-    <div
-      ref="stage"
-      class="image-stage"
-      :class="{ 'image-stage--pan': spacePressed }"
-      :aria-busy="loading"
-      @wheel.prevent="wheel"
-      @pointerdown="pointerDown"
-      @pointermove="pointerMove"
-      @pointerup="pointerUp"
-      @pointercancel="pointerCancel"
-      @pointerenter="pointerInside = true"
-      @pointerleave="pointerInside = false"
-      @dblclick="resetView"
-    >
-      <canvas ref="canvas" aria-label="Interactive selected acquisition image" />
+    <div class="image-chart">
+      <div class="image-y-axis" aria-hidden="true">
+        <span
+          v-for="tick in yTicks"
+          :key="tick.position"
+          class="image-axis-tick"
+          :style="{ top: `${tick.position * 100}%` }"
+          >{{ tick.label }}</span
+        >
+        <strong>{{ yAxisLabel }}</strong>
+      </div>
       <div
-        v-if="selection"
-        class="image-selection"
-        :class="`image-selection--${selection.axis}`"
-        :style="selectionStyle"
-        aria-hidden="true"
-      />
-      <p v-if="loading" class="image-status">Loading image plane…</p>
-      <p v-else-if="error" class="image-status error-message" role="alert">{{ error }}</p>
+        ref="stage"
+        class="image-stage"
+        :class="{ 'image-stage--pan': spacePressed }"
+        :aria-busy="loading"
+        @wheel.prevent="wheel"
+        @pointerdown="pointerDown"
+        @pointermove="pointerMove"
+        @pointerup="pointerUp"
+        @pointercancel="pointerCancel"
+        @pointerenter="pointerInside = true"
+        @pointerleave="pointerInside = false"
+        @dblclick="resetView"
+      >
+        <canvas ref="canvas" aria-label="Interactive selected acquisition image" />
+        <div
+          v-if="selection"
+          class="image-selection"
+          :class="`image-selection--${selection.axis}`"
+          :style="selectionStyle"
+          aria-hidden="true"
+        />
+        <p v-if="loading" class="image-status">Loading image plane…</p>
+        <p v-else-if="error" class="image-status error-message" role="alert">{{ error }}</p>
+      </div>
+      <div class="image-x-axis" aria-hidden="true">
+        <span
+          v-for="tick in xTicks"
+          :key="tick.position"
+          class="image-axis-tick"
+          :style="{ left: `${tick.position * 100}%` }"
+          >{{ tick.label }}</span
+        >
+        <strong>{{ xAxisLabel }}</strong>
+      </div>
     </div>
     <p class="image-help muted">
       Drag horizontally or vertically to zoom · Space-drag to pan · scroll to zoom · double-click to

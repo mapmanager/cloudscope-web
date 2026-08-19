@@ -66,6 +66,7 @@ export interface NativeAcqImageSidecar {
   }>
   image_contrast: Record<string, unknown>
   image_header_metadata: Record<string, unknown>
-  reference_image_metadata: Record<string, unknown>
+  experiment_metadata?: Record<string, unknown>
+  reference_image_metadata?: Record<string, unknown>
   rois: Array<Record<string, unknown>>
 }

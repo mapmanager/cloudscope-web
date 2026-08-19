@@ -108,7 +108,7 @@ describe('viewer selection state', () => {
           { id: 7, type: 'rect', name: '', note: '', x_start: 0, x_stop: 4, y_start: 0, y_stop: 5 },
         ],
         analyses: [],
-        metadata: {},
+        metadata: { image_header: {}, experiment: {}, reference_image: {} },
         reference_image: null,
       },
     })

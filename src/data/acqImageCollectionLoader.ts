@@ -292,7 +292,8 @@ export async function loadAcqImageCollectionEntry(
       analyses,
       metadata: {
         image_header: sidecar.image_header_metadata,
-        reference_image: sidecar.reference_image_metadata,
+        experiment: sidecar.experiment_metadata ?? {},
+        reference_image: sidecar.reference_image_metadata ?? {},
       },
       reference_image: null,
       load_state: { pixels: false, analysisCsv: false },

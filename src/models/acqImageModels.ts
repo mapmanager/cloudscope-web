@@ -143,7 +143,11 @@ export interface AcqImageDocument {
   image: PrimaryImageDescriptor
   rois: Roi[]
   analyses: ExportedAnalysis[]
-  metadata: Record<string, Record<string, unknown>>
+  metadata: {
+    image_header: Record<string, unknown>
+    experiment: Record<string, unknown>
+    reference_image: Record<string, unknown>
+  }
   reference_image: ReferenceImageDescriptor | null
   load_state?: LoadState
 }
