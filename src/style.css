@@ -179,18 +179,19 @@ h3 {
   background: #0a171d;
   box-shadow: 0 16px 48px rgb(0 0 0 / 45%);
 }
-.collection-source form + form,
-.collection-source form + details,
-.collection-source details + form {
+.collection-source form + form {
   margin-top: 14px;
 }
-.collection-source__advanced {
-  margin-top: 12px;
-  color: #8ca1ab;
-  font-size: 0.78rem;
+.collection-source__section {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #20353f;
 }
-.collection-source__advanced form {
-  margin-top: 10px;
+.collection-source__heading {
+  margin-bottom: 12px;
+  color: #d8e5ea;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
 }
 .collection-source label {
   display: block;
