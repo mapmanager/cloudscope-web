@@ -19,7 +19,11 @@ import {
   viewerUrl,
 } from '../src/composables/useViewerState'
 import { defaultSampleCollection } from '../src/config/sampleCollections'
-import type { AcqImageCollectionRow } from '../src/models/acqImageModels'
+import type {
+  AcqImageCollectionRow,
+  AcqImageDocument,
+  LoadedDocument,
+} from '../src/models/acqImageModels'
 
 function collectionRow(id: string, href: string, name: string): AcqImageCollectionRow {
   return {
@@ -40,7 +44,12 @@ function collectionRow(id: string, href: string, name: string): AcqImageCollecti
   }
 }
 
-function acqImageDocument(id: string, href: string, name: string, roiId: number) {
+function acqImageDocument(
+  id: string,
+  href: string,
+  name: string,
+  roiId: number,
+): LoadedDocument<AcqImageDocument> {
   return {
     url: new URL(`https://example.test/${href}`),
     data: {
