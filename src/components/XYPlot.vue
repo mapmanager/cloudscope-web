@@ -199,8 +199,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <article class="analysis-card">
-    <p v-if="loading" class="muted">Loading plot…</p>
+  <article class="analysis-card" :aria-busy="loading">
     <p v-if="error" class="error-message">{{ error }}</p>
     <div ref="plotElement" class="plot" :aria-label="`${spec.title} plot`"></div>
   </article>

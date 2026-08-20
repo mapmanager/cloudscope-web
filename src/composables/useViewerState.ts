@@ -243,10 +243,27 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     { flush: 'post' },
   )
 
+  function clearAcqImageDocument(): void {
+    acqImageDocument.value = null
+    selectedChannel.value = 0
+    selectedRoiId.value = null
+    selectedZ.value = 0
+    selectedT.value = 0
+  }
+
+  /**
+   * Select a collection member by id.
+   *
+   * A valid row change keeps the previous AcqImage, channel, ROI, Z, and T until
+   * the new sidecar arrives, then commits the new document and default plane in
+   * one update. Empty selection still clears the document.
+   *
+   * @param imageId Collection member id, or `null` to clear the selection.
+   */
   async function selectAcqImage(imageId: string | null): Promise<void> {
     if (
       imageId === selectedAcqImageId.value &&
-      (acqImageDocument.value !== null || acqImageLoading.value)
+      (acqImageDocument.value?.data.id === imageId || acqImageLoading.value)
     ) {
       return
     }
@@ -254,15 +271,10 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     const controller = new AbortController()
     selectionController = controller
     const request = ++selectionRequest
-    acqImageLoading.value = imageId !== null && acqImageCollectionDocument.value !== null
     selectedAcqImageId.value = imageId
-    selectedChannel.value = 0
-    selectedRoiId.value = null
-    selectedZ.value = 0
-    selectedT.value = 0
-    acqImageDocument.value = null
     error.value = null
     if (imageId === null || acqImageCollectionDocument.value === null) {
+      clearAcqImageDocument()
       selectionController = null
       acqImageLoading.value = false
       return
@@ -276,6 +288,7 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
       error.value = `Unknown image ID: ${imageId}`
       return
     }
+    acqImageLoading.value = true
     loading.value = true
     try {
       if (!activeSource.value) throw new Error('No collection source is active')
@@ -290,7 +303,10 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
       if (loaded.data.load_state) {
         updateLoadState(imageId, loaded.data.load_state)
       }
+      selectedChannel.value = 0
       selectedRoiId.value = loaded.data.rois[0]?.id ?? null
+      selectedZ.value = 0
+      selectedT.value = 0
     } catch (reason) {
       if (
         request === selectionRequest &&

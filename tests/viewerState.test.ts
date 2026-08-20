@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('../src/data/datasetLoader', () => ({
   loadDataset: vi.fn(),
@@ -19,6 +19,79 @@ import {
   viewerUrl,
 } from '../src/composables/useViewerState'
 import { defaultSampleCollection } from '../src/config/sampleCollections'
+import type { AcqImageCollectionRow } from '../src/models/acqImageModels'
+
+function collectionRow(id: string, href: string, name: string): AcqImageCollectionRow {
+  return {
+    id,
+    name,
+    href,
+    shape: [5, 4],
+    dims: ['y', 'x'],
+    sizes: { y: 5, x: 4 },
+    dtype: 'uint16',
+    axes: [],
+    acquisition: { date: '', time: '' },
+    num_channels: 1,
+    num_rois: 1,
+    analysis_types: [],
+    accepted: true,
+    has_reference_image: false,
+  }
+}
+
+function acqImageDocument(id: string, href: string, name: string, roiId: number) {
+  return {
+    url: new URL(`https://example.test/${href}`),
+    data: {
+      format: 'acqstore-web-acqimage',
+      format_version: 1,
+      id,
+      name,
+      accepted: true,
+      image: {
+        href: `${id}.ome.zarr`,
+        shape: [5, 4],
+        dims: ['y', 'x'],
+        sizes: { y: 5, x: 4 },
+        dtype: 'uint16',
+        axes: [],
+        num_channels: 1,
+        default_channel: 0,
+        channels: [{ index: 0, contrast: null }],
+        acquisition: { date: '', time: '' },
+      },
+      rois: [
+        {
+          id: roiId,
+          type: 'rect' as const,
+          name: '',
+          note: '',
+          x_start: 0,
+          x_stop: 4,
+          y_start: 0,
+          y_stop: 5,
+        },
+      ],
+      analyses: [],
+      metadata: { image_header: {}, experiment: {}, reference_image: {} },
+      reference_image: null,
+    },
+  }
+}
+
+function mockCollection(acqImages: AcqImageCollectionRow[]): void {
+  vi.mocked(loadDataset).mockResolvedValue({
+    url: new URL('https://example.test/dataset.json'),
+    data: {
+      id: 'dataset',
+      name: 'test',
+      acqstore_version: '1',
+      created_utc: '',
+      acq_images: acqImages,
+    },
+  })
+}
 
 describe('viewer URL state', () => {
   it('uses the bundled diameter collection when no explicit source is present', () => {
@@ -56,6 +129,10 @@ describe('viewer URL state', () => {
 })
 
 describe('viewer selection state', () => {
+  beforeEach(() => {
+    window.history.replaceState(null, '', '/')
+  })
+
   it('resets channel, ROI, Z, and T when a file is selected', async () => {
     vi.mocked(loadDataset).mockResolvedValue({
       url: new URL('https://example.test/dataset.json'),
@@ -134,7 +211,86 @@ describe('viewer selection state', () => {
     expect(loadAcqImage).toHaveBeenCalledTimes(descriptorLoads + 1)
   })
 
+  it('keeps the previous AcqImage until the next sidecar commits', async () => {
+    const first = acqImageDocument('image-1', 'images/one.json', 'one', 7)
+    const second = acqImageDocument('image-2', 'images/two.json', 'two', 3)
+    mockCollection([
+      collectionRow('image-1', 'images/one.json', 'one'),
+      collectionRow('image-2', 'images/two.json', 'two'),
+    ])
+    let pendingSecond: ((value: typeof second) => void) | null = null
+    vi.mocked(loadAcqImage).mockImplementation((_url, href) => {
+      if (String(href).includes('two.json')) {
+        return new Promise((resolve) => {
+          pendingSecond = resolve
+        })
+      }
+      return Promise.resolve(first)
+    })
+
+    const state = useViewerState()
+    await state.openAcqImageCollection('https://example.test/dataset.json')
+    state.selectedChannel.value = 2
+    state.selectedZ.value = 4
+    state.selectedT.value = 3
+
+    const pending = state.selectAcqImage('image-2')
+    expect(pendingSecond).not.toBeNull()
+    expect(state.selectedAcqImageId.value).toBe('image-2')
+    expect(state.acqImageDocument.value?.data.id).toBe('image-1')
+    expect(state.selectedChannel.value).toBe(2)
+    expect(state.selectedRoiId.value).toBe(7)
+    expect(state.selectedZ.value).toBe(4)
+    expect(state.selectedT.value).toBe(3)
+    expect(state.acqImageLoading.value).toBe(true)
+
+    pendingSecond!(second)
+    await pending
+
+    expect(state.acqImageDocument.value?.data.id).toBe('image-2')
+    expect(state.selectedChannel.value).toBe(0)
+    expect(state.selectedRoiId.value).toBe(3)
+    expect(state.selectedZ.value).toBe(0)
+    expect(state.selectedT.value).toBe(0)
+    expect(state.acqImageLoading.value).toBe(false)
+  })
+
+  it('keeps the previous AcqImage when the next sidecar fails', async () => {
+    const first = acqImageDocument('image-1', 'images/one.json', 'one', 7)
+    const second = acqImageDocument('image-2', 'images/two.json', 'two', 3)
+    mockCollection([
+      collectionRow('image-1', 'images/one.json', 'one'),
+      collectionRow('image-2', 'images/two.json', 'two'),
+    ])
+    vi.mocked(loadAcqImage).mockImplementation((_url, href) => {
+      if (String(href).includes('two.json')) return Promise.reject(new Error('sidecar failed'))
+      return Promise.resolve(first)
+    })
+
+    const state = useViewerState()
+    await state.openAcqImageCollection('https://example.test/dataset.json')
+    await state.selectAcqImage('image-2')
+
+    expect(state.acqImageDocument.value?.data.id).toBe('image-1')
+    expect(state.selectedRoiId.value).toBe(7)
+    expect(state.error.value).toBe('sidecar failed')
+    expect(state.selectedAcqImageId.value).toBe('image-2')
+
+    vi.mocked(loadAcqImage).mockImplementation((_url, href) => {
+      if (String(href).includes('two.json')) return Promise.resolve(second)
+      return Promise.resolve(first)
+    })
+    await state.selectAcqImage('image-2')
+    expect(state.acqImageDocument.value?.data.id).toBe('image-2')
+    expect(state.selectedRoiId.value).toBe(3)
+    expect(state.error.value).toBeNull()
+  })
+
   it('reuses a cached channel/Z/T plane', async () => {
+    mockCollection([collectionRow('image-1', 'images/one.json', 'one')])
+    vi.mocked(loadAcqImage).mockResolvedValue(
+      acqImageDocument('image-1', 'images/one.json', 'one', 7),
+    )
     vi.mocked(loadImagePlane).mockResolvedValue({
       data: new Uint16Array([1, 2, 3, 4]),
       width: 2,

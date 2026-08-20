@@ -26,7 +26,7 @@ function updateLinkedAxis(update: LinkedAxisUpdate): void {
 }
 
 watch(
-  () => viewer.selectedAcqImageId.value,
+  () => viewer.acqImageDocument.value?.data.id,
   () => {
     linkedTimeRange.value = null
   },

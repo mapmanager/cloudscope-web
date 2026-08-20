@@ -44,6 +44,7 @@ const emit = defineEmits<{
 
 const host = ref<HTMLDivElement | null>(null)
 const loading = ref(false)
+const hasPainted = ref(false)
 const error = ref<string | null>(null)
 let viewer: RasterViewer | null = null
 let loadGeneration = 0
@@ -203,6 +204,7 @@ async function reload(): Promise<void> {
     viewer.loadSourcePlane = loadSourcePlane
     await viewer.load(descriptor)
     if (generation !== loadGeneration) return
+    hasPainted.value = true
     const selected = String(props.channel)
     if (descriptor.channels.some((channel) => channel.id === selected)) {
       viewer.selectChannel(selected, false)
@@ -306,7 +308,7 @@ onBeforeUnmount(() => {
 <template>
   <section class="panel image-panel">
     <div ref="host" class="raster-viewer-host" :aria-busy="loading" />
-    <p v-if="loading" class="image-status">Loading image plane…</p>
+    <p v-if="loading && !hasPainted" class="image-status">Loading image plane…</p>
     <p v-else-if="error" class="image-status error-message" role="alert">{{ error }}</p>
   </section>
 </template>

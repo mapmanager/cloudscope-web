@@ -26,7 +26,9 @@ defineEmits<{ close: [] }>()
       </button>
     </header>
     <div class="metadata-inspector__body">
-      <p v-if="loading" class="muted metadata-empty">Loading selected AcqImage…</p>
+      <p v-if="loading && Object.keys(metadata).length === 0" class="muted metadata-empty">
+        Loading selected AcqImage…
+      </p>
       <MetadataCard v-else :metadata="metadata" :empty-message="emptyMessage" />
     </div>
   </aside>
