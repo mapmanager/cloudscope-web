@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Source zip: omit data/, dist/, node_modules/, and generated caches.
+# Source zip of the files needed to install, verify, build, and redeploy.
+# Omit data/, dist/, node_modules/, public/samples/, zips/, and generated caches.
 # Always writes to zips/cloudscope-web-YYYYMMDD-vN.zip (N increments for today's date).
 set -euo pipefail
 
@@ -29,24 +30,44 @@ shopt -u nullglob
 ZIP_PATH="$ZIPS_DIR/${PREFIX}${NEXT_N}.zip"
 rm -f "$ZIP_PATH"
 
+# Allowlist of source paths. Skip any that are absent so the zip does not fail.
+INCLUDE_CANDIDATES=(
+    src
+    tests
+    scripts
+    public
+    .github
+    .githooks
+    index.html
+    package.json
+    package-lock.json
+    vite.config.ts
+    tsconfig.json
+    tsconfig.app.json
+    tsconfig.node.json
+    eslint.config.js
+    README.md
+    AGENTS.md
+    .gitignore
+    .prettierrc.json
+    .prettierignore
+)
+
+INCLUDE=()
+for path in "${INCLUDE_CANDIDATES[@]}"; do
+    if [[ -e "$path" ]]; then
+        INCLUDE+=("$path")
+    fi
+done
+
 zip -r "$ZIP_PATH" \
-    src \
-    tests \
-    index.html \
-    package.json \
-    package-lock.json \
-    vite.config.ts \
-    tsconfig.json \
-    tsconfig.app.json \
-    tsconfig.node.json \
-    eslint.config.js \
-    .gitignore \
-    .prettierrc.json \
-    .prettierignore \
+    "${INCLUDE[@]}" \
     -x \
     "node_modules/*" \
     "dist/*" \
     "data/*" \
+    "zips/*" \
+    "public/samples/*" \
     "coverage/*" \
     ".vite/*" \
     ".git/*" \
