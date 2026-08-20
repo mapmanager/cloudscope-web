@@ -100,6 +100,16 @@
   max-width: 9rem;
 }
 
+.rv-roi-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--rv-text);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .rv-toolbar[hidden] {
   display: none;
 }
@@ -362,10 +372,11 @@
 }
 
 .rv-channel-name {
-  min-width: 1.5em;
+  min-width: max-content;
   color: var(--rv-text);
   font-weight: 700;
-  text-align: center;
+  text-align: left;
+  white-space: nowrap;
 }
 
 .rv-range-popover {

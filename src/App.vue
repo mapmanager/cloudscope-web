@@ -16,6 +16,8 @@ import type { AxisRange, LinkedAxisUpdate } from './models/viewState'
 
 const viewer = useViewerState()
 const showLocalServer = import.meta.env.DEV
+/** Hidden while the raster viewer owns Channel/ROI/Z/T. Restore after 2-channel sample smoke. */
+const showSelectedAcqImageBar = false
 const linkedTimeRange = ref<AxisRange | null>(null)
 const activeInspector = ref<InspectorKind | null>(null)
 
@@ -157,6 +159,7 @@ onMounted(() => {
 
         <template v-if="viewer.acqImageDocument.value">
           <SelectedAcqImageBar
+            v-if="showSelectedAcqImageBar"
             :image="viewer.acqImageDocument.value.data"
             :channel="viewer.selectedChannel.value"
             :roi-id="viewer.selectedRoiId.value"

@@ -587,7 +587,7 @@ export class RasterViewer {
     for (const channel of this.channels) {
       const option = document.createElement('option');
       option.value = channel.id;
-      option.textContent = String(channel.index);
+      option.textContent = `Channel ${channel.index}`;
       channelSelect.append(option);
     }
     channelSelect.value = this.selected;
@@ -634,7 +634,12 @@ export class RasterViewer {
       const value = select.value === '' ? null : Number(select.value);
       this.selectRoi(value, {emit: true, source: 'dropdown'});
     });
-    strip.append(select);
+    const roiLabel = document.createElement('label');
+    roiLabel.className = 'rv-roi-label';
+    const roiCaption = document.createElement('span');
+    roiCaption.textContent = 'ROI';
+    roiLabel.append(roiCaption, select);
+    strip.append(roiLabel);
     this.roiSelect = select;
     this.roiIdleControls.push(select);
 
@@ -727,7 +732,7 @@ export class RasterViewer {
     this.roiSelect.replaceChildren();
     const empty = document.createElement('option');
     empty.value = '';
-    empty.textContent = this.rois.length ? 'ROI' : 'No ROIs';
+    empty.textContent = this.rois.length ? 'None' : 'No ROIs';
     this.roiSelect.append(empty);
     for (const roi of this.rois) {
       const option = document.createElement('option');
@@ -1439,7 +1444,7 @@ export class RasterViewer {
 
     const name = document.createElement('span');
     name.className = 'rv-channel-name';
-    name.textContent = String(channel.index);
+    name.textContent = `Channel ${channel.index}`;
     name.setAttribute('role', 'button');
     name.tabIndex = 0;
     const select = () => {
