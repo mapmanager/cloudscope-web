@@ -4,13 +4,19 @@ import { describe, expect, it } from 'vitest'
 import AcqImageCollectionSource from '../src/components/AcqImageCollectionSource.vue'
 import { defaultSampleCollection, sampleCollections } from '../src/config/sampleCollections'
 
-describe('bundled sample catalog', () => {
-  it('has unique IDs and deployment-safe URLs', () => {
+describe('hosted sample catalog', () => {
+  it('has unique IDs and valid R2-hosted URLs', () => {
     expect(new Set(sampleCollections.map(({ id }) => id)).size).toBe(sampleCollections.length)
     expect(new Set(sampleCollections.map(({ url }) => url)).size).toBe(sampleCollections.length)
+
     for (const sample of sampleCollections) {
-      expect(sample.url).toMatch(/^\.\/samples\/.+\.ome\.zarr\/$/)
+      const url = new URL(sample.url)
+
+      expect(url.protocol).toBe('https:')
+      expect(url.hostname).toBe('data.mapmanager.net')
+      expect(url.pathname).toMatch(/^\/samples\/.+\.ome\.zarr\/$/)
     }
+
     expect(defaultSampleCollection.id).toBe('diameter')
   })
 

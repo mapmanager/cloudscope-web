@@ -1,8 +1,0 @@
-{
-  "analyses": [],
-  "format": "acqstore-native-ome-zarr",
-  "image_group": ".",
-  "sidecar": "acqstore/acq_image.json",
-  "version": 2,
-  "zarr_format": 3
-}
