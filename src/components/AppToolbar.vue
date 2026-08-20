@@ -1,20 +1,35 @@
 <script setup lang="ts">
-import { FileJson2, FlaskConical } from '@lucide/vue'
+import { FileJson2, FlaskConical, Table2 } from '@lucide/vue'
 
-/** Metadata views supported by the fixed AcqImage inspector toolbar. */
-export type InspectorKind = 'image-header' | 'experiment'
+/** Panes opened from the left inspector toolbar. */
+export type InspectorKind = 'files' | 'image-header' | 'experiment'
 
-defineProps<{ active: InspectorKind | null; disabled: boolean }>()
+defineProps<{
+  active: InspectorKind | null
+  filesDisabled: boolean
+  metadataDisabled: boolean
+}>()
 defineEmits<{ select: [kind: InspectorKind] }>()
 </script>
 
 <template>
-  <nav class="app-toolbar" aria-label="AcqImage information">
+  <nav class="app-toolbar" aria-label="Views">
+    <button
+      type="button"
+      class="icon-button"
+      :class="{ active: active === 'files' }"
+      :disabled="filesDisabled"
+      aria-label="Files"
+      title="Files"
+      @click="$emit('select', 'files')"
+    >
+      <Table2 :size="19" aria-hidden="true" />
+    </button>
     <button
       type="button"
       class="icon-button"
       :class="{ active: active === 'image-header' }"
-      :disabled="disabled"
+      :disabled="metadataDisabled"
       aria-label="Image header metadata"
       title="Image header metadata"
       @click="$emit('select', 'image-header')"
@@ -25,7 +40,7 @@ defineEmits<{ select: [kind: InspectorKind] }>()
       type="button"
       class="icon-button"
       :class="{ active: active === 'experiment' }"
-      :disabled="disabled"
+      :disabled="metadataDisabled"
       aria-label="Experiment metadata"
       title="Experiment metadata"
       @click="$emit('select', 'experiment')"

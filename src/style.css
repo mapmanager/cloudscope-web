@@ -445,6 +445,12 @@ button:disabled {
   padding: 8px 12px;
   overflow: auto;
 }
+.metadata-inspector__body--table {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  padding: 0;
+}
 .metadata-list {
   display: grid;
   grid-template-columns: minmax(90px, 0.8fr) minmax(0, 1.2fr);

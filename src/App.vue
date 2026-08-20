@@ -7,6 +7,7 @@ import AcqImageCollectionSource from './components/AcqImageCollectionSource.vue'
 import AcqImageCollectionTable from './components/AcqImageCollectionTable.vue'
 import ImageViewer from './components/ImageViewer.vue'
 import GithubMark from './components/GithubMark.vue'
+import CollectionFilesInspector from './components/CollectionFilesInspector.vue'
 import MetadataInspector from './components/MetadataInspector.vue'
 import ResizableSection from './components/ResizableSection.vue'
 import SelectedAcqImageBar from './components/SelectedAcqImageBar.vue'
@@ -125,11 +126,19 @@ onMounted(() => {
 
     <AppToolbar
       :active="activeInspector"
-      :disabled="!viewer.acqImageDocument.value"
+      :files-disabled="!viewer.acqImageCollectionDocument.value"
+      :metadata-disabled="!viewer.acqImageDocument.value"
       @select="toggleInspector"
     />
+    <CollectionFilesInspector
+      v-if="activeInspector === 'files' && viewer.acqImageCollectionDocument.value"
+      :acq-images="viewer.acqImageCollectionDocument.value.data.acq_images"
+      :selected-acq-image-id="viewer.selectedAcqImageId.value"
+      @select="viewer.selectAcqImage"
+      @close="activeInspector = null"
+    />
     <MetadataInspector
-      v-if="activeInspector"
+      v-else-if="activeInspector === 'image-header' || activeInspector === 'experiment'"
       :title="inspector.title"
       :metadata="inspector.metadata"
       :empty-message="inspector.emptyMessage"
