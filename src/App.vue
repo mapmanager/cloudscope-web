@@ -12,6 +12,7 @@ import MetadataInspector from './components/MetadataInspector.vue'
 import ResizableSection from './components/ResizableSection.vue'
 import SelectedAcqImageBar from './components/SelectedAcqImageBar.vue'
 import { useViewerState } from './composables/useViewerState'
+import { clampSectionHeight } from './data/resizableSection'
 import { plotsForAnalysis } from './plots/analysisPlotRegistry'
 import type { AxisRange, LinkedAxisUpdate } from './models/viewState'
 
@@ -21,6 +22,61 @@ const showLocalServer = import.meta.env.DEV
 const showSelectedAcqImageBar = false
 const linkedTimeRange = ref<AxisRange | null>(null)
 const activeInspector = ref<InspectorKind | null>(null)
+/** Matches `--inspector-open-width` until the user drags the inspector split. */
+const INSPECTOR_MIN_WIDTH = 0
+const INSPECTOR_MAX_WIDTH = 720
+const INSPECTOR_DEFAULT_WIDTH = 320
+/** Widths thinner than the handle count as closed on pointer-up / Home. */
+const INSPECTOR_CLOSE_WIDTH = 8
+const inspectorWidth = ref(INSPECTOR_DEFAULT_WIDTH)
+const inspectorResizing = ref(false)
+let inspectorDrag: { pointerId: number; startX: number; startWidth: number } | null = null
+
+function resizeInspector(requested: number): void {
+  inspectorWidth.value = clampSectionHeight(requested, INSPECTOR_MIN_WIDTH, INSPECTOR_MAX_WIDTH)
+}
+
+function closeCollapsedInspector(): void {
+  activeInspector.value = null
+  inspectorWidth.value = INSPECTOR_DEFAULT_WIDTH
+}
+
+function finishInspectorResize(): void {
+  inspectorDrag = null
+  inspectorResizing.value = false
+  if (inspectorWidth.value < INSPECTOR_CLOSE_WIDTH) closeCollapsedInspector()
+}
+
+function inspectorPointerDown(event: PointerEvent): void {
+  inspectorDrag = {
+    pointerId: event.pointerId,
+    startX: event.clientX,
+    startWidth: inspectorWidth.value,
+  }
+  inspectorResizing.value = true
+  ;(event.currentTarget as HTMLElement).setPointerCapture(event.pointerId)
+}
+
+function inspectorPointerMove(event: PointerEvent): void {
+  if (!inspectorDrag || inspectorDrag.pointerId !== event.pointerId) return
+  resizeInspector(inspectorDrag.startWidth + event.clientX - inspectorDrag.startX)
+}
+
+function inspectorPointerUp(event: PointerEvent): void {
+  if (inspectorDrag?.pointerId !== event.pointerId) return
+  finishInspectorResize()
+}
+
+function inspectorKeyDown(event: KeyboardEvent): void {
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return
+  event.preventDefault()
+  const step = event.shiftKey ? 40 : 10
+  if (event.key === 'ArrowLeft') resizeInspector(inspectorWidth.value - step)
+  else if (event.key === 'ArrowRight') resizeInspector(inspectorWidth.value + step)
+  else if (event.key === 'Home') resizeInspector(INSPECTOR_MIN_WIDTH)
+  else resizeInspector(INSPECTOR_MAX_WIDTH)
+  if (inspectorWidth.value < INSPECTOR_CLOSE_WIDTH) closeCollapsedInspector()
+}
 
 function updateLinkedAxis(update: LinkedAxisUpdate): void {
   if (update.group === 'time') linkedTimeRange.value = update.range
@@ -86,7 +142,14 @@ const footerStatus = computed(() => {
 })
 
 function toggleInspector(kind: InspectorKind): void {
-  activeInspector.value = activeInspector.value === kind ? null : kind
+  if (activeInspector.value === kind) {
+    activeInspector.value = null
+    return
+  }
+  if (inspectorWidth.value < INSPECTOR_CLOSE_WIDTH) {
+    inspectorWidth.value = INSPECTOR_DEFAULT_WIDTH
+  }
+  activeInspector.value = kind
 }
 
 onMounted(() => {
@@ -95,7 +158,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="app-shell" :class="{ 'inspector-open': activeInspector }">
+  <div
+    class="app-shell"
+    :class="{ 'inspector-open': activeInspector, 'inspector-resizing': inspectorResizing }"
+    :style="{ '--inspector-open-width': `${inspectorWidth}px` }"
+  >
     <header class="app-header">
       <h1>CloudScope Web</h1>
       <div class="app-header__actions">
@@ -145,6 +212,24 @@ onMounted(() => {
       :loading="viewer.acqImageLoading.value"
       @close="activeInspector = null"
     />
+    <div
+      v-if="activeInspector"
+      class="resize-handle resize-handle--vertical"
+      role="separator"
+      tabindex="0"
+      aria-orientation="vertical"
+      aria-label="Resize inspector"
+      :aria-valuemin="INSPECTOR_MIN_WIDTH"
+      :aria-valuemax="INSPECTOR_MAX_WIDTH"
+      :aria-valuenow="Math.round(inspectorWidth)"
+      @pointerdown="inspectorPointerDown"
+      @pointermove="inspectorPointerMove"
+      @pointerup="inspectorPointerUp"
+      @pointercancel="inspectorPointerUp"
+      @keydown="inspectorKeyDown"
+    >
+      <span aria-hidden="true" />
+    </div>
 
     <main class="app-main">
       <p v-if="viewer.error.value" class="error-message" role="alert">{{ viewer.error.value }}</p>

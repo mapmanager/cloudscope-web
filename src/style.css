@@ -55,6 +55,9 @@ button {
 .app-shell.inspector-open {
   --inspector-width: var(--inspector-open-width);
 }
+.app-shell.inspector-resizing {
+  transition: none;
+}
 .app-header {
   z-index: 30;
   grid-column: 1 / -1;
@@ -501,6 +504,24 @@ button:disabled {
   height: 3px;
   background: #6fd4ca;
 }
+.resize-handle--vertical {
+  z-index: 21;
+  grid-column: 2;
+  grid-row: 2;
+  width: var(--resize-handle-size);
+  height: auto;
+  justify-self: end;
+  cursor: col-resize;
+}
+.resize-handle--vertical span {
+  width: 2px;
+  height: 44px;
+}
+.resize-handle--vertical:hover span,
+.resize-handle--vertical:focus-visible span {
+  width: 3px;
+  height: 44px;
+}
 .selected-acq-image {
   display: flex;
   min-width: 0;
@@ -563,6 +584,9 @@ button:disabled {
     left: var(--app-toolbar-width);
     width: min(var(--inspector-open-width), calc(100vw - var(--app-toolbar-width)));
     box-shadow: 10px 0 30px rgb(0 0 0 / 45%);
+  }
+  .resize-handle--vertical {
+    display: none;
   }
   .selected-acq-image,
   .selected-acq-image__identity {
