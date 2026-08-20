@@ -629,6 +629,7 @@ export class RasterViewer {
 
     const select = document.createElement('select');
     select.className = 'rv-roi-select';
+    select.dataset.rvTooltip = 'Select ROI';
     select.setAttribute('aria-label', 'Selected ROI');
     select.addEventListener('change', () => {
       const value = select.value === '' ? null : Number(select.value);
@@ -1458,6 +1459,7 @@ export class RasterViewer {
     const enabled = document.createElement('input');
     enabled.type = 'checkbox';
     enabled.checked = channel.enabled;
+    enabled.dataset.rvTooltip = 'Toggle channel display';
     enabled.setAttribute('aria-label', `${channel.label} visible`);
     enabled.addEventListener('change', () => {
       channel.enabled = enabled.checked;
@@ -1465,6 +1467,7 @@ export class RasterViewer {
     });
 
     const lut = document.createElement('select');
+    lut.dataset.rvTooltip = 'Color LUT';
     lut.setAttribute('aria-label', `${channel.label} color LUT`);
     for (const [value, text] of Object.entries(LUT_LABELS)) {
       const option = document.createElement('option');

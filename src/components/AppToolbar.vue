@@ -19,8 +19,8 @@ defineEmits<{ select: [kind: InspectorKind] }>()
       class="icon-button"
       :class="{ active: active === 'files' }"
       :disabled="filesDisabled"
-      aria-label="Files"
-      title="Files"
+      aria-label="File table"
+      title="File table"
       @click="$emit('select', 'files')"
     >
       <Table2 :size="19" aria-hidden="true" />
@@ -30,8 +30,8 @@ defineEmits<{ select: [kind: InspectorKind] }>()
       class="icon-button"
       :class="{ active: active === 'image-header' }"
       :disabled="metadataDisabled"
-      aria-label="Image header metadata"
-      title="Image header metadata"
+      aria-label="Header metadata"
+      title="Header metadata"
       @click="$emit('select', 'image-header')"
     >
       <FileJson2 :size="19" aria-hidden="true" />
@@ -41,8 +41,8 @@ defineEmits<{ select: [kind: InspectorKind] }>()
       class="icon-button"
       :class="{ active: active === 'experiment' }"
       :disabled="metadataDisabled"
-      aria-label="Experiment metadata"
-      title="Experiment metadata"
+      aria-label="Experimental metadata"
+      title="Experimental metadata"
       @click="$emit('select', 'experiment')"
     >
       <FlaskConical :size="19" aria-hidden="true" />

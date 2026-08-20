@@ -9,8 +9,8 @@ describe('AppToolbar', () => {
       props: { active: 'image-header', filesDisabled: false, metadataDisabled: false },
     })
 
-    expect(wrapper.get('[aria-label="Image header metadata"]').classes()).toContain('active')
-    await wrapper.get('[aria-label="Experiment metadata"]').trigger('click')
+    expect(wrapper.get('[aria-label="Header metadata"]').classes()).toContain('active')
+    await wrapper.get('[aria-label="Experimental metadata"]').trigger('click')
     expect(wrapper.emitted('select')).toEqual([['experiment']])
   })
 
@@ -19,9 +19,9 @@ describe('AppToolbar', () => {
       props: { active: null, filesDisabled: false, metadataDisabled: true },
     })
 
-    expect(wrapper.get('[aria-label="Files"]').attributes('disabled')).toBeUndefined()
-    expect(wrapper.get('[aria-label="Image header metadata"]').attributes('disabled')).toBeDefined()
-    await wrapper.get('[aria-label="Files"]').trigger('click')
+    expect(wrapper.get('[aria-label="File table"]').attributes('disabled')).toBeUndefined()
+    expect(wrapper.get('[aria-label="Header metadata"]').attributes('disabled')).toBeDefined()
+    await wrapper.get('[aria-label="File table"]').trigger('click')
     expect(wrapper.emitted('select')).toEqual([['files']])
   })
 
