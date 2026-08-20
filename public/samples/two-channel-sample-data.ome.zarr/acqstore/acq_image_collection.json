@@ -1,0 +1,95 @@
+{
+  "acq_images": [
+    {
+      "id": "acq_image_000",
+      "manifest_path": "acq_images/acq_image_000/acqstore/manifest.json",
+      "name": "20260709_A131_0006.oir",
+      "ome_zarr_path": "acq_images/acq_image_000",
+      "reference_image_path": "acq_images/acq_image_000/reference",
+      "sidecar_path": "acq_images/acq_image_000/acqstore/acq_image.json",
+      "source": {
+        "filename": "20260709_A131_0006.oir",
+        "relative_path": "20260709_A131_0006.oir"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20260709",
+          "time": "11:24:59"
+        },
+        "analysis_types": [
+          "diameter",
+          "radon_velocity"
+        ],
+        "dims": [
+          "c",
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": true,
+        "num_channels": 2,
+        "num_rois": 2,
+        "shape": [
+          2,
+          10000,
+          512
+        ],
+        "sizes": {
+          "c": 2,
+          "x": 512,
+          "y": 10000
+        }
+      }
+    },
+    {
+      "id": "acq_image_001",
+      "manifest_path": "acq_images/acq_image_001/acqstore/manifest.json",
+      "name": "20260709_A131_0010.oir",
+      "ome_zarr_path": "acq_images/acq_image_001",
+      "reference_image_path": "acq_images/acq_image_001/reference",
+      "sidecar_path": "acq_images/acq_image_001/acqstore/acq_image.json",
+      "source": {
+        "filename": "20260709_A131_0010.oir",
+        "relative_path": "20260709_A131_0010.oir"
+      },
+      "summary": {
+        "accepted": true,
+        "acquisition": {
+          "date": "20260709",
+          "time": "11:39:44"
+        },
+        "analysis_types": [],
+        "dims": [
+          "c",
+          "y",
+          "x"
+        ],
+        "dtype": "uint16",
+        "has_reference_image": true,
+        "num_channels": 2,
+        "num_rois": 0,
+        "shape": [
+          2,
+          10000,
+          512
+        ],
+        "sizes": {
+          "c": 2,
+          "x": 512,
+          "y": 10000
+        }
+      }
+    }
+  ],
+  "acqstore_version": "0.2.0",
+  "analysis_tables": {
+    "sum_intensity": "acqstore/analysis_tables/sum_intensity.csv",
+    "velocity": "acqstore/analysis_tables/velocity.csv"
+  },
+  "created_utc": "2026-08-20T01:26:08Z",
+  "format": "acqstore-acq-image-collection",
+  "name": "two-channel-sample-data",
+  "version": 1,
+  "zarr_format": 3
+}

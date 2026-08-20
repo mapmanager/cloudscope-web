@@ -1,0 +1,30 @@
+{
+  "analyses": [
+    {
+      "analysis_name": "diameter",
+      "channel": 0,
+      "id": "diameter__c0__r3",
+      "resources": {
+        "peaks": null,
+        "table": "acqstore/analysis/diameter__c0__r3.table.csv"
+      },
+      "roi_id": 3
+    },
+    {
+      "analysis_name": "radon_velocity",
+      "channel": 0,
+      "id": "radon_velocity__c0__r2",
+      "resources": {
+        "peaks": null,
+        "table": "acqstore/analysis/radon_velocity__c0__r2.table.csv"
+      },
+      "roi_id": 2
+    }
+  ],
+  "format": "acqstore-native-ome-zarr",
+  "image_group": ".",
+  "reference_image": "reference",
+  "sidecar": "acqstore/acq_image.json",
+  "version": 2,
+  "zarr_format": 3
+}

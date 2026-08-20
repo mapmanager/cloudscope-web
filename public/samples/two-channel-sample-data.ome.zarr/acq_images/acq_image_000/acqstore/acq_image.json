@@ -1,0 +1,155 @@
+{
+  "accepted": true,
+  "analysis": [
+    {
+      "analysis_name": "radon_velocity",
+      "channel": 0,
+      "detection_params": {
+        "window_width": 64
+      },
+      "roi_id": 2,
+      "summary": {
+        "analysis_date": "260819",
+        "analysis_time": "20:43:58.276",
+        "analysis_version": 1,
+        "num_windows": 622,
+        "velocity_cv": 25.703612837669546,
+        "velocity_mean": 195.7727143865735,
+        "velocity_median": 2541.973499257747
+      }
+    },
+    {
+      "analysis_name": "diameter",
+      "channel": 0,
+      "detection_params": {
+        "binning_method": "mean",
+        "diameter_method": "threshold_width",
+        "enable_motion_gating": true,
+        "gradient_kernel": "central_diff",
+        "gradient_min_edge_strength": 0.02,
+        "gradient_sigma": 1.5,
+        "max_center_shift_um": 2.0,
+        "max_diameter_change_um": 2.0,
+        "max_edge_shift_um": 2.0,
+        "polarity": "bright_on_dark",
+        "post_filter_kernel_size": 3,
+        "stride": 1,
+        "threshold_mode": "half_max",
+        "threshold_value": 0.0,
+        "window_rows_odd": 5
+      },
+      "roi_id": 3,
+      "summary": {
+        "analysis_date": "260819",
+        "analysis_time": "20:45:47.009",
+        "analysis_version": 1,
+        "diameter_um_cv": 0.08020194679868806,
+        "diameter_um_mean": 66.88718777518541,
+        "diameter_um_median": 66.78597163725544,
+        "num_qc_center_violations": 0,
+        "num_qc_diameter_violations": 0,
+        "num_qc_edge_violations": 1102,
+        "num_rows": 10000,
+        "qc_score_mean": 0.7460199999999999
+      }
+    }
+  ],
+  "experiment_metadata": {
+    "age": "",
+    "branch_order": null,
+    "cell_type": "",
+    "condition": "",
+    "condition2": "",
+    "date": "",
+    "depth": null,
+    "direction": "",
+    "genotype": "",
+    "note": "",
+    "region": "",
+    "sex": "",
+    "species": "",
+    "treatment": "",
+    "treatment2": ""
+  },
+  "image_contrast": {
+    "0": {
+      "color_lut": "green",
+      "img_max": 151,
+      "img_min": 73,
+      "value_max": 151,
+      "value_min": 73
+    },
+    "1": {
+      "color_lut": "magenta",
+      "img_max": 137,
+      "img_min": 67,
+      "value_max": 137,
+      "value_min": 67
+    }
+  },
+  "image_header_metadata": {
+    "date": "20260709",
+    "dims": "('C', 'Y', 'X')",
+    "dtype": "uint16",
+    "num_channels": 2,
+    "num_scenes": 1,
+    "physical_label_x": "micrometer",
+    "physical_label_y": "seconds",
+    "physical_unit_x": 0.494710901016707,
+    "physical_unit_y": 0.002118,
+    "shape": "(2, 10000, 512)",
+    "sizes": "{'C': 2, 'Y': 10000, 'X': 512}",
+    "time": "11:24:59"
+  },
+  "reference_image_metadata": {
+    "dims": "('Y', 'X')",
+    "dtype": "uint16",
+    "has_scan_path": true,
+    "line_roi": "(213.0, 511.0, 229.0, 0.0)",
+    "num_channels": 2,
+    "physical_label_x": "um",
+    "physical_label_y": "um",
+    "physical_unit_x": 0.494710901016707,
+    "physical_unit_y": 0.494710901016707,
+    "scan_path_num_points": 2,
+    "scan_path_x_pixels": [
+      213.0,
+      229.0
+    ],
+    "scan_path_y_pixels": [
+      511.0,
+      0.0
+    ],
+    "shape": "(512, 512)",
+    "sizes": "{'Y': 512, 'X': 512}"
+  },
+  "rois": [
+    {
+      "data": {
+        "col_start": 358,
+        "col_stop": 422,
+        "row_start": 0,
+        "row_stop": 10000
+      },
+      "name": "",
+      "note": "",
+      "roi_id": 2,
+      "roi_type": "rectroi",
+      "version": "1.0"
+    },
+    {
+      "data": {
+        "col_start": 205,
+        "col_stop": 368,
+        "row_start": 0,
+        "row_stop": 10000
+      },
+      "name": "",
+      "note": "",
+      "roi_id": 3,
+      "roi_type": "rectroi",
+      "version": "1.0"
+    }
+  ],
+  "version": 2
+}

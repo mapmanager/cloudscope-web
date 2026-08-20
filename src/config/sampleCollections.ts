@@ -24,6 +24,12 @@ export const sampleCollections = [
     description: 'Radon-velocity and heart-rate analyses',
     url: './samples/velocity-sample-data.ome.zarr/',
   },
+  {
+    id: 'two-channel',
+    name: 'Two-channel sample',
+    description: 'Two-channel kymographs',
+    url: './samples/two-channel-sample-data.ome.zarr/',
+  },
 ] as const satisfies readonly SampleCollection[]
 
 /** Default collection shown when no explicit or local development source is selected. */

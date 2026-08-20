@@ -1,0 +1,75 @@
+{
+  "accepted": true,
+  "analysis": [],
+  "experiment_metadata": {
+    "age": "",
+    "branch_order": null,
+    "cell_type": "",
+    "condition": "",
+    "condition2": "",
+    "date": "",
+    "depth": null,
+    "direction": "",
+    "genotype": "",
+    "note": "",
+    "region": "",
+    "sex": "",
+    "species": "",
+    "treatment": "",
+    "treatment2": ""
+  },
+  "image_contrast": {
+    "0": {
+      "color_lut": "green",
+      "img_max": 142,
+      "img_min": 73,
+      "value_max": 142,
+      "value_min": 73
+    },
+    "1": {
+      "color_lut": "magenta",
+      "img_max": 133,
+      "img_min": 66,
+      "value_max": 133,
+      "value_min": 66
+    }
+  },
+  "image_header_metadata": {
+    "date": "20260709",
+    "dims": "('C', 'Y', 'X')",
+    "dtype": "uint16",
+    "num_channels": 2,
+    "num_scenes": 1,
+    "physical_label_x": "micrometer",
+    "physical_label_y": "seconds",
+    "physical_unit_x": 0.331456303681194,
+    "physical_unit_y": 0.002118,
+    "shape": "(2, 10000, 512)",
+    "sizes": "{'C': 2, 'Y': 10000, 'X': 512}",
+    "time": "11:39:44"
+  },
+  "reference_image_metadata": {
+    "dims": "('Y', 'X')",
+    "dtype": "uint16",
+    "has_scan_path": true,
+    "line_roi": "(155.0, 15.0, 348.0, 488.0)",
+    "num_channels": 2,
+    "physical_label_x": "um",
+    "physical_label_y": "um",
+    "physical_unit_x": 0.331456303681194,
+    "physical_unit_y": 0.331456303681194,
+    "scan_path_num_points": 2,
+    "scan_path_x_pixels": [
+      155.0,
+      348.0
+    ],
+    "scan_path_y_pixels": [
+      15.0,
+      488.0
+    ],
+    "shape": "(512, 512)",
+    "sizes": "{'Y': 512, 'X': 512}"
+  },
+  "rois": [],
+  "version": 2
+}
