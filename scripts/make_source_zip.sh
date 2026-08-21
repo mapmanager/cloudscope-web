@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Source zip of the files needed to install, verify, build, and redeploy.
+# Source zip of the files needed to install, verify, build, document, and redeploy.
 # Omit data/, dist/, node_modules/, public/samples/, zips/, and generated caches.
 # Always writes to zips/cloudscope-web-YYYYMMDD-vN.zip (N increments for today's date).
 set -euo pipefail
@@ -48,6 +48,9 @@ INCLUDE_CANDIDATES=(
     eslint.config.js
     README.md
     AGENTS.md
+    docs
+    mkdocs.yml
+    requirements-docs.txt
     .gitignore
     .prettierrc.json
     .prettierignore
