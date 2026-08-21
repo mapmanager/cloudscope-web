@@ -8,6 +8,6 @@ export const appInformation: Record<string, unknown> = {
   ...(buildInfo.gitCommit ? { 'Git commit': buildInfo.gitCommit } : {}),
   ...(buildInfo.gitBranch ? { 'Git branch': buildInfo.gitBranch } : {}),
   ...(buildInfo.gitState ? { 'Git state': buildInfo.gitState } : {}),
-  ...(buildInfo.builtUtc ? { 'Built UTC': buildInfo.builtUtc } : {}),
+  ...(buildInfo.builtEastern ? { 'Built (New York)': buildInfo.builtEastern } : {}),
   'AcqStore OME-Zarr collection version': ACQ_IMAGE_COLLECTION_VERSION,
 }

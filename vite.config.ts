@@ -31,14 +31,18 @@ const localDatasetRoot = path.resolve(
   configuredLocalDatasetRoot ?? path.resolve(import.meta.dirname, 'data/output'),
 )
 
-export default defineConfig(({ command }) => {
+export default defineConfig(() => {
   const gitStatus = gitValue(['status', '--porcelain'])
   const buildInfo = {
     version: packageJson.version,
     gitCommit: gitValue(['rev-parse', 'HEAD']),
     gitBranch: process.env.GITHUB_REF_NAME || gitValue(['branch', '--show-current']) || null,
     gitState: gitStatus === null ? null : gitStatus ? 'dirty' : 'clean',
-    builtUtc: command === 'build' ? new Date().toISOString() : null,
+    builtEastern: new Intl.DateTimeFormat('en-US', {
+      dateStyle: 'medium',
+      timeStyle: 'long',
+      timeZone: 'America/New_York',
+    }).format(new Date()),
   }
 
   return {

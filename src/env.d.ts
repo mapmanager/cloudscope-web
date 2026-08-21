@@ -8,7 +8,7 @@ interface CloudScopeBuildInfoDefinition {
   gitCommit: string | null
   gitBranch: string | null
   gitState: 'clean' | 'dirty' | null
-  builtUtc: string | null
+  builtEastern: string | null
 }
 
 declare const __CLOUDSCOPE_BUILD_INFO__: CloudScopeBuildInfoDefinition
