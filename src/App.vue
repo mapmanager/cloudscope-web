@@ -10,6 +10,7 @@ import ImageViewer from './components/ImageViewer.vue'
 import CollectionFilesInspector from './components/CollectionFilesInspector.vue'
 import MetadataInspector from './components/MetadataInspector.vue'
 import ResizableSection from './components/ResizableSection.vue'
+import ReferenceImageInspector from './components/ReferenceImageInspector.vue'
 import SelectedAcqImageBar from './components/SelectedAcqImageBar.vue'
 import { useViewerState } from './composables/useViewerState'
 import { appInformation } from './config/buildInfo'
@@ -227,6 +228,13 @@ onMounted(() => {
       :metadata="inspector.metadata"
       :empty-message="inspector.emptyMessage"
       :loading="inspector.loading"
+      @close="activeInspector = null"
+    />
+    <ReferenceImageInspector
+      v-else-if="activeInspector === 'reference-image' && viewer.acqImageDocument.value"
+      :image="viewer.acqImageDocument.value.data.reference_image"
+      :document-url="viewer.acqImageDocument.value.url"
+      :load-plane="viewer.loadPlane"
       @close="activeInspector = null"
     />
     <div

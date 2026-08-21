@@ -1,4 +1,9 @@
-import type { PrimaryImageDescriptor, Roi } from '../models/acqImageModels'
+import type {
+  PixelDescriptor,
+  PrimaryImageDescriptor,
+  ReferenceImageDescriptor,
+  Roi,
+} from '../models/acqImageModels'
 import type { ImagePlane } from './omeZarrLoader'
 import { normalizeLutName } from './rasterLut'
 import { displayTimeStepSeconds } from './rasterTimeRange'
@@ -27,7 +32,7 @@ function rasterDims(dims: string[]): RasterDim[] {
 }
 
 /** T/Z/Y/X header dims: include T/Z whenever those sizes exist, never drop Y/X. */
-function rasterHeaderDims(image: PrimaryImageDescriptor): RasterDim[] {
+function rasterHeaderDims(image: PixelDescriptor): RasterDim[] {
   const listed = new Set(rasterDims(image.dims))
   const dims: RasterDim[] = []
   if (listed.has('T') || axisSize(image.sizes, 't') !== undefined) dims.push('T')
@@ -103,7 +108,9 @@ function encodingFor(dtype: string): string {
   return dtype.toLowerCase().includes('16') ? 'raw-u16-le' : 'raw-f32-le'
 }
 
-function channelsOf(image: PrimaryImageDescriptor): PrimaryImageDescriptor['channels'] {
+type ChannelImage = PixelDescriptor & { channels: PrimaryImageDescriptor['channels'] }
+
+function channelsOf(image: ChannelImage): PrimaryImageDescriptor['channels'] {
   if (image.channels.length > 0) return image.channels
   return Array.from({ length: Math.max(0, image.num_channels) }, (_, index) => ({
     index,
@@ -122,15 +129,16 @@ function channelsOf(image: PrimaryImageDescriptor): PrimaryImageDescriptor['chan
  * @param rois AcqStore ROIs in source coordinates.
  * @returns Schema 2.0 descriptor with empty `data_url` placeholders.
  */
-export function buildRasterDescriptor(
-  image: PrimaryImageDescriptor,
+function buildDescriptor(
+  image: ChannelImage,
   plane: ImagePlane,
   rois: Roi[],
+  sourceAxes: { x: { label: string; step: number; unit: string }; y: { label: string; step: number; unit: string } },
+  includePlanes: boolean,
 ): RasterDescriptor {
   if (plane.width < 1 || plane.height < 1) {
     throw new Error('Loaded image plane has no raster samples')
   }
-  const timeStep = displayTimeStepSeconds(plane.axes.y)
   const scaleX = plane.width / plane.sourceWidth
   const scaleY = plane.height / plane.sourceHeight
   if (!(scaleX > 0) || !(scaleY > 0)) {
@@ -139,19 +147,19 @@ export function buildRasterDescriptor(
   const dims = rasterHeaderDims(image)
   const channelList = channelsOf(image)
   const samples = plane.width * plane.height
-  const tSize = axisSize(image.sizes, 't')
-  const zSize = axisSize(image.sizes, 'z')
+  const tSize = includePlanes ? axisSize(image.sizes, 't') : undefined
+  const zSize = includePlanes ? axisSize(image.sizes, 'z') : undefined
   const sizes: Record<string, number> = { Y: plane.height, X: plane.width }
   if (tSize !== undefined) sizes.T = tSize
   if (zSize !== undefined) sizes.Z = zSize
   const physicalUnits = dims.map((dim) => {
-    if (dim === 'Y') return timeStep
-    if (dim === 'X') return plane.axes.x.spacing
+    if (dim === 'Y') return sourceAxes.y.step
+    if (dim === 'X') return sourceAxes.x.step
     return 1
   })
   const physicalLabels = dims.map((dim) => {
-    if (dim === 'Y') return 's'
-    if (dim === 'X') return plane.axes.x.unit
+    if (dim === 'Y') return sourceAxes.y.unit
+    if (dim === 'X') return sourceAxes.x.unit
     return dim
   })
   return {
@@ -172,8 +180,8 @@ export function buildRasterDescriptor(
     endianness: 'little',
     display_orientation: { transpose: true, flip_y: true },
     axes: {
-      x: { label: plane.axes.x.unit, step: plane.axes.x.spacing, unit: plane.axes.x.unit },
-      y: { label: 's', step: timeStep, unit: 's' },
+      x: sourceAxes.x,
+      y: sourceAxes.y,
     },
     rois: rois.flatMap((roi) => {
       const envelope = roiToEnvelope(roi, scaleX, scaleY)
@@ -203,4 +211,39 @@ export function buildRasterDescriptor(
       }
     }),
   }
+}
+
+export function buildRasterDescriptor(
+  image: PrimaryImageDescriptor,
+  plane: ImagePlane,
+  rois: Roi[],
+): RasterDescriptor {
+  const timeStep = displayTimeStepSeconds(plane.axes.y)
+  return buildDescriptor(
+    image,
+    plane,
+    rois,
+    {
+      x: { label: plane.axes.x.unit, step: plane.axes.x.spacing, unit: plane.axes.x.unit },
+      y: { label: 's', step: timeStep, unit: 's' },
+    },
+    true,
+  )
+}
+
+/** Build a raster descriptor for a non-volumetric spatial reference image. */
+export function buildReferenceRasterDescriptor(
+  image: ReferenceImageDescriptor,
+  plane: ImagePlane,
+): RasterDescriptor {
+  return buildDescriptor(
+    image,
+    plane,
+    [],
+    {
+      x: { label: plane.axes.x.unit, step: plane.axes.x.spacing, unit: plane.axes.x.unit },
+      y: { label: plane.axes.y.unit, step: plane.axes.y.spacing, unit: plane.axes.y.unit },
+    },
+    false,
+  )
 }

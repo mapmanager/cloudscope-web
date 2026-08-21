@@ -454,6 +454,22 @@ button:disabled {
   flex-direction: column;
   padding: 0;
 }
+.reference-image-inspector__body {
+  position: relative;
+  display: flex;
+  height: calc(100% - 42px);
+  min-height: 0;
+  flex-direction: column;
+  padding: 8px;
+}
+.reference-image-inspector__toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 3px 8px;
+  color: #b8cbd2;
+  font-size: 0.78rem;
+}
 .metadata-list {
   display: grid;
   grid-template-columns: minmax(90px, 0.8fr) minmax(0, 1.2fr);

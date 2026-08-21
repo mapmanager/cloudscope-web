@@ -1,6 +1,6 @@
 import * as zarr from 'zarrita'
 
-import type { PixelDescriptor } from '../models/acqImageModels'
+import type { AxisDescriptor, PixelDescriptor } from '../models/acqImageModels'
 
 interface OmeDataset {
   path: string
@@ -19,6 +19,12 @@ interface OmeRootMetadata {
       }>
     }
   }
+}
+
+interface OmeArrayMetadata {
+  shape?: number[]
+  data_type?: string
+  dimension_names?: string[]
 }
 
 export interface ImagePlane {
@@ -58,6 +64,52 @@ async function fetchRootMetadata(zarrUrl: URL, signal?: AbortSignal): Promise<Om
     throw new Error(`Could not load OME-Zarr metadata (${response.status})`)
   }
   return (await response.json()) as OmeRootMetadata
+}
+
+/** Read the descriptor fields owned by an OME-Zarr image rather than a sidecar summary. */
+export async function loadPixelDescriptor(
+  href: string,
+  signal?: AbortSignal,
+): Promise<Omit<PixelDescriptor, 'href'>> {
+  const zarrUrl = new URL(href)
+  const metadata = await fetchRootMetadata(zarrUrl, signal)
+  const multiscale = metadata.attributes?.ome?.multiscales?.[0]
+  const first = multiscale?.datasets?.[0]
+  const axes = multiscale?.axes
+  if (!first || !axes?.length) throw new Error('OME-Zarr metadata does not describe image axes')
+  const response = await fetch(
+    new URL(`${zarrUrl.href.replace(/\/$/, '')}/${first.path}/zarr.json`),
+    signal ? { signal } : {},
+  )
+  if (!response.ok) throw new Error(`Could not load OME-Zarr array metadata (${response.status})`)
+  const array = (await response.json()) as OmeArrayMetadata
+  if (
+    !Array.isArray(array.shape) ||
+    !array.shape.every((value) => Number.isInteger(value) && value > 0) ||
+    typeof array.data_type !== 'string'
+  ) {
+    throw new Error('OME-Zarr array metadata has an invalid shape or data type')
+  }
+  const dims = array.dimension_names ?? axes.map(({ name }) => name)
+  if (dims.length !== array.shape.length || dims.some((name) => typeof name !== 'string')) {
+    throw new Error('OME-Zarr array dimensions do not match its shape')
+  }
+  const scale = first.coordinateTransformations?.find(({ type }) => type === 'scale')?.scale
+  const axisDescriptors: AxisDescriptor[] = dims.map((name, index) => ({
+    name,
+    size: array.shape![index]!,
+    spacing: scale?.[index] ?? 1,
+    unit: axes[index]?.unit ?? 'Pixels',
+  }))
+  const channelIndex = dims.findIndex((name) => name.toLowerCase() === 'c')
+  return {
+    shape: array.shape,
+    dims,
+    sizes: Object.fromEntries(dims.map((name, index) => [name, array.shape![index]!])),
+    dtype: array.data_type,
+    axes: axisDescriptors,
+    num_channels: channelIndex < 0 ? 1 : array.shape[channelIndex]!,
+  }
 }
 
 export function planeSelection(dims: string[], indices: PlaneIndices): Array<null | number> {

@@ -65,6 +65,8 @@ The native manifest identifies the image group, per-image metadata resource, opt
 
 The per-image metadata contains the ROI definitions and analysis summaries exported by AcqStore. The current web client normalizes supported rectangular and line ROIs for display.
 
+Reference-image scan paths are read from the per-image sidecar's `reference_image_metadata` object. A declared scan path uses `has_scan_path`, `scan_path_num_points`, `scan_path_x_pixels`, and `scan_path_y_pixels`. CloudScope Web validates the two-point line segment and renders it as a non-interactive physical X/Y overlay, independently of image ROIs.
+
 Analysis resources are matched using analysis name, channel, and ROI ID. When a registered plot is available for the analysis type, CloudScope Web loads the corresponding table and renders the plot.
 
 ## Version ownership

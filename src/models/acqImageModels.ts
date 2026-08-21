@@ -130,8 +130,18 @@ export interface ExportedAnalysis {
   detection_params?: Record<string, unknown>
 }
 
-export interface ReferenceImageDescriptor extends PixelDescriptor {
+export interface ReferenceImageResource {
+  href: string
   metadata: Record<string, unknown>
+  num_channels: number
+  scan_path: {
+    x_pixels: number[]
+    y_pixels: number[]
+  } | null
+}
+
+export interface ReferenceImageDescriptor extends PixelDescriptor, ReferenceImageResource {
+  channels: ImageChannel[]
 }
 
 export interface AcqImageDocument {
@@ -148,7 +158,7 @@ export interface AcqImageDocument {
     experiment: Record<string, unknown>
     reference_image: Record<string, unknown>
   }
-  reference_image: ReferenceImageDescriptor | null
+  reference_image: ReferenceImageResource | null
   load_state?: LoadState
 }
 

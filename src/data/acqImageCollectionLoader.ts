@@ -6,6 +6,7 @@ import type {
   ImageChannel,
   LoadedDocument,
   Roi,
+  ReferenceImageResource,
 } from '../models/acqImageModels'
 import {
   ACQ_IMAGE_COLLECTION_VERSION,
@@ -226,6 +227,25 @@ function channels(count: number, contrast: Record<string, unknown>): ImageChanne
   })
 }
 
+function scanPath(metadata: Record<string, unknown>): ReferenceImageResource['scan_path'] {
+  if (metadata.has_scan_path === false) return null
+  if (metadata.has_scan_path !== true) {
+    throw new Error('Reference image metadata has invalid has_scan_path')
+  }
+  const x = metadata.scan_path_x_pixels
+  const y = metadata.scan_path_y_pixels
+  const count = metadata.scan_path_num_points
+  if (
+    !Array.isArray(x) || !Array.isArray(y) ||
+    !x.every((value) => typeof value === 'number' && Number.isFinite(value)) ||
+    !y.every((value) => typeof value === 'number' && Number.isFinite(value)) ||
+    x.length !== y.length || count !== x.length || x.length !== 2
+  ) {
+    throw new Error('Reference image metadata has an invalid scan path')
+  }
+  return { x_pixels: x, y_pixels: y }
+}
+
 export async function loadAcqImageCollectionEntry(
   root: URL,
   entry: AcqImageCollectionEntry,
@@ -269,6 +289,31 @@ export async function loadAcqImageCollectionEntry(
     }
   })
   const summary = entry.summary
+  let referenceImage: ReferenceImageResource | null = null
+  if (summary.has_reference_image) {
+    if (!entry.reference_image_path || !manifest.reference_image) {
+      throw new Error(`Image ${entry.id} declares a reference image without its resource path`)
+    }
+    const collectionHref = new URL(`${entry.reference_image_path.replace(/\/$/, '')}/`, root).href
+    const nativeHref = new URL(`${manifest.reference_image.replace(/\/$/, '')}/`, childRoot).href
+    if (collectionHref !== nativeHref) {
+      throw new Error(`Image ${entry.id} has conflicting reference image paths`)
+    }
+    const metadata = sidecar.reference_image_metadata
+    if (!metadata) throw new Error(`Image ${entry.id} is missing reference image metadata`)
+    const numChannels = metadata.num_channels
+    if (!Number.isInteger(numChannels) || Number(numChannels) < 1) {
+      throw new Error(`Image ${entry.id} has an invalid reference channel count`)
+    }
+    referenceImage = {
+      href: collectionHref,
+      metadata,
+      num_channels: Number(numChannels),
+      scan_path: scanPath(metadata),
+    }
+  } else if (entry.reference_image_path || manifest.reference_image) {
+    throw new Error(`Image ${entry.id} has a reference resource but reports none in its summary`)
+  }
   return {
     data: {
       format: 'acqstore-web-acqimage',
@@ -297,7 +342,7 @@ export async function loadAcqImageCollectionEntry(
         experiment: sidecar.experiment_metadata ?? {},
         reference_image: sidecar.reference_image_metadata ?? {},
       },
-      reference_image: null,
+      reference_image: referenceImage,
       load_state: { pixels: false, analysisCsv: false },
     },
     url: manifestUrl,

@@ -85,6 +85,18 @@ export interface RasterPhysicalRange {
   unit: string
 }
 
+export interface RasterXYPlot {
+  plot_id: string
+  x: number[]
+  y: number[]
+  name?: string
+  mode?: 'markers' | 'lines' | 'lines_markers'
+  style?: { color?: string; marker_size?: number; line_width?: number; opacity?: number }
+  visible?: boolean
+  channel_ids?: string[] | null
+  coordinate_space?: 'physical'
+}
+
 export class RasterViewer {
   host: HTMLElement
   loadSourcePlane: LoadSourcePlane | null
@@ -102,6 +114,9 @@ export class RasterViewer {
   selectChannel(channelId: string, notify?: boolean): string
   setRois(envelopes: unknown[]): number
   selectRoi(roiId: number | null, options?: { emit?: boolean; source?: string }): boolean
+  addXYPlot(specification: RasterXYPlot): string
+  showXYPlot(plotId: string): boolean
+  hideXYPlot(plotId: string): boolean
   fullPhysicalXRange(): RasterPhysicalRange
   clear(): boolean
   destroy(): void

@@ -101,6 +101,7 @@ describe('AcqImageCollection loader', () => {
           format: 'acqstore-native-ome-zarr',
           version: 2,
           image_group: '.',
+          reference_image: 'reference',
           sidecar: 'acqstore/acq_image.json',
           analyses: [
             {
@@ -122,7 +123,13 @@ describe('AcqImageCollection loader', () => {
           image_contrast: {},
           image_header_metadata: {},
           experiment_metadata: { preparation: 'arteriole' },
-          reference_image_metadata: {},
+          reference_image_metadata: {
+            has_scan_path: true,
+            num_channels: 1,
+            scan_path_num_points: 2,
+            scan_path_x_pixels: [10, 20],
+            scan_path_y_pixels: [30, 40],
+          },
           rois: [],
           analysis: [
             {
@@ -150,6 +157,11 @@ describe('AcqImageCollection loader', () => {
         },
         peaks: null,
       },
+    })
+    expect(loaded.data.reference_image).toMatchObject({
+      href: 'https://example.test/sample.ome.zarr/acq_images/acq_image_000/reference/',
+      num_channels: 1,
+      scan_path: { x_pixels: [10, 20], y_pixels: [30, 40] },
     })
     expect(loaded.data.metadata.experiment).toEqual({ preparation: 'arteriole' })
   })

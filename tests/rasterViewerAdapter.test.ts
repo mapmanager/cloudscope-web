@@ -1,10 +1,19 @@
 import { describe, expect, it } from 'vitest'
 
 import { normalizeLutName } from '../src/data/rasterLut'
-import { axisSize, buildRasterDescriptor, roiToEnvelope } from '../src/data/rasterDescriptor'
+import {
+  axisSize,
+  buildRasterDescriptor,
+  buildReferenceRasterDescriptor,
+  roiToEnvelope,
+} from '../src/data/rasterDescriptor'
 import { fullLinkedTimeRange, linkedRangeFromPhysical } from '../src/data/rasterTimeRange'
 import { asPlaneSamples, maxProjectPlanes, slidingZIndices } from '../src/data/slidingZ'
-import type { PrimaryImageDescriptor, Roi } from '../src/models/acqImageModels'
+import type {
+  PrimaryImageDescriptor,
+  ReferenceImageDescriptor,
+  Roi,
+} from '../src/models/acqImageModels'
 import type { ImagePlane } from '../src/data/omeZarrLoader'
 
 function image(overrides: Partial<PrimaryImageDescriptor> = {}): PrimaryImageDescriptor {
@@ -143,6 +152,48 @@ describe('buildRasterDescriptor', () => {
     expect(axisSize({ Z: 5 }, 'z')).toBe(5)
     expect(axisSize({ t: 2 }, 'T')).toBe(2)
     expect(axisSize({ y: 0 }, 'y')).toBeUndefined()
+  })
+
+  it('builds an independent spatial descriptor for a reference image', () => {
+    const reference: ReferenceImageDescriptor = {
+      href: './reference/',
+      shape: [2, 512, 512],
+      dims: ['c', 'y', 'x'],
+      sizes: { c: 2, y: 512, x: 512 },
+      dtype: 'uint16',
+      axes: [
+        { name: 'c', size: 2, spacing: 1, unit: 'Pixels' },
+        { name: 'y', size: 512, spacing: 0.5, unit: 'micrometer' },
+        { name: 'x', size: 512, spacing: 0.5, unit: 'micrometer' },
+      ],
+      num_channels: 2,
+      channels: [
+        { index: 0, contrast: null },
+        { index: 1, contrast: null },
+      ],
+      metadata: {},
+      scan_path: { x_pixels: [10, 20], y_pixels: [30, 40] },
+    }
+    const descriptor = buildReferenceRasterDescriptor(
+      reference,
+      plane({
+        width: 512,
+        height: 512,
+        sourceWidth: 512,
+        sourceHeight: 512,
+        axes: {
+          x: { spacing: 0.5, unit: 'micrometer' },
+          y: { spacing: 0.5, unit: 'micrometer' },
+        },
+      }),
+    )
+    expect(descriptor.channels.map(({ id }) => id)).toEqual(['0', '1'])
+    expect(descriptor.rois).toEqual([])
+    expect(descriptor.header.dims).toEqual(['Y', 'X'])
+    expect(descriptor.axes).toEqual({
+      x: { label: 'micrometer', step: 0.5, unit: 'micrometer' },
+      y: { label: 'micrometer', step: 0.5, unit: 'micrometer' },
+    })
   })
 })
 

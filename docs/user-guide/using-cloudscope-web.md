@@ -57,7 +57,9 @@ A dataset does not need to contain every analysis type. CloudScope Web shows the
 
 ## 7. Inspect metadata
 
-Use the left toolbar to inspect information associated with the selected image and experiment. CloudScope Web currently provides inspectors for image-header and experiment metadata.
+Use the left toolbar to inspect information associated with the selected image and experiment. CloudScope Web provides inspectors for the collection file list, reference image, image-header metadata, experiment metadata, and app information.
+
+The **Reference image** inspector uses an image viewer independent from the primary image viewer. Its **Scan Path** checkbox shows or hides the exported, display-only scan line. When the selected AcqImage has no reference image, the inspector reports that explicitly.
 
 These views are useful when you need more context about how an image was acquired or how it fits into the larger dataset.
 
