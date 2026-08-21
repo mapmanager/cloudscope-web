@@ -24,10 +24,12 @@ export interface AcqImageCollectionEntry {
   summary: AcqImageSummary
 }
 
+export const ACQ_IMAGE_COLLECTION_VERSION = 1 as const
+
 /** AcqStore-owned wrapper manifest around independent native OME-Zarr images. */
 export interface AcqImageCollectionManifest {
   format: 'acqstore-acq-image-collection'
-  version: 1
+  version: typeof ACQ_IMAGE_COLLECTION_VERSION
   zarr_format: 3
   name: string
   created_utc: string

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { FileJson2, FlaskConical, Table2 } from '@lucide/vue'
+import { FileJson2, FlaskConical, Info, Table2 } from '@lucide/vue'
 
 /** Panes opened from the left inspector toolbar. */
-export type InspectorKind = 'files' | 'image-header' | 'experiment'
+export type InspectorKind = 'files' | 'image-header' | 'experiment' | 'app-info'
 
 defineProps<{
   active: InspectorKind | null
@@ -46,6 +46,16 @@ defineEmits<{ select: [kind: InspectorKind] }>()
       @click="$emit('select', 'experiment')"
     >
       <FlaskConical :size="19" aria-hidden="true" />
+    </button>
+    <button
+      type="button"
+      class="icon-button"
+      :class="{ active: active === 'app-info' }"
+      aria-label="App information"
+      title="App information"
+      @click="$emit('select', 'app-info')"
+    >
+      <Info :size="19" aria-hidden="true" />
     </button>
   </nav>
 </template>

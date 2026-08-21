@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { BookOpen } from '@lucide/vue'
 import { computed, onMounted, ref, watch } from 'vue'
 
 import AnalysisPlot from './components/AnalysisPlot.vue'
@@ -6,12 +7,12 @@ import AppToolbar, { type InspectorKind } from './components/AppToolbar.vue'
 import AcqImageCollectionSource from './components/AcqImageCollectionSource.vue'
 import AcqImageCollectionTable from './components/AcqImageCollectionTable.vue'
 import ImageViewer from './components/ImageViewer.vue'
-import GithubMark from './components/GithubMark.vue'
 import CollectionFilesInspector from './components/CollectionFilesInspector.vue'
 import MetadataInspector from './components/MetadataInspector.vue'
 import ResizableSection from './components/ResizableSection.vue'
 import SelectedAcqImageBar from './components/SelectedAcqImageBar.vue'
 import { useViewerState } from './composables/useViewerState'
+import { appInformation } from './config/buildInfo'
 import { clampSectionHeight } from './data/resizableSection'
 import { plotsForAnalysis } from './plots/analysisPlotRegistry'
 import type { AxisRange, LinkedAxisUpdate } from './models/viewState'
@@ -120,19 +121,30 @@ const imageHeaderMetadata = computed<Record<string, unknown>>(() => {
   }
 })
 
-const inspector = computed(() =>
-  activeInspector.value === 'image-header'
-    ? {
-        title: 'Image header',
-        metadata: imageHeaderMetadata.value,
-        emptyMessage: 'No image header metadata is available.',
-      }
-    : {
-        title: 'Experiment metadata',
-        metadata: viewer.acqImageDocument.value?.data.metadata.experiment ?? {},
-        emptyMessage: 'No experiment metadata is available for this AcqImage.',
-      },
-)
+const inspector = computed(() => {
+  if (activeInspector.value === 'image-header') {
+    return {
+      title: 'Image header',
+      metadata: imageHeaderMetadata.value,
+      emptyMessage: 'No image header metadata is available.',
+      loading: viewer.acqImageLoading.value,
+    }
+  }
+  if (activeInspector.value === 'app-info') {
+    return {
+      title: 'App information',
+      metadata: appInformation,
+      emptyMessage: 'No app information is available.',
+      loading: false,
+    }
+  }
+  return {
+    title: 'Experiment metadata',
+    metadata: viewer.acqImageDocument.value?.data.metadata.experiment ?? {},
+    emptyMessage: 'No experiment metadata is available for this AcqImage.',
+    loading: viewer.acqImageLoading.value,
+  }
+})
 
 const footerStatus = computed(() => {
   if (viewer.error.value) return `Error: ${viewer.error.value}`
@@ -181,13 +193,14 @@ onMounted(() => {
         />
         <a
           class="icon-button"
-          href="https://github.com/mapmanager/cloudscope-web"
+          href="https://mapmanager.github.io/cloudscope-web/docs/"
           target="_blank"
           rel="noreferrer"
-          aria-label="Open the CloudScope Web GitHub repository"
-          title="GitHub repository"
-          ><GithubMark
-        /></a>
+          aria-label="Open the CloudScope Web documentation"
+          title="Documentation"
+        >
+          <BookOpen :size="19" aria-hidden="true" />
+        </a>
       </div>
     </header>
 
@@ -205,11 +218,15 @@ onMounted(() => {
       @close="activeInspector = null"
     />
     <MetadataInspector
-      v-else-if="activeInspector === 'image-header' || activeInspector === 'experiment'"
+      v-else-if="
+        activeInspector === 'image-header' ||
+        activeInspector === 'experiment' ||
+        activeInspector === 'app-info'
+      "
       :title="inspector.title"
       :metadata="inspector.metadata"
       :empty-message="inspector.emptyMessage"
-      :loading="viewer.acqImageLoading.value"
+      :loading="inspector.loading"
       @close="activeInspector = null"
     />
     <div

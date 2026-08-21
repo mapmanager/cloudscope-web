@@ -7,11 +7,12 @@ import type {
   LoadedDocument,
   Roi,
 } from '../models/acqImageModels'
-import type {
-  AcqImageCollectionEntry,
-  AcqImageCollectionManifest,
-  NativeAcqImageSidecar,
-  NativeImageManifest,
+import {
+  ACQ_IMAGE_COLLECTION_VERSION,
+  type AcqImageCollectionEntry,
+  type AcqImageCollectionManifest,
+  type NativeAcqImageSidecar,
+  type NativeImageManifest,
 } from '../models/acqImageCollectionManifest'
 
 async function loadJson<T>(url: URL, signal?: AbortSignal): Promise<T> {
@@ -72,10 +73,11 @@ function validateCollection(data: unknown, url: URL): asserts data is AcqImageCo
   if (data.format !== 'acqstore-acq-image-collection') {
     invalidManifest(url, '$.format', "must equal 'acqstore-acq-image-collection'")
   }
-  if (data.version !== 1) {
+  if (data.version !== ACQ_IMAGE_COLLECTION_VERSION) {
     throw new Error(
       `Unsupported AcqStore OME-Zarr collection version ${String(data.version)} at ${url.href}. ` +
-        'CloudScope requires AcqImageCollection version 1; re-export with the current AcqStore exporter.',
+        `CloudScope requires AcqImageCollection version ${ACQ_IMAGE_COLLECTION_VERSION}; ` +
+        're-export with the current AcqStore exporter.',
     )
   }
   requireField(data, 'name', '$', url, isString, 'a string')

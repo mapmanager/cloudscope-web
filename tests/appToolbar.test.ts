@@ -25,12 +25,16 @@ describe('AppToolbar', () => {
     expect(wrapper.emitted('select')).toEqual([['files']])
   })
 
-  it('disables metadata actions when no AcqImage is selected', () => {
+  it('keeps app information available when no collection is open', async () => {
     const wrapper = mount(AppToolbar, {
       props: { active: null, filesDisabled: true, metadataDisabled: true },
     })
-    expect(
-      wrapper.findAll('button').every((button) => button.attributes('disabled') !== undefined),
-    ).toBe(true)
+    expect(wrapper.get('[aria-label="File table"]').attributes('disabled')).toBeDefined()
+    expect(wrapper.get('[aria-label="Header metadata"]').attributes('disabled')).toBeDefined()
+    expect(wrapper.get('[aria-label="Experimental metadata"]').attributes('disabled')).toBeDefined()
+    expect(wrapper.get('[aria-label="App information"]').attributes('disabled')).toBeUndefined()
+
+    await wrapper.get('[aria-label="App information"]').trigger('click')
+    expect(wrapper.emitted('select')).toEqual([['app-info']])
   })
 })
