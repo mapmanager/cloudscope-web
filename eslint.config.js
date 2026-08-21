@@ -6,7 +6,14 @@ import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'coverage/**', 'data/**', 'tmp-to-be-deleted/**', 'src/raster-viewer/**'],
+    ignores: [
+      'dist/**',
+      'coverage/**',
+      'data/**',
+      'tmp-to-be-deleted/**',
+      'src/raster-viewer/**',
+      '.venv-docs/**',
+    ],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,

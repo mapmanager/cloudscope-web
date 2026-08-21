@@ -27,7 +27,7 @@ The current CloudScope Web URL stores the collection and primary image-selection
 This makes the URL substantially more useful than linking only to the root OME-Zarr dataset: it tells CloudScope Web which part of the collection you were examining.
 
 !!! note
-    The current shared URL is intended to restore the dataset and primary selection state. Display details that are not encoded in the URL, such as every transient pan, zoom, or contrast adjustment, are not guaranteed to be reproduced.
+The current shared URL is intended to restore the dataset and primary selection state. Display details that are not encoded in the URL, such as every transient pan, zoom, or contrast adjustment, are not guaranteed to be reproduced.
 
 ## Sharing published datasets
 

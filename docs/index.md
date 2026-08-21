@@ -18,7 +18,6 @@ The CloudScope dataset is then uploaded to a repository such as the [Dandi Archi
 
 To ensure scientific reproducibility, all analysis done in the CloudScope desktop app is driven by the Python package [AcqStore](https://mapmanager.github.io/acqstore/). Importantly, AcqStore can also be used in Python scripts and notebooks, dataset can be saved and then shared directly from these Python scripts. This is particularly useful for any future analysis needed and taps into the sharability of the CloudScope Web.
 
-
 ## What you can do in CloudScope Web
 
 CloudScope Web lets you open datasets in a browser and inspect its images and analyses interactively. Depending on the dataset, you can select images, change channels, work with ROIs, adjust image display settings, inspect metadata, and view analysis plots.
@@ -30,4 +29,3 @@ A particularly useful feature is sharing. The dataset and primary selection stat
 - Start with [Using CloudScope Web](user-guide/using-cloudscope-web.md).
 - See [Sharing a view](user-guide/sharing.md) for the copy-and-paste sharing workflow.
 - See [Publishing a CloudScope dataset](publishing/index.md) for a recommended publication workflow.
-

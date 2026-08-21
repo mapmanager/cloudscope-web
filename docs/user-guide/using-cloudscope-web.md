@@ -35,7 +35,7 @@ Use the image viewer to inspect the selected image. The controls available depen
 - ROI overlays and ROI selection
 
 !!! tip "Familiar controls for CloudScope users"
-    The image viewer in CloudScope Web uses the same viewer code as the desktop [CloudScope](https://mapmanager.github.io/cloudscope-app/), so its core image interaction and display controls should feel familiar to existing CloudScope users.
+The image viewer in CloudScope Web uses the same viewer code as the desktop [CloudScope](https://mapmanager.github.io/cloudscope-app/), so its core image interaction and display controls should feel familiar to existing CloudScope users.
 
 ## 5. Select a channel and ROI
 
