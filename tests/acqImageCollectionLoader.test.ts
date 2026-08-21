@@ -130,7 +130,16 @@ describe('AcqImageCollection loader', () => {
             scan_path_x_pixels: [10, 20],
             scan_path_y_pixels: [30, 40],
           },
-          rois: [],
+          rois: [
+            {
+              roi_id: 1,
+              roi_type: 'linesegmentroi',
+              version: '1.0',
+              name: 'primary line',
+              note: 'independent of the reference scan path',
+              data: { row0: 3, col0: 4, row1: 13, col1: 14 },
+            },
+          ],
           analysis: [
             {
               analysis_name: 'radon_velocity',
@@ -163,6 +172,18 @@ describe('AcqImageCollection loader', () => {
       num_channels: 1,
       scan_path: { x_pixels: [10, 20], y_pixels: [30, 40] },
     })
+    expect(loaded.data.rois).toEqual([
+      {
+        id: 1,
+        type: 'line',
+        name: 'primary line',
+        note: 'independent of the reference scan path',
+        x0: 4,
+        y0: 3,
+        x1: 14,
+        y1: 13,
+      },
+    ])
     expect(loaded.data.metadata.experiment).toEqual({ preparation: 'arteriole' })
   })
 })

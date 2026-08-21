@@ -209,7 +209,7 @@ function normalizeRois(rois: Array<Record<string, unknown>>): Roi[] {
         y_stop: numberValue(data.row_stop),
       }]
     }
-    if (roi.roi_type === 'lineroi' && data) {
+    if (roi.roi_type === 'linesegmentroi' && data) {
       return [{
         id: numberValue(roi.roi_id), type: 'line', name: String(roi.name ?? ''),
         note: String(roi.note ?? ''), x0: numberValue(data.col0), y0: numberValue(data.row0),
