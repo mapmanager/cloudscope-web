@@ -229,7 +229,29 @@ onMounted(() => {
       :empty-message="inspector.emptyMessage"
       :loading="inspector.loading"
       @close="activeInspector = null"
-    />
+    >
+      <template v-if="activeInspector === 'app-info'" #before-metadata>
+        <div class="app-information-intro">
+          <p>
+            CloudScope Web is a static, browser-based viewer for
+            <a href="https://mapmanager.github.io/acqstore/" target="_blank" rel="noreferrer">
+              AcqStore
+            </a>
+            Collection OME-Zarr stores.
+          </p>
+          <p>
+            Learn more in the
+            <a href="https://mapmanager.github.io/cloudscope-app/" target="_blank" rel="noreferrer">
+              CloudScope App documentation</a
+            >.
+          </p>
+          <p>
+            Contact:
+            <a href="mailto:robert.cudmore@gmail.com">robert.cudmore@gmail.com</a>
+          </p>
+        </div>
+      </template>
+    </MetadataInspector>
     <ReferenceImageInspector
       v-else-if="activeInspector === 'reference-image' && viewer.acqImageDocument.value"
       :image="viewer.acqImageDocument.value.data.reference_image"

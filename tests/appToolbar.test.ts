@@ -4,6 +4,20 @@ import { describe, expect, it } from 'vitest'
 import AppToolbar from '../src/components/AppToolbar.vue'
 
 describe('AppToolbar', () => {
+  it('presents inspector buttons in workflow order', () => {
+    const wrapper = mount(AppToolbar, {
+      props: { active: null, filesDisabled: false, metadataDisabled: false },
+    })
+
+    expect(wrapper.findAll('button').map((button) => button.attributes('aria-label'))).toEqual([
+      'File table',
+      'Header metadata',
+      'Experimental metadata',
+      'Reference image',
+      'App information',
+    ])
+  })
+
   it('emits the requested inspector and marks the active button', async () => {
     const wrapper = mount(AppToolbar, {
       props: { active: 'image-header', filesDisabled: false, metadataDisabled: false },

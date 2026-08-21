@@ -493,6 +493,23 @@ button:disabled {
 .metadata-empty {
   margin: 8px 0;
 }
+.app-information-intro {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #20353f;
+  margin-bottom: 6px;
+  color: #b8cbd2;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+.app-information-intro p {
+  margin: 0 0 7px;
+}
+.app-information-intro p:last-child {
+  margin-bottom: 0;
+}
+.app-information-intro a {
+  color: #91e0d7;
+}
 .resizable-section {
   min-width: 0;
 }

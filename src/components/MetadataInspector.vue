@@ -26,6 +26,7 @@ defineEmits<{ close: [] }>()
       </button>
     </header>
     <div class="metadata-inspector__body">
+      <slot name="before-metadata" />
       <p v-if="loading && Object.keys(metadata).length === 0" class="muted metadata-empty">
         Loading selected AcqImage…
       </p>

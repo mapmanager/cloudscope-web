@@ -1,6 +1,6 @@
 # CloudScope Web
 
-CloudScope Web is a static website for viewing CloudScope analysis datasets saved as OME-Zarr. To use CloudScope Web, there is nothing to install or run, just open it in a browser, open a dataset, and view it.
+CloudScope Web is a static website for viewing CloudScope analysis datasets saved as AcqStore OME-Zarr. To use CloudScope Web, there is nothing to install or run, just open it in a browser, open a dataset, and view it.
 
 **Open CloudScope Web:** https://mapmanager.github.io/cloudscope-web/
 

@@ -28,17 +28,6 @@ defineEmits<{ select: [kind: InspectorKind] }>()
     <button
       type="button"
       class="icon-button"
-      :class="{ active: active === 'reference-image' }"
-      :disabled="metadataDisabled"
-      aria-label="Reference image"
-      title="Reference image"
-      @click="$emit('select', 'reference-image')"
-    >
-      <Image :size="19" aria-hidden="true" />
-    </button>
-    <button
-      type="button"
-      class="icon-button"
       :class="{ active: active === 'image-header' }"
       :disabled="metadataDisabled"
       aria-label="Header metadata"
@@ -57,6 +46,17 @@ defineEmits<{ select: [kind: InspectorKind] }>()
       @click="$emit('select', 'experiment')"
     >
       <FlaskConical :size="19" aria-hidden="true" />
+    </button>
+    <button
+      type="button"
+      class="icon-button"
+      :class="{ active: active === 'reference-image' }"
+      :disabled="metadataDisabled"
+      aria-label="Reference image"
+      title="Reference image"
+      @click="$emit('select', 'reference-image')"
+    >
+      <Image :size="19" aria-hidden="true" />
     </button>
     <button
       type="button"

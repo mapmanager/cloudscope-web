@@ -93,3 +93,12 @@ flow. Unit tests alone do not prove that images or Plotly charts render.
 
 Do not weaken tests to make a change pass. Report any verification that could
 not be completed.
+
+## Changelog
+
+- Record notable user-facing changes in the root `CHANGELOG.md`; do not list
+  routine refactors, formatting, or dependency-lock updates.
+- Add pending work under `Unreleased` using `Added`, `Changed`, `Fixed`, or
+  `Removed` headings as needed.
+- Because every push to `main` deploys the site, move deployed entries into a
+  date-based section rather than inventing a version or Git tag.
