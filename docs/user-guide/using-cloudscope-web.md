@@ -14,7 +14,17 @@ CloudScope Web is a static website. There is nothing to install or start on your
 
 Use **Open collection** in the CloudScope Web header.
 
-You can either choose one of the provided sample datasets or paste the root URL of a published CloudScope analysis dataset and choose **Open URL**.
+You can choose one of the provided samples, paste the root URL of a published dataset and choose **Open URL**, or open a current AcqStore OME-Zarr directory from your computer.
+
+To open local data in Chrome or Edge:
+
+1. Choose **Open local directory**.
+2. Select the root directory whose name ends with `.ome.zarr`.
+3. Approve read-only access when the browser asks.
+
+The local directory stays on your computer. CloudScope Web reads its manifests, tables, and required Zarr chunks directly through the browser. Local directory access is not currently supported in Safari or Firefox, and a local collection cannot be restored from a shared URL after the page is reloaded.
+
+CloudScope Web accepts only the current `acqstore-acq-image-collection` export format. Re-export older AcqStore OME-Zarr collections rather than opening their legacy layouts.
 
 After the dataset loads, CloudScope Web displays the collection and its available images.
 

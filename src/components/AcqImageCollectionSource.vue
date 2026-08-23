@@ -2,6 +2,7 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 import { sampleCollections } from '../config/sampleCollections'
+import { browserDirectoryPickerSupported } from '../data/browserDirectory'
 
 defineProps<{ modelValue: string; serverUrl: string; loading: boolean; showLocalServer: boolean }>()
 const emit = defineEmits<{
@@ -11,10 +12,12 @@ const emit = defineEmits<{
   'open-sample': [url: string]
   'open-server': [kind: 'file' | 'folder' | 'csv']
   'open-exported-folder': []
+  'open-local-directory': []
 }>()
 
 const root = ref<HTMLElement | null>(null)
 const open = ref(false)
+const localDirectorySupported = browserDirectoryPickerSupported()
 
 /** Close the collection popover when a pointer interaction occurs outside it. */
 function handleDocumentPointerDown(event: PointerEvent): void {
@@ -85,6 +88,21 @@ onBeforeUnmount(() => {
             </button>
           </div>
         </form>
+        <div class="collection-source__section">
+          <label>Local AcqStore OME-Zarr</label>
+          <div class="collection-source__row">
+            <button
+              type="button"
+              :disabled="loading || !localDirectorySupported"
+              @click="emit('open-local-directory')"
+            >
+              Open local directory
+            </button>
+          </div>
+          <p v-if="!localDirectorySupported" class="muted">
+            Local directory loading requires Chrome or Edge.
+          </p>
+        </div>
       </section>
       <section
         v-if="showLocalServer"

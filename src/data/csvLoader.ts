@@ -1,12 +1,18 @@
 import Papa from 'papaparse'
 
+import type { ResourceFetch } from './browserDirectory'
+
 export interface CsvTable {
   columns: string[]
   rows: Record<string, string>[]
 }
 
-export async function loadCsv(url: URL, signal?: AbortSignal): Promise<CsvTable> {
-  const response = await fetch(url, signal ? { signal } : undefined)
+export async function loadCsv(
+  url: URL,
+  signal?: AbortSignal,
+  resourceFetch: ResourceFetch = fetch,
+): Promise<CsvTable> {
+  const response = await resourceFetch(url, signal ? { signal } : undefined)
   if (!response.ok) {
     throw new Error(`Could not load ${url.href}: HTTP ${response.status}`)
   }

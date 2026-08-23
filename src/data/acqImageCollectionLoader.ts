@@ -15,9 +15,14 @@ import {
   type NativeAcqImageSidecar,
   type NativeImageManifest,
 } from '../models/acqImageCollectionManifest'
+import type { ResourceFetch } from './browserDirectory'
 
-async function loadJson<T>(url: URL, signal?: AbortSignal): Promise<T> {
-  const response = await fetch(url, signal ? { signal } : undefined)
+async function loadJson<T>(
+  url: URL,
+  signal?: AbortSignal,
+  resourceFetch: ResourceFetch = fetch,
+): Promise<T> {
+  const response = await resourceFetch(url, signal ? { signal } : undefined)
   if (!response.ok) throw new Error(`Could not load ${url.href}: HTTP ${response.status}`)
   try {
     return (await response.json()) as T
@@ -175,10 +180,11 @@ function indexRow(entry: AcqImageCollectionEntry): AcqImageCollectionRow {
 export async function loadAcqImageCollection(
   url: string | URL,
   signal?: AbortSignal,
+  resourceFetch: ResourceFetch = fetch,
 ): Promise<LoadedDocument<AcqImageCollection> & { manifest: AcqImageCollectionManifest }> {
   const root = collectionRoot(url)
   const manifestUrl = new URL('acqstore/acq_image_collection.json', root)
-  const manifest = await loadJson<unknown>(manifestUrl, signal)
+  const manifest = await loadJson<unknown>(manifestUrl, signal, resourceFetch)
   validateCollection(manifest, manifestUrl)
   return {
     data: {
@@ -251,14 +257,19 @@ export async function loadAcqImageCollectionEntry(
   root: URL,
   entry: AcqImageCollectionEntry,
   signal?: AbortSignal,
+  resourceFetch: ResourceFetch = fetch,
 ): Promise<LoadedDocument<AcqImageDocument>> {
   const manifestUrl = new URL(entry.manifest_path, root)
-  const manifest = await loadJson<NativeImageManifest>(manifestUrl, signal)
+  const manifest = await loadJson<NativeImageManifest>(manifestUrl, signal, resourceFetch)
   if (manifest.format !== 'acqstore-native-ome-zarr' || manifest.version !== 2) {
     throw new Error(`Image ${entry.id} does not have an AcqStore native manifest v2`)
   }
   const childRoot = new URL(`${entry.ome_zarr_path.replace(/\/$/, '')}/`, root)
-  const sidecar = await loadJson<NativeAcqImageSidecar>(new URL(entry.sidecar_path, root), signal)
+  const sidecar = await loadJson<NativeAcqImageSidecar>(
+    new URL(entry.sidecar_path, root),
+    signal,
+    resourceFetch,
+  )
   const summaries = new Map(
     sidecar.analysis.map((item) => [
       `${item.analysis_name}|${item.channel}|${item.roi_id}`,

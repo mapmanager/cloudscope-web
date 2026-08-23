@@ -1,6 +1,7 @@
 import * as zarr from 'zarrita'
 
 import type { AxisDescriptor, PixelDescriptor } from '../models/acqImageModels'
+import type { ResourceFetch } from './browserDirectory'
 
 interface OmeDataset {
   path: string
@@ -58,8 +59,12 @@ function metadataUrl(zarrUrl: URL): URL {
   return new URL(`${zarrUrl.href.replace(/\/$/, '')}/zarr.json`)
 }
 
-async function fetchRootMetadata(zarrUrl: URL, signal?: AbortSignal): Promise<OmeRootMetadata> {
-  const response = await fetch(metadataUrl(zarrUrl), signal ? { signal } : {})
+async function fetchRootMetadata(
+  zarrUrl: URL,
+  signal?: AbortSignal,
+  resourceFetch: ResourceFetch = fetch,
+): Promise<OmeRootMetadata> {
+  const response = await resourceFetch(metadataUrl(zarrUrl), signal ? { signal } : {})
   if (!response.ok) {
     throw new Error(`Could not load OME-Zarr metadata (${response.status})`)
   }
@@ -70,14 +75,15 @@ async function fetchRootMetadata(zarrUrl: URL, signal?: AbortSignal): Promise<Om
 export async function loadPixelDescriptor(
   href: string,
   signal?: AbortSignal,
+  resourceFetch: ResourceFetch = fetch,
 ): Promise<Omit<PixelDescriptor, 'href'>> {
   const zarrUrl = new URL(href)
-  const metadata = await fetchRootMetadata(zarrUrl, signal)
+  const metadata = await fetchRootMetadata(zarrUrl, signal, resourceFetch)
   const multiscale = metadata.attributes?.ome?.multiscales?.[0]
   const first = multiscale?.datasets?.[0]
   const axes = multiscale?.axes
   if (!first || !axes?.length) throw new Error('OME-Zarr metadata does not describe image axes')
-  const response = await fetch(
+  const response = await resourceFetch(
     new URL(`${zarrUrl.href.replace(/\/$/, '')}/${first.path}/zarr.json`),
     signal ? { signal } : {},
   )
@@ -181,16 +187,19 @@ export async function loadImagePlane(
   documentUrl: URL,
   indices: PlaneIndices,
   signal?: AbortSignal,
+  resourceFetch: ResourceFetch = fetch,
 ): Promise<ImagePlane> {
   const zarrUrl = new URL(descriptor.href.replace(/\/?$/, '/'), documentUrl)
-  const metadata = await fetchRootMetadata(zarrUrl, signal)
+  const metadata = await fetchRootMetadata(zarrUrl, signal, resourceFetch)
   const datasets = metadata.attributes?.ome?.multiscales?.[0]?.datasets
   const paths = datasets?.map(({ path }) => path)
   if (!paths?.length || !datasets) {
     throw new Error('OME-Zarr metadata does not contain a multiscale dataset')
   }
 
-  const store = new zarr.FetchStore(zarrUrl)
+  const store = new zarr.FetchStore(zarrUrl, {
+    fetch: (request) => resourceFetch(request),
+  })
   const group = await zarr.open(store, signal ? { kind: 'group', signal } : { kind: 'group' })
   const { array, path } = await chooseLevel(group, paths, descriptor.dims, signal)
   const dataset = datasets.find((candidate) => candidate.path === path)

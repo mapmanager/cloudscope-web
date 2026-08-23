@@ -260,6 +260,7 @@ onMounted(() => {
           @open-sample="viewer.openAcqImageCollection"
           @open-server="viewer.openServer"
           @open-exported-folder="viewer.openExportedFolder"
+          @open-local-directory="viewer.openLocalDirectory"
         />
         <a
           class="icon-button"
@@ -329,6 +330,7 @@ onMounted(() => {
       :image="viewer.acqImageDocument.value.data.reference_image"
       :document-url="viewer.acqImageDocument.value.url"
       :load-plane="viewer.loadPlane"
+      :load-pixel-descriptor="viewer.loadPixelDescriptor"
       @close="activeInspector = null"
     />
     <div

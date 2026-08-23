@@ -14,6 +14,8 @@ published CloudScope OME-Zarr dataset
 
 The application can therefore be deployed independently from the scientific data.
 
+Chrome and Edge users can also grant read-only access to a local `.ome.zarr` directory. A fetch-compatible directory adapter resolves collection-relative paths through `FileSystemDirectoryHandle`; the manifest, CSV, and OME-Zarr parsers are shared with hosted loading. Zarrita requests metadata and chunks lazily through the same adapter. Local handles are session-only and are never serialized into the page URL.
+
 ## Collection-first loading
 
 CloudScope Web starts by loading the AcqStore collection manifest. The collection manifest contains enough summary information to populate the collection table before the full resources for every image are loaded.

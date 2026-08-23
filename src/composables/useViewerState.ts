@@ -5,12 +5,14 @@ import type { ImagePlane, PlaneIndices } from '../data/omeZarrLoader'
 import { defaultSampleCollection } from '../config/sampleCollections'
 import {
   AcqStoreServerSource,
+  BrowserDirectoryCollectionSource,
   ExportedDatasetSource,
   AcqImageCollectionSource,
   ServerExportedDatasetSource,
   type LocalOpenKind,
   type ViewerDataSource,
 } from '../data/viewerDataSource'
+import { pickCollectionDirectory } from '../data/browserDirectory'
 import { DEFAULT_PLANE_CACHE_OPTIONS, PlaneCache, type PlaneCacheOptions } from '../data/planeCache'
 import type {
   AcqImageDocument,
@@ -208,6 +210,17 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     await activateSource(new ServerExportedDatasetSource(serverUrl.value.trim()))
   }
 
+  /** Open a current AcqStore OME-Zarr collection directly from a browser directory handle. */
+  async function openLocalDirectory(): Promise<void> {
+    try {
+      const directory = await pickCollectionDirectory()
+      await activateSource(new BrowserDirectoryCollectionSource(directory))
+    } catch (reason) {
+      if (reason instanceof DOMException && reason.name === 'AbortError') return
+      error.value = errorMessage(reason)
+    }
+  }
+
   watch(
     [
       selectedAcqImageId,
@@ -354,6 +367,14 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     return plane
   }
 
+  async function loadPixelDescriptor(
+    href: string,
+    signal?: AbortSignal,
+  ): Promise<Omit<PixelDescriptor, 'href'>> {
+    if (!activeSource.value) throw new Error('No collection source is active')
+    return activeSource.value.loadPixelDescriptor(href, signal)
+  }
+
   async function loadTable(url: URL, signal?: AbortSignal): Promise<CsvTable> {
     if (!activeSource.value) throw new Error('No collection source is active')
     const source = activeSource.value
@@ -425,8 +446,10 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     openAcqImageCollection,
     openServer,
     openExportedFolder,
+    openLocalDirectory,
     selectAcqImage,
     loadPlane,
+    loadPixelDescriptor,
     loadTable,
     loadCollectionTable,
     unloadImage,

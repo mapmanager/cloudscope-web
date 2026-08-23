@@ -14,22 +14,6 @@ const viewerSpies = vi.hoisted(() => ({
   showXYPlot: vi.fn(),
 }))
 
-vi.mock('../src/data/omeZarrLoader', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../src/data/omeZarrLoader')>()),
-  loadPixelDescriptor: vi.fn().mockResolvedValue({
-    shape: [2, 512, 512],
-    dims: ['c', 'y', 'x'],
-    sizes: { c: 2, y: 512, x: 512 },
-    dtype: 'uint16',
-    axes: [
-      { name: 'c', size: 2, spacing: 1, unit: 'Pixels' },
-      { name: 'y', size: 512, spacing: 0.5, unit: 'micrometer' },
-      { name: 'x', size: 512, spacing: 0.5, unit: 'micrometer' },
-    ],
-    num_channels: 2,
-  }),
-}))
-
 vi.mock('../src/raster-viewer/raster-viewer.js', () => ({
   RasterViewer: class {
     loadSourcePlane = null
@@ -64,16 +48,31 @@ const plane: ImagePlane = {
   },
 }
 
+const pixelDescriptor = {
+  shape: [2, 512, 512],
+  dims: ['c', 'y', 'x'],
+  sizes: { c: 2, y: 512, x: 512 },
+  dtype: 'uint16',
+  axes: [
+    { name: 'c', size: 2, spacing: 1, unit: 'Pixels' },
+    { name: 'y', size: 512, spacing: 0.5, unit: 'micrometer' },
+    { name: 'x', size: 512, spacing: 0.5, unit: 'micrometer' },
+  ],
+  num_channels: 2,
+}
+
 describe('ReferenceImageInspector', () => {
   beforeEach(() => vi.clearAllMocks())
 
   it('loads its own viewer and toggles the non-interactive scan path', async () => {
     const loadPlane = vi.fn().mockResolvedValue(plane)
+    const loadPixelDescriptor = vi.fn().mockResolvedValue(pixelDescriptor)
     const wrapper = mount(ReferenceImageInspector, {
       props: {
         image,
         documentUrl: new URL('https://example.test/acqstore/manifest.json'),
         loadPlane,
+        loadPixelDescriptor,
       },
     })
     await flushPromises()
@@ -97,16 +96,19 @@ describe('ReferenceImageInspector', () => {
 
   it('shows a normal empty state without creating a data request', async () => {
     const loadPlane = vi.fn()
+    const loadPixelDescriptor = vi.fn()
     const wrapper = mount(ReferenceImageInspector, {
       props: {
         image: null,
         documentUrl: new URL('https://example.test/acqstore/manifest.json'),
         loadPlane,
+        loadPixelDescriptor,
       },
     })
     await flushPromises()
 
     expect(wrapper.text()).toContain('This AcqImage has no reference image.')
     expect(loadPlane).not.toHaveBeenCalled()
+    expect(loadPixelDescriptor).not.toHaveBeenCalled()
   })
 })

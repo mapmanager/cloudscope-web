@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import AcqImageCollectionSource from '../src/components/AcqImageCollectionSource.vue'
 
@@ -35,5 +35,23 @@ describe('AcqImageCollectionSource', () => {
 
     expect(wrapper.find('.collection-source__popover').exists()).toBe(false)
     wrapper.unmount()
+  })
+
+  it('offers the Chrome/Edge local-directory action', async () => {
+    vi.stubGlobal('showDirectoryPicker', vi.fn())
+    const wrapper = mount(AcqImageCollectionSource, {
+      props: { modelValue: '', serverUrl: '', loading: false, showLocalServer: false },
+    })
+
+    await wrapper.get('.collection-source__trigger').trigger('click')
+    const localButton = wrapper
+      .findAll('button')
+      .find((button) => button.text().trim() === 'Open local directory')
+    expect(localButton).toBeDefined()
+    await localButton!.trigger('click')
+
+    expect(wrapper.emitted('open-local-directory')).toEqual([[]])
+    wrapper.unmount()
+    vi.unstubAllGlobals()
   })
 })

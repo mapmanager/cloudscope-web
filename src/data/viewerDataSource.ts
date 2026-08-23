@@ -1,6 +1,11 @@
 import { loadCsv, type CsvTable } from './csvLoader'
 import { loadAcqImage, loadDataset } from './datasetLoader'
-import { loadImagePlane, type ImagePlane, type PlaneIndices } from './omeZarrLoader'
+import {
+  loadImagePlane,
+  loadPixelDescriptor,
+  type ImagePlane,
+  type PlaneIndices,
+} from './omeZarrLoader'
 import {
   loadAcqImageCollection,
   loadAcqImageCollectionEntry,
@@ -12,6 +17,10 @@ import type {
   PixelDescriptor,
   AcqImageCollection,
 } from '../models/acqImageModels'
+import {
+  createDirectoryFetch,
+  type ResourceFetch,
+} from './browserDirectory'
 
 export type LocalOpenKind = 'file' | 'folder' | 'csv'
 
@@ -32,6 +41,10 @@ export interface ViewerDataSource {
     indices: PlaneIndices,
     signal?: AbortSignal,
   ): Promise<ImagePlane>
+  loadPixelDescriptor(
+    href: string,
+    signal?: AbortSignal,
+  ): Promise<Omit<PixelDescriptor, 'href'>>
   loadTable(url: URL, signal?: AbortSignal): Promise<CsvTable>
   unloadImage(imageId: string): Promise<void>
   close(): Promise<void>
@@ -62,6 +75,10 @@ export class ExportedDatasetSource implements ViewerDataSource {
     signal?: AbortSignal,
   ): Promise<ImagePlane> {
     return loadImagePlane(descriptor, documentUrl, indices, signal)
+  }
+
+  loadPixelDescriptor(href: string, signal?: AbortSignal) {
+    return loadPixelDescriptor(href, signal)
   }
 
   loadTable(url: URL, signal?: AbortSignal): Promise<CsvTable> {
@@ -188,6 +205,10 @@ export class AcqStoreServerSource implements ViewerDataSource {
     }
   }
 
+  loadPixelDescriptor(href: string, signal?: AbortSignal) {
+    return loadPixelDescriptor(href, signal)
+  }
+
   loadTable(url: URL, signal?: AbortSignal): Promise<CsvTable> {
     return loadCsv(url, signal)
   }
@@ -261,14 +282,20 @@ export class ServerExportedDatasetSource extends ExportedDatasetSource {
 
 export class AcqImageCollectionSource implements ViewerDataSource {
   readonly canUnload = true
-  readonly persistInUrl = true
+  readonly persistInUrl: boolean
   readonly refreshAfterUnload = false
   private entries = new Map<string, AcqImageCollectionEntry>()
 
-  constructor(private readonly collectionUrl: string) {}
+  constructor(
+    private readonly collectionUrl: string,
+    private readonly resourceFetch: ResourceFetch = fetch,
+    persistInUrl = true,
+  ) {
+    this.persistInUrl = persistInUrl
+  }
 
   async loadCollection(signal?: AbortSignal): Promise<LoadedDocument<AcqImageCollection>> {
-    const loaded = await loadAcqImageCollection(this.collectionUrl, signal)
+    const loaded = await loadAcqImageCollection(this.collectionUrl, signal, this.resourceFetch)
     this.entries = new Map(
       loaded.manifest.acq_images.map((entry) => [entry.manifest_path, entry]),
     )
@@ -282,7 +309,7 @@ export class AcqImageCollectionSource implements ViewerDataSource {
   loadAcqImage(collectionUrl: URL, href: string, signal?: AbortSignal) {
     const entry = this.entries.get(href)
     if (!entry) return Promise.reject(new Error(`Unknown collection image manifest: ${href}`))
-    return loadAcqImageCollectionEntry(collectionUrl, entry, signal)
+    return loadAcqImageCollectionEntry(collectionUrl, entry, signal, this.resourceFetch)
   }
 
   loadPlane(
@@ -291,16 +318,62 @@ export class AcqImageCollectionSource implements ViewerDataSource {
     indices: PlaneIndices,
     signal?: AbortSignal,
   ): Promise<ImagePlane> {
-    return loadImagePlane(descriptor, documentUrl, indices, signal)
+    return loadImagePlane(descriptor, documentUrl, indices, signal, this.resourceFetch)
+  }
+
+  loadPixelDescriptor(href: string, signal?: AbortSignal) {
+    return loadPixelDescriptor(href, signal, this.resourceFetch)
   }
 
   loadTable(url: URL, signal?: AbortSignal): Promise<CsvTable> {
-    return loadCsv(url, signal)
+    return loadCsv(url, signal, this.resourceFetch)
   }
 
   async unloadImage(): Promise<void> {}
 
   async close(): Promise<void> {
     this.entries.clear()
+  }
+}
+
+/** Current-format AcqStore collection selected from the user's local filesystem. */
+export class BrowserDirectoryCollectionSource extends AcqImageCollectionSource {
+  private readonly rootUrl: URL
+  private readonly localFetch: ResourceFetch
+
+  constructor(private readonly directory: FileSystemDirectoryHandle) {
+    const rootUrl = new URL(
+      `${encodeURIComponent(directory.name)}/`,
+      'https://local-ome-zarr.invalid/',
+    )
+    const localFetch = createDirectoryFetch(directory, rootUrl)
+    super(rootUrl.href, localFetch, false)
+    this.rootUrl = rootUrl
+    this.localFetch = localFetch
+  }
+
+  override async loadCollection(signal?: AbortSignal) {
+    if (!this.directory.name.toLowerCase().endsWith('.ome.zarr')) {
+      throw new Error('Select the root directory whose name ends with .ome.zarr.')
+    }
+    const currentManifest = await this.localFetch(
+      new URL('acqstore/acq_image_collection.json', this.rootUrl),
+      signal ? { signal } : undefined,
+    )
+    if (!currentManifest.ok) {
+      const legacyManifest = await this.localFetch(
+        new URL('acqstore/manifest.json', this.rootUrl),
+        signal ? { signal } : undefined,
+      )
+      if (legacyManifest.ok) {
+        throw new Error(
+          'This is a legacy AcqStore OME-Zarr collection; re-export it with the current AcqStore exporter.',
+        )
+      }
+      throw new Error(
+        'The selected directory is missing acqstore/acq_image_collection.json.',
+      )
+    }
+    return super.loadCollection(signal)
   }
 }

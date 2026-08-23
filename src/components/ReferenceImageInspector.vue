@@ -3,7 +3,7 @@ import { X } from '@lucide/vue'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 import { buildReferenceRasterDescriptor } from '../data/rasterDescriptor'
-import { loadPixelDescriptor, type ImagePlane, type PlaneIndices } from '../data/omeZarrLoader'
+import type { ImagePlane, PlaneIndices } from '../data/omeZarrLoader'
 import type {
   PixelDescriptor,
   ReferenceImageDescriptor,
@@ -26,6 +26,10 @@ const props = defineProps<{
     indices: PlaneIndices,
     signal?: AbortSignal,
   ) => Promise<ImagePlane>
+  loadPixelDescriptor: (
+    href: string,
+    signal?: AbortSignal,
+  ) => Promise<Omit<PixelDescriptor, 'href'>>
 }>()
 defineEmits<{ close: [] }>()
 
@@ -87,7 +91,7 @@ async function reload(): Promise<void> {
   loading.value = true
   error.value = null
   try {
-    const pixels = await loadPixelDescriptor(props.image.href, current.signal)
+    const pixels = await props.loadPixelDescriptor(props.image.href, current.signal)
     const dimensions = pixels.dims.map((name) => name.toLowerCase())
     if (!(
       (dimensions.length === 2 && dimensions.join(',') === 'y,x') ||
