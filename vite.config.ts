@@ -47,12 +47,16 @@ export default defineConfig(() => {
 
   return {
     base: './',
+    // Linked workspace packages resolve through their physical checkout. Force
+    // shared browser runtimes to the application's copies so production does
+    // not bundle duplicate Vue or Plotly implementations.
+    resolve: { dedupe: ['vue', 'plotly.js-dist-min'] },
     define: {
       __ACQSTORE_DEV_DATASET_CONFIGURED__: JSON.stringify(Boolean(configuredLocalDatasetRoot)),
       __CLOUDSCOPE_BUILD_INFO__: JSON.stringify(buildInfo),
     },
     plugins: [
-      vue(),
+      vue({ template: { compilerOptions: { isCustomElement: (tag) => tag === 'nice-pool' } } }),
       {
         name: 'cloudscope-local-dataset',
         apply: 'serve',

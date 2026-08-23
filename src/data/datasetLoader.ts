@@ -6,10 +6,11 @@ import type {
 } from '../models/acqImageModels'
 
 /** Legacy AcqStore Server wire format, adapted at the transport boundary. */
-interface WebDatasetV1 extends Omit<AcqImageCollection, 'acq_images'> {
+interface WebDatasetV1 extends Omit<AcqImageCollection, 'acq_images' | 'analysis_tables'> {
   format: 'acqstore-web-dataset'
   format_version: 1
   images: AcqImageCollectionRow[]
+  analysis_tables?: Record<string, string>
 }
 
 async function loadJson<T>(url: string | URL, signal?: AbortSignal): Promise<LoadedDocument<T>> {
@@ -35,6 +36,7 @@ export async function loadDataset(
       name: loaded.data.name,
       acqstore_version: loaded.data.acqstore_version,
       created_utc: loaded.data.created_utc,
+      analysis_tables: loaded.data.analysis_tables ?? {},
       acq_images: loaded.data.images,
     },
     url: loaded.url,

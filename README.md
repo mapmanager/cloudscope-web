@@ -50,12 +50,18 @@ CloudScope Web is implemented with Vue 3, TypeScript, and Vite.
 
 Requirements for the web application:
 
-- Node.js 22 or newer
+- Node.js 22.13 or newer
 - npm
+- a sibling checkout of
+  [`mapmanager-web-components`](https://github.com/mapmanager/mapmanager-web-components)
 
-Install the locked dependencies:
+Build the shared NicePool package, then install the locked dependencies:
 
 ```bash
+cd ../mapmanager-web-components
+npm ci
+npm run build --workspace @mapmanager/nicepool
+cd ../cloudscope-web
 npm ci
 ```
 

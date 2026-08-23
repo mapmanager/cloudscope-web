@@ -55,6 +55,7 @@ describe('AcqImageCollection loader', () => {
       num_rois: 1,
       load_state: { pixels: false, analysisCsv: false },
     })
+    expect(loaded.data.analysis_tables).toEqual({})
   })
 
   it('rejects stale collection versions before reading new fields', async () => {

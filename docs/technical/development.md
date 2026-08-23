@@ -4,18 +4,39 @@
 
 CloudScope Web application development requires:
 
-- Node.js 22 or newer
+- Node.js 22.13 or newer
 - npm
+- a sibling checkout of
+  [`mapmanager-web-components`](https://github.com/mapmanager/mapmanager-web-components)
 
 Documentation development additionally requires Python with the packages pinned in `requirements-docs.txt`.
 
 ## Install the web application
 
-Install the locked npm dependencies:
+Check out the two repositories as siblings:
+
+```text
+cs_project/
+├── cloudscope-web/
+└── mapmanager-web-components/
+```
+
+Build the shared NicePool package, then install CloudScope Web's locked
+dependencies:
 
 ```bash
+cd ../mapmanager-web-components
+npm ci
+npm run build --workspace @mapmanager/nicepool
+cd ../cloudscope-web
 npm ci
 ```
+
+CloudScope Web uses the local `@mapmanager/nicepool` package. Its GitHub Pages
+workflow performs the same steps after checking out the current
+`mapmanager-web-components/main` branch. A NicePool push is picked up the next
+time the CloudScope Web workflow runs; it does not independently trigger a
+CloudScope Web deployment.
 
 Start the Vite development server:
 

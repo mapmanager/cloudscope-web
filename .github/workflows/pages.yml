@@ -16,33 +16,57 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
+      - name: Check out CloudScope Web
         uses: actions/checkout@v6
+        with:
+          path: cloudscope-web
+
+      - name: Check out shared web components
+        uses: actions/checkout@v6
+        with:
+          repository: mapmanager/mapmanager-web-components
+          ref: main
+          path: mapmanager-web-components
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: |
+            cloudscope-web/package-lock.json
+            mapmanager-web-components/package-lock.json
 
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: '3.12'
           cache: pip
-          cache-dependency-path: requirements-docs.txt
+          cache-dependency-path: cloudscope-web/requirements-docs.txt
+
+      - name: Install shared component dependencies
+        run: npm ci
+        working-directory: mapmanager-web-components
+
+      - name: Build NicePool package
+        run: npm run build --workspace @mapmanager/nicepool
+        working-directory: mapmanager-web-components
 
       - name: Install application dependencies
         run: npm ci
+        working-directory: cloudscope-web
 
       - name: Install documentation dependencies
         run: python -m pip install -r requirements-docs.txt
+        working-directory: cloudscope-web
 
       - name: Verify and build production site
         run: npm run check
+        working-directory: cloudscope-web
 
       - name: Build documentation
         run: mkdocs build --strict
+        working-directory: cloudscope-web
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
@@ -50,7 +74,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: dist
+          path: cloudscope-web/dist
 
   deploy:
     needs: build

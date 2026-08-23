@@ -9,11 +9,13 @@ import AcqImageCollectionTable from './components/AcqImageCollectionTable.vue'
 import ImageViewer from './components/ImageViewer.vue'
 import CollectionFilesInspector from './components/CollectionFilesInspector.vue'
 import MetadataInspector from './components/MetadataInspector.vue'
+import NicePoolPanel from './components/NicePoolPanel.vue'
 import ResizableSection from './components/ResizableSection.vue'
 import ReferenceImageInspector from './components/ReferenceImageInspector.vue'
 import SelectedAcqImageBar from './components/SelectedAcqImageBar.vue'
 import { useViewerState } from './composables/useViewerState'
 import { appInformation } from './config/buildInfo'
+import { preferredAnalysisTableForUrl } from './config/sampleCollections'
 import { clampSectionHeight } from './data/resizableSection'
 import { plotsForAnalysis } from './plots/analysisPlotRegistry'
 import type { AxisRange, LinkedAxisUpdate } from './models/viewState'
@@ -32,7 +34,15 @@ const INSPECTOR_DEFAULT_WIDTH = 320
 const INSPECTOR_CLOSE_WIDTH = 8
 const inspectorWidth = ref(INSPECTOR_DEFAULT_WIDTH)
 const inspectorResizing = ref(false)
+const nicepoolOpen = ref(false)
+const NICEPOOL_MIN_WIDTH = 0
+const NICEPOOL_MAX_WIDTH = 1200
+const NICEPOOL_DEFAULT_WIDTH = 720
+const NICEPOOL_CLOSE_WIDTH = 8
+const nicepoolWidth = ref(NICEPOOL_DEFAULT_WIDTH)
+const nicepoolResizing = ref(false)
 let inspectorDrag: { pointerId: number; startX: number; startWidth: number } | null = null
+let nicepoolDrag: { pointerId: number; startX: number; startWidth: number } | null = null
 
 function resizeInspector(requested: number): void {
   inspectorWidth.value = clampSectionHeight(requested, INSPECTOR_MIN_WIDTH, INSPECTOR_MAX_WIDTH)
@@ -78,6 +88,57 @@ function inspectorKeyDown(event: KeyboardEvent): void {
   else if (event.key === 'Home') resizeInspector(INSPECTOR_MIN_WIDTH)
   else resizeInspector(INSPECTOR_MAX_WIDTH)
   if (inspectorWidth.value < INSPECTOR_CLOSE_WIDTH) closeCollapsedInspector()
+}
+
+function resizeNicePool(requested: number): void {
+  nicepoolWidth.value = clampSectionHeight(requested, NICEPOOL_MIN_WIDTH, NICEPOOL_MAX_WIDTH)
+}
+
+function toggleNicePool(): void {
+  nicepoolOpen.value = !nicepoolOpen.value
+  if (nicepoolOpen.value && nicepoolWidth.value < NICEPOOL_CLOSE_WIDTH) {
+    nicepoolWidth.value = NICEPOOL_DEFAULT_WIDTH
+  }
+}
+
+function finishNicePoolResize(): void {
+  nicepoolDrag = null
+  nicepoolResizing.value = false
+  if (nicepoolWidth.value < NICEPOOL_CLOSE_WIDTH) {
+    nicepoolOpen.value = false
+    nicepoolWidth.value = NICEPOOL_DEFAULT_WIDTH
+  }
+}
+
+function nicepoolPointerDown(event: PointerEvent): void {
+  nicepoolDrag = {
+    pointerId: event.pointerId,
+    startX: event.clientX,
+    startWidth: nicepoolWidth.value,
+  }
+  nicepoolResizing.value = true
+  ;(event.currentTarget as HTMLElement).setPointerCapture(event.pointerId)
+}
+
+function nicepoolPointerMove(event: PointerEvent): void {
+  if (!nicepoolDrag || nicepoolDrag.pointerId !== event.pointerId) return
+  resizeNicePool(nicepoolDrag.startWidth - (event.clientX - nicepoolDrag.startX))
+}
+
+function nicepoolPointerUp(event: PointerEvent): void {
+  if (nicepoolDrag?.pointerId !== event.pointerId) return
+  finishNicePoolResize()
+}
+
+function nicepoolKeyDown(event: KeyboardEvent): void {
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return
+  event.preventDefault()
+  const step = event.shiftKey ? 40 : 10
+  if (event.key === 'ArrowLeft') resizeNicePool(nicepoolWidth.value + step)
+  else if (event.key === 'ArrowRight') resizeNicePool(nicepoolWidth.value - step)
+  else if (event.key === 'Home') resizeNicePool(NICEPOOL_MIN_WIDTH)
+  else resizeNicePool(NICEPOOL_MAX_WIDTH)
+  if (nicepoolWidth.value < NICEPOOL_CLOSE_WIDTH) finishNicePoolResize()
 }
 
 function updateLinkedAxis(update: LinkedAxisUpdate): void {
@@ -173,8 +234,16 @@ onMounted(() => {
 <template>
   <div
     class="app-shell"
-    :class="{ 'inspector-open': activeInspector, 'inspector-resizing': inspectorResizing }"
-    :style="{ '--inspector-open-width': `${inspectorWidth}px` }"
+    :class="{
+      'inspector-open': activeInspector,
+      'inspector-resizing': inspectorResizing,
+      'nicepool-open': nicepoolOpen,
+      'nicepool-resizing': nicepoolResizing,
+    }"
+    :style="{
+      '--inspector-open-width': `${inspectorWidth}px`,
+      '--nicepool-open-width': `${nicepoolWidth}px`,
+    }"
   >
     <header class="app-header">
       <h1>CloudScope Web</h1>
@@ -209,7 +278,10 @@ onMounted(() => {
       :active="activeInspector"
       :files-disabled="!viewer.acqImageCollectionDocument.value"
       :metadata-disabled="!viewer.acqImageDocument.value"
+      :nicepool-disabled="!viewer.acqImageCollectionDocument.value"
+      :nicepool-open="nicepoolOpen"
       @select="toggleInspector"
+      @toggle-nicepool="toggleNicePool"
     />
     <CollectionFilesInspector
       v-if="activeInspector === 'files' && viewer.acqImageCollectionDocument.value"
@@ -261,7 +333,7 @@ onMounted(() => {
     />
     <div
       v-if="activeInspector"
-      class="resize-handle resize-handle--vertical"
+      class="resize-handle resize-handle--vertical resize-handle--inspector"
       role="separator"
       tabindex="0"
       aria-orientation="vertical"
@@ -351,6 +423,32 @@ onMounted(() => {
       </template>
       <section v-else class="panel empty-state">Open an AcqImageCollection to begin.</section>
     </main>
+
+    <div
+      v-if="nicepoolOpen"
+      class="resize-handle resize-handle--vertical resize-handle--nicepool"
+      role="separator"
+      tabindex="0"
+      aria-orientation="vertical"
+      aria-label="Resize NicePool"
+      :aria-valuemin="NICEPOOL_MIN_WIDTH"
+      :aria-valuemax="NICEPOOL_MAX_WIDTH"
+      :aria-valuenow="Math.round(nicepoolWidth)"
+      @pointerdown="nicepoolPointerDown"
+      @pointermove="nicepoolPointerMove"
+      @pointerup="nicepoolPointerUp"
+      @pointercancel="nicepoolPointerUp"
+      @keydown="nicepoolKeyDown"
+    >
+      <span aria-hidden="true" />
+    </div>
+    <NicePoolPanel
+      v-if="nicepoolOpen && viewer.acqImageCollectionDocument.value"
+      :collection-url="viewer.acqImageCollectionDocument.value.url"
+      :analysis-tables="viewer.acqImageCollectionDocument.value.data.analysis_tables"
+      :preferred-table="preferredAnalysisTableForUrl(viewer.acqImageCollectionDocument.value.url)"
+      :load-table="viewer.loadCollectionTable"
+    />
 
     <footer class="app-footer">
       <span>{{ viewer.acqImageDocument.value?.data.name ?? 'No AcqImage' }}</span>

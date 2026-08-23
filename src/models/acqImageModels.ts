@@ -41,6 +41,8 @@ export interface AcqImageCollection {
   name: string
   acqstore_version: string
   created_utc: string
+  /** Collection-level CSV resources advertised by the AcqStore manifest. */
+  analysis_tables: Record<string, string>
   acq_images: AcqImageCollectionRow[]
 }
 

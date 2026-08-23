@@ -4,6 +4,9 @@
   --app-toolbar-width: 44px;
   --inspector-width: 0px;
   --inspector-open-width: 320px;
+  --nicepool-width: 0px;
+  --nicepool-open-width: 720px;
+  --nicepool-divider-width: 0px;
   --resize-handle-size: 8px;
   --plot-gutter-left: 64px;
   --plot-gutter-right: 20px;
@@ -48,14 +51,23 @@ button {
   display: grid;
   width: 100vw;
   height: 100vh;
-  grid-template-columns: var(--app-toolbar-width) var(--inspector-width) minmax(0, 1fr);
+  grid-template-columns:
+    var(--app-toolbar-width) var(--inspector-width) minmax(0, 1fr) var(--nicepool-divider-width)
+    var(--nicepool-width);
   grid-template-rows: var(--app-header-height) minmax(0, 1fr) var(--app-footer-height);
   transition: grid-template-columns 160ms ease;
 }
 .app-shell.inspector-open {
   --inspector-width: var(--inspector-open-width);
 }
+.app-shell.nicepool-open {
+  --nicepool-width: var(--nicepool-open-width);
+  --nicepool-divider-width: var(--resize-handle-size);
+}
 .app-shell.inspector-resizing {
+  transition: none;
+}
+.app-shell.nicepool-resizing {
   transition: none;
 }
 .app-header {
@@ -539,12 +551,56 @@ button:disabled {
 }
 .resize-handle--vertical {
   z-index: 21;
-  grid-column: 2;
   grid-row: 2;
   width: var(--resize-handle-size);
   height: auto;
   justify-self: end;
   cursor: col-resize;
+}
+.resize-handle--inspector {
+  grid-column: 2;
+}
+.resize-handle--nicepool {
+  grid-column: 4;
+  justify-self: stretch;
+}
+.nicepool-panel {
+  min-width: 0;
+  min-height: 0;
+  grid-column: 5;
+  grid-row: 2;
+  border-left: 1px solid #20353f;
+  background: #0a171d;
+  overflow: auto;
+}
+.nicepool-panel__header {
+  position: sticky;
+  z-index: 8;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 6px 8px;
+  border-bottom: 1px solid #20353f;
+  background: #0a171d;
+  font-size: var(--font-small);
+}
+.nicepool-panel__header select {
+  min-width: 0;
+  flex: 1;
+  border: 1px solid #31505c;
+  border-radius: 4px;
+  padding: 3px 5px;
+  color: inherit;
+  background: #101f26;
+}
+.nicepool-panel__message {
+  margin: 10px;
+}
+.nicepool-panel__widget {
+  display: block;
+  min-width: 0;
 }
 .resize-handle--vertical span {
   width: 2px;
@@ -620,6 +676,15 @@ button:disabled {
   }
   .resize-handle--vertical {
     display: none;
+  }
+  .nicepool-panel {
+    position: fixed;
+    z-index: 39;
+    top: var(--app-header-height);
+    right: 0;
+    bottom: var(--app-footer-height);
+    width: min(92vw, var(--nicepool-open-width));
+    box-shadow: -10px 0 30px rgb(0 0 0 / 45%);
   }
   .selected-acq-image,
   .selected-acq-image__identity {

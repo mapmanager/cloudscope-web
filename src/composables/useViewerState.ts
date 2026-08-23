@@ -365,6 +365,12 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     return table
   }
 
+  /** Load a collection-level table without changing one AcqImage's load status. */
+  async function loadCollectionTable(url: URL, signal?: AbortSignal): Promise<CsvTable> {
+    if (!activeSource.value) throw new Error('No collection source is active')
+    return activeSource.value.loadTable(url, signal)
+  }
+
   async function unloadImage(imageId: string): Promise<void> {
     if (!activeSource.value?.canUnload) return
     loading.value = true
@@ -422,6 +428,7 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     selectAcqImage,
     loadPlane,
     loadTable,
+    loadCollectionTable,
     unloadImage,
     closeAcqImageCollection,
   }

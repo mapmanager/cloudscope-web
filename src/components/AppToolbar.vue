@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FileJson2, FlaskConical, Image, Info, Table2 } from '@lucide/vue'
+import { ChartScatter, FileJson2, FlaskConical, Image, Info, Table2 } from '@lucide/vue'
 
 /** Panes opened from the left inspector toolbar. */
 export type InspectorKind = 'files' | 'reference-image' | 'image-header' | 'experiment' | 'app-info'
@@ -8,8 +8,10 @@ defineProps<{
   active: InspectorKind | null
   filesDisabled: boolean
   metadataDisabled: boolean
+  nicepoolDisabled: boolean
+  nicepoolOpen: boolean
 }>()
-defineEmits<{ select: [kind: InspectorKind] }>()
+defineEmits<{ select: [kind: InspectorKind]; 'toggle-nicepool': [] }>()
 </script>
 
 <template>
@@ -24,6 +26,17 @@ defineEmits<{ select: [kind: InspectorKind] }>()
       @click="$emit('select', 'files')"
     >
       <Table2 :size="19" aria-hidden="true" />
+    </button>
+    <button
+      type="button"
+      class="icon-button"
+      :class="{ active: nicepoolOpen }"
+      :disabled="nicepoolDisabled"
+      aria-label="NicePool"
+      title="NicePool"
+      @click="$emit('toggle-nicepool')"
+    >
+      <ChartScatter :size="19" aria-hidden="true" />
     </button>
     <button
       type="button"

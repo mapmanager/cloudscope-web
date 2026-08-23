@@ -6,11 +6,18 @@ import AppToolbar from '../src/components/AppToolbar.vue'
 describe('AppToolbar', () => {
   it('presents inspector buttons in workflow order', () => {
     const wrapper = mount(AppToolbar, {
-      props: { active: null, filesDisabled: false, metadataDisabled: false },
+      props: {
+        active: null,
+        filesDisabled: false,
+        metadataDisabled: false,
+        nicepoolDisabled: false,
+        nicepoolOpen: false,
+      },
     })
 
     expect(wrapper.findAll('button').map((button) => button.attributes('aria-label'))).toEqual([
       'File table',
+      'NicePool',
       'Header metadata',
       'Experimental metadata',
       'Reference image',
@@ -20,7 +27,13 @@ describe('AppToolbar', () => {
 
   it('emits the requested inspector and marks the active button', async () => {
     const wrapper = mount(AppToolbar, {
-      props: { active: 'image-header', filesDisabled: false, metadataDisabled: false },
+      props: {
+        active: 'image-header',
+        filesDisabled: false,
+        metadataDisabled: false,
+        nicepoolDisabled: false,
+        nicepoolOpen: false,
+      },
     })
 
     expect(wrapper.get('[aria-label="Header metadata"]').classes()).toContain('active')
@@ -30,7 +43,13 @@ describe('AppToolbar', () => {
 
   it('opens the files pane independently of metadata', async () => {
     const wrapper = mount(AppToolbar, {
-      props: { active: null, filesDisabled: false, metadataDisabled: true },
+      props: {
+        active: null,
+        filesDisabled: false,
+        metadataDisabled: true,
+        nicepoolDisabled: false,
+        nicepoolOpen: false,
+      },
     })
 
     expect(wrapper.get('[aria-label="File table"]').attributes('disabled')).toBeUndefined()
@@ -41,7 +60,13 @@ describe('AppToolbar', () => {
 
   it('opens the reference image pane for a selected AcqImage', async () => {
     const wrapper = mount(AppToolbar, {
-      props: { active: null, filesDisabled: false, metadataDisabled: false },
+      props: {
+        active: null,
+        filesDisabled: false,
+        metadataDisabled: false,
+        nicepoolDisabled: false,
+        nicepoolOpen: false,
+      },
     })
 
     await wrapper.get('[aria-label="Reference image"]').trigger('click')
@@ -50,7 +75,13 @@ describe('AppToolbar', () => {
 
   it('keeps app information available when no collection is open', async () => {
     const wrapper = mount(AppToolbar, {
-      props: { active: null, filesDisabled: true, metadataDisabled: true },
+      props: {
+        active: null,
+        filesDisabled: true,
+        metadataDisabled: true,
+        nicepoolDisabled: true,
+        nicepoolOpen: false,
+      },
     })
     expect(wrapper.get('[aria-label="File table"]').attributes('disabled')).toBeDefined()
     expect(wrapper.get('[aria-label="Header metadata"]').attributes('disabled')).toBeDefined()
@@ -60,5 +91,20 @@ describe('AppToolbar', () => {
 
     await wrapper.get('[aria-label="App information"]').trigger('click')
     expect(wrapper.emitted('select')).toEqual([['app-info']])
+  })
+
+  it('toggles NicePool independently of the left inspector', async () => {
+    const wrapper = mount(AppToolbar, {
+      props: {
+        active: null,
+        filesDisabled: false,
+        metadataDisabled: false,
+        nicepoolDisabled: false,
+        nicepoolOpen: true,
+      },
+    })
+    expect(wrapper.get('[aria-label="NicePool"]').classes()).toContain('active')
+    await wrapper.get('[aria-label="NicePool"]').trigger('click')
+    expect(wrapper.emitted('toggle-nicepool')).toEqual([[]])
   })
 })

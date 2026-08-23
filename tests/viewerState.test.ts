@@ -97,6 +97,7 @@ function mockCollection(acqImages: AcqImageCollectionRow[]): void {
       name: 'test',
       acqstore_version: '1',
       created_utc: '',
+      analysis_tables: {},
       acq_images: acqImages,
     },
   })
@@ -150,6 +151,7 @@ describe('viewer selection state', () => {
         name: 'test',
         acqstore_version: '1',
         created_utc: '',
+        analysis_tables: {},
         acq_images: [
           {
             id: 'image-1',

@@ -15,6 +15,7 @@ describe('hosted sample catalog', () => {
       expect(url.protocol).toBe('https:')
       expect(url.hostname).toBe('data.mapmanager.net')
       expect(url.pathname).toMatch(/^\/samples\/.+\.ome\.zarr\/$/)
+      expect(sample.preferredAnalysisTable).toMatch(/^[a-z][a-z0-9_]*$/)
     }
 
     expect(defaultSampleCollection.id).toBe('diameter')

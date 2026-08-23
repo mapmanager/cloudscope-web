@@ -186,6 +186,7 @@ export async function loadAcqImageCollection(
       name: manifest.name,
       acqstore_version: manifest.acqstore_version,
       created_utc: manifest.created_utc,
+      analysis_tables: { ...manifest.analysis_tables },
       acq_images: manifest.acq_images.map(indexRow),
     },
     url: root,

@@ -8,8 +8,13 @@ deployed.
 
 ## Unreleased
 
+### Added
+
+- Added a collapsible, resizable NicePool panel for exploring collection-level analysis tables.
+
 ### Changed
 
+- Deduplicated the Plotly runtime shared by CloudScope Web and NicePool in production builds.
 - Reordered the left toolbar into file, metadata, reference-image, and application-information workflow order.
 - Expanded the App Information panel with a project description, documentation links, and contact information.
 
