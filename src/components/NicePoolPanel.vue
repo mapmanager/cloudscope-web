@@ -1,17 +1,35 @@
 <script setup lang="ts">
-import { NicePoolElement, registerNicePoolElement } from '@mapmanager/nicepool'
+import {
+  NicePoolElement,
+  registerNicePoolElement,
+  type NicePoolSelection,
+  type NicePoolState,
+  type NicePoolRow,
+} from '@mapmanager/nicepool'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 
 import type { CsvTable } from '../data/csvLoader'
-import { csvTableToNicePoolDataset } from '../data/nicepoolDataset'
+import {
+  csvTableToNicePoolDataset,
+  nicePoolSelectionForViewer,
+  nicePoolTargetForSelection,
+} from '../data/nicepoolDataset'
+import type { AnalysisTableDescriptor } from '../models/acqImageCollectionManifest'
 
 registerNicePoolElement()
 
 const props = defineProps<{
   collectionUrl: URL
-  analysisTables: Record<string, string>
+  analysisTables: Record<string, AnalysisTableDescriptor>
   preferredTable: string | null
   loadTable: (url: URL, signal?: AbortSignal) => Promise<CsvTable>
+  loadJson: (url: URL, signal?: AbortSignal) => Promise<unknown>
+  selectedAcqImageId: string | null
+  selectedChannel: number
+  selectedRoiId: number | null
+}>()
+const emit = defineEmits<{
+  selectAnalysisRow: [acqImageId: string, channel: number, roiId: number]
 }>()
 
 const element = ref<NicePoolElement | null>(null)
@@ -19,6 +37,7 @@ const selectedTable = ref('')
 const loading = ref(false)
 const error = ref<string | null>(null)
 let request: AbortController | null = null
+let currentRows: readonly NicePoolRow[] = []
 
 const tableNames = computed(() => Object.keys(props.analysisTables))
 
@@ -32,17 +51,32 @@ function initialTable(): string {
 async function loadSelectedTable(): Promise<void> {
   request?.abort()
   error.value = null
+  currentRows = []
   if (!selectedTable.value) return
   const controller = new AbortController()
   request = controller
   loading.value = true
   try {
-    const path = props.analysisTables[selectedTable.value]
-    if (!path) throw new Error(`Unknown analysis table: ${selectedTable.value}`)
-    const table = await props.loadTable(new URL(path, props.collectionUrl), controller.signal)
+    const descriptor = props.analysisTables[selectedTable.value]
+    if (!descriptor) throw new Error(`Unknown analysis table: ${selectedTable.value}`)
+    const table = await props.loadTable(
+      new URL(descriptor.csv, props.collectionUrl),
+      controller.signal,
+    )
     const dataset = csvTableToNicePoolDataset(table)
+    const workspace = descriptor.nicepool_state
+      ? await props.loadJson(
+          new URL(descriptor.nicepool_state, props.collectionUrl),
+          controller.signal,
+        )
+      : null
     await nextTick()
-    if (!controller.signal.aborted) element.value?.setData(dataset)
+    if (!controller.signal.aborted && element.value) {
+      currentRows = dataset.rows
+      element.value.setData(dataset)
+      if (workspace !== null) element.value.setState(workspace as NicePoolState)
+      syncSelectionFromViewer()
+    }
   } catch (reason) {
     if (!(reason instanceof DOMException && reason.name === 'AbortError')) {
       error.value = reason instanceof Error ? reason.message : String(reason)
@@ -55,6 +89,28 @@ async function loadSelectedTable(): Promise<void> {
   }
 }
 
+function syncSelectionFromViewer(): void {
+  if (!element.value || currentRows.length === 0) return
+  element.value.setSelection(
+    nicePoolSelectionForViewer(
+      currentRows,
+      props.selectedAcqImageId,
+      props.selectedChannel,
+      props.selectedRoiId,
+    ),
+  )
+}
+
+function handleNicePoolSelection(event: Event): void {
+  const selection = (event as CustomEvent<NicePoolSelection>).detail
+  try {
+    const target = nicePoolTargetForSelection(currentRows, selection)
+    if (target) emit('selectAnalysisRow', target.acqImageId, target.channel, target.roiId)
+  } catch (reason) {
+    error.value = reason instanceof Error ? reason.message : String(reason)
+  }
+}
+
 watch(
   () => [props.collectionUrl.href, props.analysisTables, props.preferredTable] as const,
   () => {
@@ -64,6 +120,10 @@ watch(
   { immediate: true },
 )
 onBeforeUnmount(() => request?.abort())
+watch(
+  () => [props.selectedAcqImageId, props.selectedChannel, props.selectedRoiId] as const,
+  syncSelectionFromViewer,
+)
 </script>
 
 <template>
@@ -90,6 +150,7 @@ onBeforeUnmount(() => request?.abort())
       v-show="!error && tableNames.length > 0"
       ref="element"
       class="nicepool-panel__widget"
+      @nicepool-selection-change="handleNicePoolSelection"
     />
   </section>
 </template>

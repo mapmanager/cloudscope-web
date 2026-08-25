@@ -52,6 +52,7 @@ function show(column: CollectionTableColumn): boolean {
     <table class="file-table">
       <thead>
         <tr>
+          <th>#</th>
           <th v-if="show('file')">File</th>
           <th v-if="show('dimensions')">Dimensions</th>
           <th v-if="show('channels')">Channels</th>
@@ -65,7 +66,7 @@ function show(column: CollectionTableColumn): boolean {
       </thead>
       <tbody>
         <tr
-          v-for="acqImage in acqImages"
+          v-for="(acqImage, rowIndex) in acqImages"
           :key="acqImage.id"
           :class="{ selected: acqImage.id === selectedAcqImageId }"
           tabindex="0"
@@ -73,6 +74,7 @@ function show(column: CollectionTableColumn): boolean {
           @keydown.enter="emit('select', acqImage.id)"
           @keydown.space.prevent="emit('select', acqImage.id)"
         >
+          <td>{{ rowIndex + 1 }}</td>
           <td v-if="show('file')" class="file-name">{{ acqImage.name }}</td>
           <td v-if="show('dimensions')">{{ dimensions(acqImage) }}</td>
           <td v-if="show('channels')">{{ acqImage.num_channels }}</td>

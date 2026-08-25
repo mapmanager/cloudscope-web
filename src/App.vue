@@ -450,6 +450,11 @@ onMounted(() => {
       :analysis-tables="viewer.acqImageCollectionDocument.value.data.analysis_tables"
       :preferred-table="preferredAnalysisTableForUrl(viewer.acqImageCollectionDocument.value.url)"
       :load-table="viewer.loadCollectionTable"
+      :load-json="viewer.loadCollectionJson"
+      :selected-acq-image-id="viewer.selectedAcqImageId.value"
+      :selected-channel="viewer.selectedChannel.value"
+      :selected-roi-id="viewer.selectedRoiId.value"
+      @select-analysis-row="viewer.selectAnalysisRow"
     />
 
     <footer class="app-footer">

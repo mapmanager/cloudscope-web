@@ -146,8 +146,21 @@ function validateCollection(data: unknown, url: URL): asserts data is AcqImageCo
     'an object',
   )
   for (const [name, tablePath] of Object.entries(analysisTables)) {
-    if (!isString(tablePath)) invalidManifest(url, `$.analysis_tables.${name}`, 'must be a string')
-    assertRelativePath(tablePath, `Analysis table ${name}`, url)
+    if (isString(tablePath)) {
+      throw new Error(
+        `Analysis table ${name} at ${url.href} uses the obsolete path-only format; ` +
+          're-export with the current AcqStore exporter.',
+      )
+    }
+    if (!isObject(tablePath)) invalidManifest(url, `$.analysis_tables.${name}`, 'must be an object')
+    const csv = requireField(tablePath, 'csv', `$.analysis_tables.${name}`, url, isString, 'a string')
+    assertRelativePath(csv, `Analysis table ${name}`, url)
+    if (tablePath.nicepool_state !== undefined) {
+      if (!isString(tablePath.nicepool_state)) {
+        invalidManifest(url, `$.analysis_tables.${name}.nicepool_state`, 'must be a string')
+      }
+      assertRelativePath(tablePath.nicepool_state, `NicePool state ${name}`, url)
+    }
   }
 }
 
@@ -192,7 +205,7 @@ export async function loadAcqImageCollection(
       name: manifest.name,
       acqstore_version: manifest.acqstore_version,
       created_utc: manifest.created_utc,
-      analysis_tables: { ...manifest.analysis_tables },
+      analysis_tables: structuredClone(manifest.analysis_tables),
       acq_images: manifest.acq_images.map(indexRow),
     },
     url: root,

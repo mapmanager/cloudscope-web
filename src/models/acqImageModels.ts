@@ -1,3 +1,5 @@
+import type { AnalysisTableDescriptor } from './acqImageCollectionManifest'
+
 /** Physical and display metadata for one AcqImage axis. */
 export interface AxisDescriptor {
   name: string
@@ -42,7 +44,7 @@ export interface AcqImageCollection {
   acqstore_version: string
   created_utc: string
   /** Collection-level CSV resources advertised by the AcqStore manifest. */
-  analysis_tables: Record<string, string>
+  analysis_tables: Record<string, AnalysisTableDescriptor>
   acq_images: AcqImageCollectionRow[]
 }
 

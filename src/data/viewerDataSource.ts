@@ -24,6 +24,16 @@ import {
 
 export type LocalOpenKind = 'file' | 'folder' | 'csv'
 
+async function loadJsonResource(
+  url: URL,
+  signal?: AbortSignal,
+  resourceFetch: ResourceFetch = fetch,
+): Promise<unknown> {
+  const response = await resourceFetch(url, signal ? { signal } : undefined)
+  if (!response.ok) throw new Error(`Could not load JSON: HTTP ${response.status}`)
+  return response.json()
+}
+
 export interface ViewerDataSource {
   readonly canUnload: boolean
   readonly persistInUrl: boolean
@@ -46,6 +56,7 @@ export interface ViewerDataSource {
     signal?: AbortSignal,
   ): Promise<Omit<PixelDescriptor, 'href'>>
   loadTable(url: URL, signal?: AbortSignal): Promise<CsvTable>
+  loadJson(url: URL, signal?: AbortSignal): Promise<unknown>
   unloadImage(imageId: string): Promise<void>
   close(): Promise<void>
 }
@@ -83,6 +94,10 @@ export class ExportedDatasetSource implements ViewerDataSource {
 
   loadTable(url: URL, signal?: AbortSignal): Promise<CsvTable> {
     return loadCsv(url, signal)
+  }
+
+  async loadJson(url: URL, signal?: AbortSignal): Promise<unknown> {
+    return loadJsonResource(url, signal)
   }
 
   async unloadImage(): Promise<void> {}
@@ -213,6 +228,10 @@ export class AcqStoreServerSource implements ViewerDataSource {
     return loadCsv(url, signal)
   }
 
+  async loadJson(url: URL, signal?: AbortSignal): Promise<unknown> {
+    return loadJsonResource(url, signal)
+  }
+
   async unloadImage(imageId: string): Promise<void> {
     if (!this.datasetId) throw new Error('No server dataset is open')
     const url = new URL(
@@ -327,6 +346,10 @@ export class AcqImageCollectionSource implements ViewerDataSource {
 
   loadTable(url: URL, signal?: AbortSignal): Promise<CsvTable> {
     return loadCsv(url, signal, this.resourceFetch)
+  }
+
+  async loadJson(url: URL, signal?: AbortSignal): Promise<unknown> {
+    return loadJsonResource(url, signal, this.resourceFetch)
   }
 
   async unloadImage(): Promise<void> {}

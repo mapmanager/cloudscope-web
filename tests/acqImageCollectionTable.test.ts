@@ -34,6 +34,8 @@ describe('AcqImageCollectionTable', () => {
     })
 
     expect(wrapper.text()).toContain('one.tif')
+    expect(wrapper.get('thead th').text()).toBe('#')
+    expect(wrapper.get('tbody td').text()).toBe('1')
     expect(wrapper.text()).toContain('File')
     expect(wrapper.text()).toContain('Channels')
     expect(wrapper.text()).toContain('ROIs')

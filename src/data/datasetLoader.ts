@@ -36,7 +36,9 @@ export async function loadDataset(
       name: loaded.data.name,
       acqstore_version: loaded.data.acqstore_version,
       created_utc: loaded.data.created_utc,
-      analysis_tables: loaded.data.analysis_tables ?? {},
+      analysis_tables: Object.fromEntries(
+        Object.entries(loaded.data.analysis_tables ?? {}).map(([name, csv]) => [name, { csv }]),
+      ),
       acq_images: loaded.data.images,
     },
     url: loaded.url,

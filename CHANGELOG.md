@@ -12,6 +12,7 @@ deployed.
 
 - Added a collapsible, resizable NicePool panel for exploring collection-level analysis tables.
 - Added read-only opening of local AcqStore OME-Zarr collection directories in Chrome and Edge.
+- Added collection and NicePool table row numbers, exported NicePool workspace loading, and bidirectional analysis-row selection.
 
 ### Changed
 

@@ -26,6 +26,12 @@ export interface AcqImageCollectionEntry {
 
 export const ACQ_IMAGE_COLLECTION_VERSION = 1 as const
 
+/** One collection-level analysis table and its optional presentation state. */
+export interface AnalysisTableDescriptor {
+  csv: string
+  nicepool_state?: string
+}
+
 /** AcqStore-owned wrapper manifest around independent native OME-Zarr images. */
 export interface AcqImageCollectionManifest {
   format: 'acqstore-acq-image-collection'
@@ -35,7 +41,7 @@ export interface AcqImageCollectionManifest {
   created_utc: string
   acqstore_version: string
   acq_images: AcqImageCollectionEntry[]
-  analysis_tables: Record<string, string>
+  analysis_tables: Record<string, AnalysisTableDescriptor>
 }
 
 export interface AnalysisResourceEntry {

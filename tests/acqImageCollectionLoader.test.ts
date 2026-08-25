@@ -72,6 +72,27 @@ describe('AcqImageCollection loader', () => {
     )
   })
 
+  it('rejects obsolete path-only analysis table entries', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        Response.json({
+          format: 'acqstore-acq-image-collection',
+          version: 1,
+          zarr_format: 3,
+          name: 'obsolete',
+          created_utc: '2026-08-18T00:00:00Z',
+          acqstore_version: '1.0',
+          acq_images: [entry],
+          analysis_tables: { velocity: 'acqstore/analysis_tables/velocity.csv' },
+        }),
+      ),
+    )
+    await expect(loadAcqImageCollection('https://example.test/obsolete.ome.zarr/')).rejects.toThrow(
+      'obsolete path-only format; re-export',
+    )
+  })
+
   it('reports the resource and exact missing manifest field', async () => {
     const invalidEntry = { ...entry, source: undefined }
     vi.stubGlobal(

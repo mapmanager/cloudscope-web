@@ -1,4 +1,9 @@
-import type { DatasetInput, NicePoolRow, NicePoolValue } from '@mapmanager/nicepool'
+import type {
+  DatasetInput,
+  NicePoolRow,
+  NicePoolSelection,
+  NicePoolValue,
+} from '@mapmanager/nicepool'
 
 import type { CsvTable } from './csvLoader'
 
@@ -51,4 +56,50 @@ export function csvTableToNicePoolDataset(table: CsvTable): DatasetInput {
     return row
   })
   return { rowIdColumn: NICEPOOL_ROW_ID_COLUMN, rows }
+}
+
+function integerField(row: NicePoolRow, name: string): number | null {
+  const value = row[name]
+  return typeof value === 'number' && Number.isInteger(value) ? value : null
+}
+
+/** Build NicePool selection for the image/channel/ROI currently shown by CloudScope. */
+export function nicePoolSelectionForViewer(
+  rows: readonly NicePoolRow[],
+  acqImageId: string | null,
+  channel: number,
+  roiId: number | null,
+): NicePoolSelection {
+  if (!acqImageId) return { primaryRowId: null, selectedRowIds: [] }
+  const matching = rows.filter((row) => row.acq_image_id === acqImageId)
+  const exact = matching.find(
+    (row) => integerField(row, 'channel') === channel && integerField(row, 'roi_id') === roiId,
+  )
+  const primary = exact ?? matching[0]
+  return {
+    primaryRowId: primary ? String(primary.pool_row_id) : null,
+    selectedRowIds: matching.map((row) => String(row.pool_row_id)),
+  }
+}
+
+export interface NicePoolSelectionTarget {
+  acqImageId: string
+  channel: number
+  roiId: number
+}
+
+/** Resolve a NicePool primary row into CloudScope's image-plane selection identity. */
+export function nicePoolTargetForSelection(
+  rows: readonly NicePoolRow[],
+  selection: NicePoolSelection,
+): NicePoolSelectionTarget | null {
+  if (!selection.primaryRowId) return null
+  const row = rows.find((candidate) => candidate.pool_row_id === selection.primaryRowId)
+  if (!row || typeof row.acq_image_id !== 'string') return null
+  const channel = integerField(row, 'channel')
+  const roiId = integerField(row, 'roi_id')
+  if (channel === null || roiId === null) {
+    throw new Error('Selected analysis row has no valid channel or ROI.')
+  }
+  return { acqImageId: row.acq_image_id, channel, roiId }
 }

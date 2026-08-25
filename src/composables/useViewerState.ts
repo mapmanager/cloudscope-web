@@ -392,6 +392,33 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     return activeSource.value.loadTable(url, signal)
   }
 
+  /** Load collection-level JSON through the active hosted or local source. */
+  async function loadCollectionJson(url: URL, signal?: AbortSignal): Promise<unknown> {
+    if (!activeSource.value) throw new Error('No collection source is active')
+    return activeSource.value.loadJson(url, signal)
+  }
+
+  /** Select an analysis row through the same image-loading path as the file table. */
+  async function selectAnalysisRow(
+    acqImageId: string,
+    channel: number,
+    roiId: number,
+  ): Promise<void> {
+    await selectAcqImage(acqImageId)
+    const image = acqImageDocument.value?.data
+    if (!image || image.id !== acqImageId) return
+    if (!image.image.channels.some(({ index }) => index === channel)) {
+      error.value = `Analysis row references unknown channel ${channel} for ${acqImageId}`
+      return
+    }
+    if (!image.rois.some(({ id }) => id === roiId)) {
+      error.value = `Analysis row references unknown ROI ${roiId} for ${acqImageId}`
+      return
+    }
+    selectedChannel.value = channel
+    selectedRoiId.value = roiId
+  }
+
   async function unloadImage(imageId: string): Promise<void> {
     if (!activeSource.value?.canUnload) return
     loading.value = true
@@ -452,6 +479,8 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     loadPixelDescriptor,
     loadTable,
     loadCollectionTable,
+    loadCollectionJson,
+    selectAnalysisRow,
     unloadImage,
     closeAcqImageCollection,
   }

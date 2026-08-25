@@ -65,6 +65,11 @@ The current viewer includes registered plots for:
 
 A dataset does not need to contain every analysis type. CloudScope Web shows the results that were exported with that dataset.
 
+Open **NicePool** to explore a collection-level analysis table. When the
+collection supplies a default NicePool workspace, it is applied automatically.
+Selecting a NicePool point or row opens its corresponding image, channel, and
+ROI. Selecting an image in the collection table updates the NicePool selection.
+
 ## 7. Inspect metadata
 
 Use the left toolbar to inspect information associated with the selected image and experiment. CloudScope Web provides inspectors for the collection file list, reference image, image-header metadata, experiment metadata, and app information.

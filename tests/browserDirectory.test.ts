@@ -69,7 +69,12 @@ const collectionManifest = {
       },
     },
   ],
-  analysis_tables: { velocity: 'acqstore/analysis_tables/velocity.csv' },
+  analysis_tables: {
+    velocity: {
+      csv: 'acqstore/analysis_tables/velocity.csv',
+      nicepool_state: 'acqstore/analysis_tables/velocity.nicepool.json',
+    },
+  },
 }
 
 describe('browser directory transport', () => {
@@ -97,7 +102,10 @@ describe('browser directory transport', () => {
     const root = directoryHandle('sample.ome.zarr', {
       acqstore: {
         'acq_image_collection.json': JSON.stringify(collectionManifest),
-        analysis_tables: { 'velocity.csv': 'pool_row_id,velocity\na,1\n' },
+        analysis_tables: {
+          'velocity.csv': 'pool_row_id,velocity\na,1\n',
+          'velocity.nicepool.json': '{"schemaVersion":1}',
+        },
       },
     })
 
@@ -106,6 +114,14 @@ describe('browser directory transport', () => {
     expect(loaded.data.name).toBe('local velocity')
     expect(loaded.data.acq_images[0]?.id).toBe('acq_image_000')
     expect(loaded.url.protocol).toBe('https:')
+    await expect(
+      new BrowserDirectoryCollectionSource(root).loadJson(
+        new URL(
+          'acqstore/analysis_tables/velocity.nicepool.json',
+          'https://local-ome-zarr.invalid/sample.ome.zarr/',
+        ),
+      ),
+    ).resolves.toEqual({ schemaVersion: 1 })
   })
 
   it('rejects legacy collections instead of maintaining compatibility code', async () => {
