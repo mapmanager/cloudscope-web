@@ -2,6 +2,7 @@
 import {
   NicePoolElement,
   registerNicePoolElement,
+  type NicePoolPreset,
   type NicePoolSelection,
   type NicePoolState,
   type NicePoolRow,
@@ -73,8 +74,19 @@ async function loadSelectedTable(): Promise<void> {
     await nextTick()
     if (!controller.signal.aborted && element.value) {
       currentRows = dataset.rows
+      element.value.setShowPresetEditing(false)
       element.value.setData(dataset)
-      if (workspace !== null) element.value.setState(workspace as NicePoolState)
+      if (workspace !== null) {
+        const preset: NicePoolPreset = {
+          schemaVersion: 1,
+          name: 'Collection default',
+          state: workspace as NicePoolState,
+        }
+        element.value.setNicePoolPresets([preset])
+        element.value.applyNicePoolPreset(preset.name)
+      } else {
+        element.value.setNicePoolPresets([])
+      }
       syncSelectionFromViewer()
     }
   } catch (reason) {

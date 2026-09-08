@@ -37,7 +37,8 @@ The raster viewer code is shared with CloudScope Desktop, which helps keep core 
 Analysis resources are associated with an analysis identity, image channel, and ROI. CloudScope Web loads analysis tables as needed and dispatches supported analysis types through its plot registry.
 
 Collection analysis-table descriptors may also reference a complete NicePool
-workspace. CloudScope loads the CSV first and then applies that state. Analysis
+workspace. CloudScope loads the CSV, exposes that state as the **Collection
+default** NicePool preset, and applies it automatically. Analysis
 rows join back to the collection through `acq_image_id`; `pool_row_id`
 remains the unique NicePool row identity. Both the file table and NicePool call
 the same viewer image-selection operation, avoiding separate image-loading
