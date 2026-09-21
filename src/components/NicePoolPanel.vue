@@ -27,10 +27,10 @@ const props = defineProps<{
   loadJson: (url: URL, signal?: AbortSignal) => Promise<unknown>
   selectedAcqImageId: string | null
   selectedChannel: number
-  selectedRoiId: number | null
+  selectedRoiId: string | null
 }>()
 const emit = defineEmits<{
-  selectAnalysisRow: [acqImageId: string, channel: number, roiId: number]
+  selectAnalysisRow: [acqImageId: string, channel: number, roiId: string]
 }>()
 
 const element = ref<NicePoolElement | null>(null)

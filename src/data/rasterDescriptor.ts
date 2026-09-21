@@ -59,14 +59,13 @@ function scaleCoord(value: number, scale: number): number {
  * @param roi AcqStore ROI in source X/Y.
  * @param scaleX `plane.width / plane.sourceWidth`.
  * @param scaleY `plane.height / plane.sourceHeight`.
- * @returns Widget envelope, or `null` when the ROI id is not a positive integer.
+ * @returns Widget envelope.
  */
 export function roiToEnvelope(
   roi: Roi,
   scaleX: number,
   scaleY: number,
 ): Record<string, unknown> | null {
-  if (!Number.isInteger(roi.id) || roi.id <= 0) return null
   if (roi.type === 'rect') {
     return {
       roi_id: roi.id,

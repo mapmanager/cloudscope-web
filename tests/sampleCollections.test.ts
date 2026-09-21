@@ -21,13 +21,11 @@ describe('hosted sample catalog', () => {
     expect(defaultSampleCollection.id).toBe('diameter')
   })
 
-  it('emits the selected sample and hides local-server controls in production mode', async () => {
+  it('emits the selected sample', async () => {
     const wrapper = mount(AcqImageCollectionSource, {
       props: {
         modelValue: defaultSampleCollection.url,
-        serverUrl: 'http://127.0.0.1:8767',
         loading: false,
-        showLocalServer: false,
       },
     })
     await wrapper.get('.collection-source__trigger').trigger('click')
@@ -38,6 +36,5 @@ describe('hosted sample catalog', () => {
     await wrapper.get('#sample-collection').setValue(sampleCollections[1].url)
 
     expect(wrapper.emitted('open-sample')).toEqual([[sampleCollections[1].url]])
-    expect(wrapper.find('#server-url').exists()).toBe(false)
   })
 })

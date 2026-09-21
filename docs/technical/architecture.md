@@ -58,14 +58,8 @@ Hosted collection sources are persisted in the browser URL along with primary se
 
 This provides the basis for copy-and-paste sharing links while keeping the application itself static.
 
-## Optional local development server
+## Local development data
 
-Development builds expose optional AcqStore Server controls. These can open local files, folders, CSVs, or exported folders through the server at a configurable URL, defaulting to:
-
-```text
-http://127.0.0.1:8767
-```
-
-These controls are enabled only in Vite development mode and are hidden from the production static application.
-
-CloudScope Web also supports mounting a local exported collection directly through the Vite development server with `ACQSTORE_OME_ZARR_ROOT`; this path does not require the production site to contain the dataset.
+CloudScope Web supports mounting a local Collection v1 export directly through
+the Vite development server with `ACQSTORE_OME_ZARR_ROOT`. Chrome and Edge can
+also open a local `.ome.zarr` directory through the browser directory picker.

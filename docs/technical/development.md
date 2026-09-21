@@ -70,16 +70,6 @@ Startup source priority is:
 2. `ACQSTORE_OME_ZARR_ROOT` when running the Vite development server
 3. the configured default hosted sample
 
-## Optional AcqStore Server controls
-
-Vite development mode also exposes optional controls for an AcqStore Server. The default server URL is:
-
-```text
-http://127.0.0.1:8767
-```
-
-The current development controls can request local file, folder, CSV, and exported-folder operations. These controls are hidden from the production build.
-
 ## Tests and quality checks
 
 Run the test suite:

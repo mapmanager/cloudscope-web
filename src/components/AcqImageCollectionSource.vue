@@ -4,14 +4,11 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { sampleCollections } from '../config/sampleCollections'
 import { browserDirectoryPickerSupported } from '../data/browserDirectory'
 
-defineProps<{ modelValue: string; serverUrl: string; loading: boolean; showLocalServer: boolean }>()
+defineProps<{ modelValue: string; loading: boolean }>()
 const emit = defineEmits<{
   'update:modelValue': [value: string]
-  'update:serverUrl': [value: string]
   open: []
   'open-sample': [url: string]
-  'open-server': [kind: 'file' | 'folder' | 'csv']
-  'open-exported-folder': []
   'open-local-directory': []
 }>()
 
@@ -103,58 +100,6 @@ onBeforeUnmount(() => {
             Local directory loading requires Chrome or Edge.
           </p>
         </div>
-      </section>
-      <section
-        v-if="showLocalServer"
-        class="collection-source__section"
-        aria-labelledby="server-source-heading"
-      >
-        <h2 id="server-source-heading" class="collection-source__heading">
-          AcqStore Server (local)
-        </h2>
-        <form @submit.prevent>
-          <label for="server-url">Server URL</label>
-          <div class="collection-source__row">
-            <input
-              id="server-url"
-              :value="serverUrl"
-              type="url"
-              required
-              spellcheck="false"
-              placeholder="http://127.0.0.1:8767"
-              @input="emit('update:serverUrl', ($event.target as HTMLInputElement).value)"
-            />
-            <button
-              type="button"
-              :disabled="loading || !serverUrl.trim()"
-              @click="emit('open-server', 'file')"
-            >
-              Open file
-            </button>
-            <button
-              type="button"
-              :disabled="loading || !serverUrl.trim()"
-              @click="emit('open-server', 'folder')"
-            >
-              Open folder
-            </button>
-            <button
-              type="button"
-              :disabled="loading || !serverUrl.trim()"
-              @click="emit('open-server', 'csv')"
-            >
-              Open CSV
-            </button>
-            <button
-              type="button"
-              :disabled="loading || !serverUrl.trim()"
-              @click="emit('open-exported-folder')"
-            >
-              Open exported folder
-            </button>
-          </div>
-          <p class="muted">The local server opens the native file or folder picker.</p>
-        </form>
       </section>
     </div>
   </div>

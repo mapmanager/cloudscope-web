@@ -92,7 +92,7 @@ function isEditableKeyboardTarget(target) {
 
 /**
  * @typedef {object} RectRoiEnvelope
- * @property {number} roi_id Stable positive committed identity.
+ * @property {string} roi_id Stable opaque committed identity.
  * @property {'rectroi'} roi_type Rectangle discriminator.
  * @property {'1.0'} version ROI schema version.
  * @property {string} name Display name.
@@ -102,7 +102,7 @@ function isEditableKeyboardTarget(target) {
 
 /**
  * @typedef {object} LineRoiEnvelope
- * @property {number} roi_id Stable positive committed identity.
+ * @property {string} roi_id Stable opaque committed identity.
  * @property {'linesegmentroi'} roi_type Line-segment discriminator.
  * @property {'1.0'} version ROI schema version.
  * @property {string} name Human-readable display name.
@@ -243,7 +243,6 @@ export class RasterViewer {
     this.rois = [];
     this.xyPlots = new Map();
     this.selectedRoiId = null;
-    this.nextLocalRoiId = 1;
     this.roiState = RoiInteractionState.IDLE;
     this.roiDraft = null;
     this.activeEditOverlay = null;
@@ -886,13 +885,12 @@ export class RasterViewer {
     const rectHeight = Math.max(1, Math.floor(height / 4));
     const colStart = Math.floor((width - rectWidth) / 2);
     const rowStart = Math.floor((height - rectHeight) / 2);
-    const roiId = this.nextLocalRoiId;
-    this.nextLocalRoiId += 1;
+    const roiId = `local-${crypto.randomUUID()}`;
     return {
       roi_id: roiId,
       roi_type: RoiType.RECT,
       version: '1.0',
-      name: String(roiId - 1),
+      name: 'New ROI',
       note: '',
       data: {
         row_start: rowStart,
@@ -901,12 +899,6 @@ export class RasterViewer {
         col_stop: colStart + rectWidth,
       },
     };
-  }
-
-  _refreshLocalRoiIdCounter() {
-    let maximum = 0;
-    for (const roi of this.rois) maximum = Math.max(maximum, Number(roi.roiId) || 0);
-    this.nextLocalRoiId = maximum + 1;
   }
 
   buildSlidingZControls() {
@@ -1560,7 +1552,6 @@ export class RasterViewer {
     if (!this.rois.some(roi => roi.roiId === this.selectedRoiId)) {
       this.selectedRoiId = this.rois[0]?.roiId ?? null;
     }
-    this._refreshLocalRoiIdCounter();
     this.syncRoiToolbar();
     this.redrawRois();
     return this.rois.length;
@@ -1571,7 +1562,6 @@ export class RasterViewer {
     const index = this.rois.findIndex(item => item.roiId === roi.roiId);
     if (index >= 0) this.rois[index] = roi;
     else this.rois.push(roi);
-    this._refreshLocalRoiIdCounter();
     this.syncRoiToolbar();
     this.redrawRois();
     return true;
@@ -1585,7 +1575,7 @@ export class RasterViewer {
    * @throws {Error} If the ROI ID already exists.
    */
   addRoi(envelope) {
-    const roiId = Number(envelope.roi_id);
+    const roiId = String(envelope.roi_id);
     if (this.rois.some(item => item.roiId === roiId)) {
       throw new Error(`ROI ${envelope.roi_id} already exists`);
     }
@@ -1600,7 +1590,7 @@ export class RasterViewer {
    * @throws {Error} If the ROI ID does not exist.
    */
   updateRoi(envelope) {
-    const roiId = Number(envelope.roi_id);
+    const roiId = String(envelope.roi_id);
     if (!this.rois.some(item => item.roiId === roiId)) {
       throw new Error(`ROI ${envelope.roi_id} does not exist`);
     }
@@ -1610,13 +1600,14 @@ export class RasterViewer {
   /**
    * Remove one committed ROI silently.
    *
-   * @param {number} roiId Stable ROI identity.
+   * @param {string} roiId Stable ROI identity.
    * @returns {boolean} Whether a matching ROI was removed.
    */
   removeRoi(roiId) {
     const previousLength = this.rois.length;
-    this.rois = this.rois.filter(roi => roi.roiId !== Number(roiId));
-    if (this.selectedRoiId === Number(roiId)) this.selectedRoiId = null;
+    const normalized = String(roiId);
+    this.rois = this.rois.filter(roi => roi.roiId !== normalized);
+    if (this.selectedRoiId === normalized) this.selectedRoiId = null;
     this.syncRoiToolbar();
     this.redrawRois();
     return this.rois.length !== previousLength;
@@ -1628,12 +1619,12 @@ export class RasterViewer {
    * Caller synchronization is silent by default. Set `options.emit` only for a
    * genuine user-originated interaction.
    *
-   * @param {number|null} roiId Stable ROI identity, or null to clear selection.
+   * @param {string|null} roiId Stable ROI identity, or null to clear selection.
    * @param {{emit?:boolean,source?:string}} [options] Optional event behavior.
    * @returns {boolean} Whether the requested selection was valid and applied.
    */
   selectRoi(roiId, options = {}) {
-    const normalized = roiId === null ? null : Number(roiId);
+    const normalized = roiId === null ? null : String(roiId);
     if (normalized !== null && !this.rois.some(roi => roi.roiId === normalized)) return false;
     this.selectedRoiId = normalized;
     this.syncRoiToolbar();
@@ -1688,13 +1679,13 @@ export class RasterViewer {
   /**
    * Start transactional editing of one committed ROI.
    *
-   * @param {number} roiId Stable committed identity.
+   * @param {string} roiId Stable committed identity.
    * @returns {boolean} Whether editing started.
    */
   beginRoiEdit(roiId) {
     if (!this.roiEditingEnabled) return false;
     if (this.roiState !== RoiInteractionState.IDLE) return false;
-    const roi = this.rois.find(item => item.roiId === Number(roiId));
+    const roi = this.rois.find(item => item.roiId === String(roiId));
     if (!roi) return false;
     this.selectedRoiId = roi.roiId;
     this.roiState = RoiInteractionState.EDITING;
@@ -1735,7 +1726,7 @@ export class RasterViewer {
         name: this.roiDraft.name,
         note: this.roiDraft.note,
         roi_type: this.roiDraft.roiType,
-        data: roiEnvelope({...this.roiDraft, roiId: 0}).data,
+        data: roiEnvelope({...this.roiDraft, roiId: 'draft'}).data,
       });
     } else {
       this.dispatch('raster-roi-edit-commit', {
@@ -1754,7 +1745,7 @@ export class RasterViewer {
    */
   completeRoiCommit(envelope) {
     this._installRoi(envelope);
-    this.selectedRoiId = Number(envelope.roi_id);
+    this.selectedRoiId = String(envelope.roi_id);
     this.finishRoiInteraction();
     return true;
   }

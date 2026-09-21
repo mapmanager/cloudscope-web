@@ -3,9 +3,8 @@
 ## Repository role
 
 `cloudscope-web` is an independent Vue 3 and TypeScript single-page viewer for
-AcqStore AcqImageCollection OME-Zarr stores. It must remain buildable as a static site. A
-Python runtime or AcqStore Server may enhance local development, but neither is
-required to use the production viewer.
+AcqStore AcqImageCollection OME-Zarr stores. It must remain buildable as a static
+site and does not require a Python runtime or local API server.
 
 Do not confuse this repository with the sibling `cloudscope-app` Python/NiceGUI
 application. If a request names `cloudscope-app` while discussing this viewer,
@@ -28,12 +27,17 @@ adding or changing OME-Zarr loading behavior, consult the producer contract in
 the sibling AcqStore repository:
 
 - `../acqstore/docs/ome-zarr-export-format.md`
-- `../acqstore/src/acqstore/acq_image/io/export_schema/acqstore_ome_zarr_contract.schema.json`
+- `../acqstore/src/acqstore/acq_image/io/ome_zarr_collection_v1/schema/acqstore-ome-zarr-collection-v1.schema.json`
+- `../acqstore/src/acqstore/acq_image/io/ome_zarr_collection_v1/exporter.py`
+- `../acqstore/src/acqstore/acq_image/io/ome_zarr_collection_v1/validator.py`
 
 Treat AcqStore as the producer source of truth. Do not infer serialized field
 names or relationships from sample data alone, and do not redefine the export
 contract in CloudScope Web. If the sibling repository is unavailable, ask for
 the producer contract rather than guessing.
+
+Older AcqStore export modules, schemas, and documentation describe superseded
+formats and are not authoritative for Collection v1.
 
 This is a development-time reference only. CloudScope Web must remain
 independent at runtime: do not import AcqStore, require Python, copy the schema
@@ -41,12 +45,10 @@ into this repository, or fetch the schema in the production viewer.
 
 ## Data boundaries
 
-- `public/samples/` contains intentionally public, deployable OME-Zarr samples.
-  Vite copies them into the production site.
 - `data/` is for private, temporary, or large local datasets and remains
   ignored by Git.
-- Inspect metadata before adding a sample to `public/samples/`; GitHub Pages is
-  public even when some repository plans permit private source repositories.
+- Hosted samples are registered in `src/config/sampleCollections.ts` and live
+  outside this repository.
 - Never commit `.DS_Store` or other operating-system metadata.
 - Register every bundled sample in `src/config/sampleCollections.ts` and run
   `npm run verify:samples` after changing a sample or catalog entry.
@@ -57,8 +59,6 @@ into this repository, or fetch the schema in the production viewer.
 - Keep public asset and sample URLs relative to the deployed site base.
 - `ACQSTORE_OME_ZARR_ROOT` and `/__dev_collection__/` are development-only.
 - Preserve hosted OME-Zarr URL loading. Cross-origin hosts must provide CORS.
-- AcqStore Server controls are development-only until production access is
-  deliberately designed and verified.
 
 ## TypeScript and Vue conventions
 
@@ -71,8 +71,8 @@ into this repository, or fetch the schema in the production viewer.
   contracts. Prefer `@param`, `@returns`, and `@throws` where they add useful
   information; do not restate obvious types.
 - Use `AcqImageCollection` for the domain/serialized multi-image collection,
-  `AcqImage` for one member, and `dataset` only where a legacy transport or the
-  OME-NGFF specification uses that term.
+  `AcqImage` for one member, and `dataset` only where the OME-NGFF specification
+  uses that term.
 - Preserve the distinction between an `AcqImageCollection`, its additive
   AcqStore wrapper metadata, each unchanged native child OME-Zarr image, and
   an active viewer/data-source session.

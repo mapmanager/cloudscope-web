@@ -16,6 +16,8 @@ deployed.
 
 ### Changed
 
+- Updated collection loading to the authoritative AcqStore OME-Zarr Collection v1 contract and opaque ROI identities.
+- Removed the unused localhost server and Web Dataset compatibility controls.
 - Deduplicated the Plotly runtime shared by CloudScope Web and NicePool in production builds.
 - Reordered the left toolbar into file, metadata, reference-image, and application-information workflow order.
 - Expanded the App Information panel with a project description, documentation links, and contact information.

@@ -48,15 +48,13 @@ export function normalizedEndpoints(endpoints, width, height, roundValues = fals
 export function roiFromEnvelope(envelope, width, height) {
   const roiType = String(envelope.roi_type);
   const common = {
-    roiId: Number(envelope.roi_id),
+    roiId: String(envelope.roi_id),
     roiType,
     version: String(envelope.version),
     name: String(envelope.name),
     note: String(envelope.note || ''),
   };
-  if (!Number.isInteger(common.roiId) || common.roiId <= 0) {
-    throw new Error('ROI ID must be a positive integer');
-  }
+  if (!common.roiId) throw new Error('ROI ID must be a non-empty string');
   if (common.version !== '1.0') throw new Error(`unsupported ROI version: ${common.version}`);
   if (roiType === RoiType.RECT) {
     return {...common, bounds: normalizedBounds(envelope.data, width, height, true)};
@@ -175,7 +173,7 @@ export class RoiOverlay {
     this.viewport = viewport;
     this.viewer = viewer;
     this.active = null;
-    /** @type {{roiId:number,start:{x:number,y:number}}|null} */
+    /** @type {{roiId:string,start:{x:number,y:number}}|null} */
     this.pendingIdleSelect = null;
   }
 

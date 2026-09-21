@@ -4,12 +4,8 @@ import type { CsvTable } from '../data/csvLoader'
 import type { ImagePlane, PlaneIndices } from '../data/omeZarrLoader'
 import { defaultSampleCollection } from '../config/sampleCollections'
 import {
-  AcqStoreServerSource,
   BrowserDirectoryCollectionSource,
-  ExportedDatasetSource,
   AcqImageCollectionSource,
-  ServerExportedDatasetSource,
-  type LocalOpenKind,
   type ViewerDataSource,
 } from '../data/viewerDataSource'
 import { pickCollectionDirectory } from '../data/browserDirectory'
@@ -44,7 +40,7 @@ export function initialCollectionUrl(): string {
 interface UrlSelection {
   acqImage: string | null
   channel: number
-  roi: number | null
+  roi: string | null
   z: number
   t: number
 }
@@ -56,12 +52,10 @@ function nonNegativeInteger(params: URLSearchParams, key: string): number {
 
 export function readUrlSelection(href: string): UrlSelection {
   const params = new URL(href).searchParams
-  const roiValue = params.get('roi')
-  const roi = roiValue === null ? null : Number(roiValue)
   return {
     acqImage: params.get('acq_image'),
     channel: nonNegativeInteger(params, 'channel'),
-    roi: roi !== null && Number.isInteger(roi) && roi >= 0 ? roi : null,
+    roi: params.get('roi'),
     z: nonNegativeInteger(params, 'z'),
     t: nonNegativeInteger(params, 't'),
   }
@@ -82,14 +76,13 @@ export function viewerUrl(href: string, state: UrlSelection & { collection: stri
 
 export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PLANE_CACHE_OPTIONS) {
   const hostedCollectionUrl = ref(initialCollectionUrl())
-  const serverUrl = ref('http://127.0.0.1:8767')
   const planeCache = new PlaneCache(planeCacheOptions)
   const activeSource = shallowRef<ViewerDataSource | null>(null)
   const acqImageCollectionDocument = shallowRef<LoadedDocument<AcqImageCollection> | null>(null)
   const acqImageDocument = shallowRef<LoadedDocument<AcqImageDocument> | null>(null)
   const selectedAcqImageId = ref<string | null>(null)
   const selectedChannel = ref(0)
-  const selectedRoiId = ref<number | null>(null)
+  const selectedRoiId = ref<string | null>(null)
   const selectedZ = ref(0)
   const selectedT = ref(0)
   const loading = ref(false)
@@ -192,22 +185,7 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     if (!url.trim()) return
     const resolved = url.trim()
     hostedCollectionUrl.value = resolved
-    // Temporary migration compatibility: remove this Web Dataset v1 branch
-    // after hosted and server-backed collection loading reach feature parity.
-    const source = resolved.endsWith('.json')
-      ? new ExportedDatasetSource(resolved)
-      : new AcqImageCollectionSource(resolved)
-    await activateSource(source)
-  }
-
-  async function openServer(kind: LocalOpenKind): Promise<void> {
-    if (!serverUrl.value.trim()) return
-    await activateSource(new AcqStoreServerSource(serverUrl.value.trim(), kind))
-  }
-
-  async function openExportedFolder(): Promise<void> {
-    if (!serverUrl.value.trim()) return
-    await activateSource(new ServerExportedDatasetSource(serverUrl.value.trim()))
+    await activateSource(new AcqImageCollectionSource(resolved))
   }
 
   /** Open a current AcqStore OME-Zarr collection directly from a browser directory handle. */
@@ -402,7 +380,7 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
   async function selectAnalysisRow(
     acqImageId: string,
     channel: number,
-    roiId: number,
+    roiId: string,
   ): Promise<void> {
     await selectAcqImage(acqImageId)
     const image = acqImageDocument.value?.data
@@ -457,7 +435,6 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
 
   return {
     hostedCollectionUrl,
-    serverUrl,
     acqImageCollectionDocument,
     acqImageDocument,
     selectedAcqImageId,
@@ -471,8 +448,6 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     error,
     canUnload,
     openAcqImageCollection,
-    openServer,
-    openExportedFolder,
     openLocalDirectory,
     selectAcqImage,
     loadPlane,

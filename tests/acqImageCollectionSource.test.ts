@@ -11,7 +11,7 @@ describe('AcqImageCollectionSource', () => {
   it('light-dismisses the open panel after an outside pointer interaction', async () => {
     const wrapper = mount(AcqImageCollectionSource, {
       attachTo: document.body,
-      props: { modelValue: '', serverUrl: '', loading: false, showLocalServer: false },
+      props: { modelValue: '', loading: false },
     })
 
     await wrapper.get('.collection-source__trigger').trigger('click')
@@ -26,7 +26,7 @@ describe('AcqImageCollectionSource', () => {
   it('dismisses the open panel with Escape', async () => {
     const wrapper = mount(AcqImageCollectionSource, {
       attachTo: document.body,
-      props: { modelValue: '', serverUrl: '', loading: false, showLocalServer: false },
+      props: { modelValue: '', loading: false },
     })
 
     await wrapper.get('.collection-source__trigger').trigger('click')
@@ -40,7 +40,7 @@ describe('AcqImageCollectionSource', () => {
   it('offers the Chrome/Edge local-directory action', async () => {
     vi.stubGlobal('showDirectoryPicker', vi.fn())
     const wrapper = mount(AcqImageCollectionSource, {
-      props: { modelValue: '', serverUrl: '', loading: false, showLocalServer: false },
+      props: { modelValue: '', loading: false },
     })
 
     await wrapper.get('.collection-source__trigger').trigger('click')

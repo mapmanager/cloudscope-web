@@ -1,74 +1,33 @@
 # Data format
 
-CloudScope Web consumes the web-oriented OME-Zarr collection exported by AcqStore. The authoritative writer and export behavior belongs in AcqStore; CloudScope Web should document only the contract it needs in order to read that export.
+CloudScope Web consumes AcqStore OME-Zarr Collection v1. AcqStore owns the
+writer, schema, validation, and format specification; this page only summarizes
+the browser entry point.
 
-See the [AcqStore documentation](https://mapmanager.github.io/acqstore/) for the Python analysis and export side of the workflow.
+## Collection discovery
 
-## Collection root
-
-Given a collection root URL such as:
+For a collection root such as:
 
 ```text
 https://example.org/my-dataset.ome.zarr/
 ```
 
-CloudScope Web loads the collection manifest at:
+CloudScope loads `acqstore/collection.json`. The document must declare
+`format: acqstore-ome-zarr-collection` and `version: 1`. Each member explicitly
+links its primary OME-Zarr image, `acqimage.json`, optional `analyses.json`, and
+optional reference image.
 
-```text
-acqstore/acq_image_collection.json
-```
+## Authority boundaries
 
-The current loader requires the collection manifest to declare:
+- OME-Zarr metadata owns pixels, shape, dimensions, axes, calibration, dtype,
+  channels, and pyramid levels.
+- `acqimage.json` owns AcqStore metadata and opaque-string ROI identities.
+- `analyses.json` owns analysis instances and their CSV resources.
+- `reference-image.json` owns reference-image metadata and scan paths.
+- `collection.json` may advertise collection-level CSV tables for NicePool.
 
-```text
-format:      acqstore-acq-image-collection
-version:     1
-zarr_format: 3
-```
+Member summaries are optional discovery hints and are not authoritative image
+metadata. CloudScope validates collection-relative paths before following them.
 
-The manifest also records the collection name, creation time, AcqStore version, image entries, and collection-level analysis-table paths.
-
-## Image entries
-
-Each collection entry has a stable image ID and summary information used to build the collection table. The current summary includes fields such as:
-
-- image shape and dimensions
-- data type
-- channel count
-- ROI count
-- available analysis types
-- acquisition date/time summary
-- accepted state
-- reference-image availability
-
-Each entry also provides collection-relative paths to:
-
-- the image's OME-Zarr group
-- the per-image metadata JSON
-- the image's native AcqStore manifest
-- an optional reference image
-
-CloudScope Web rejects absolute or parent-traversing paths in the collection manifest.
-
-## Native image manifest
-
-For each selected image, CloudScope Web currently requires the native AcqStore image manifest to declare:
-
-```text
-format:  acqstore-native-ome-zarr
-version: 2
-```
-
-The native manifest identifies the image group, per-image metadata resource, optional reference image, and analysis resources associated with the image.
-
-## ROIs and analyses
-
-The per-image metadata contains the ROI definitions and analysis summaries exported by AcqStore. The current web client normalizes supported rectangular and line ROIs for display.
-
-Reference-image scan paths are read from the per-image sidecar's `reference_image_metadata` object. A declared scan path uses `has_scan_path`, `scan_path_num_points`, `scan_path_x_pixels`, and `scan_path_y_pixels`. CloudScope Web validates the two-point line segment and renders it as a non-interactive physical X/Y overlay, independently of image ROIs.
-
-Analysis resources are matched using analysis name, channel, and ROI ID. When a registered plot is available for the analysis type, CloudScope Web loads the corresponding table and renders the plot.
-
-## Version ownership
-
-CloudScope Web validates the collection and native manifest versions it understands. If AcqStore changes the export contract, AcqStore remains the canonical source for the writer specification and migration/re-export instructions, while CloudScope Web should update its reader and this compatibility summary together.
+See the [AcqStore documentation](https://mapmanager.github.io/acqstore/) for the
+normative contract and export workflow.

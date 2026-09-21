@@ -21,7 +21,6 @@ import { plotsForAnalysis } from './plots/analysisPlotRegistry'
 import type { AxisRange, LinkedAxisUpdate } from './models/viewState'
 
 const viewer = useViewerState()
-const showLocalServer = import.meta.env.DEV
 /** Hidden while the raster viewer owns Channel/ROI/Z/T. Restore after 2-channel sample smoke. */
 const showSelectedAcqImageBar = false
 const linkedTimeRange = ref<AxisRange | null>(null)
@@ -253,13 +252,9 @@ onMounted(() => {
         </span>
         <AcqImageCollectionSource
           v-model="viewer.hostedCollectionUrl.value"
-          v-model:server-url="viewer.serverUrl.value"
           :loading="viewer.loading.value"
-          :show-local-server="showLocalServer"
           @open="viewer.openAcqImageCollection()"
           @open-sample="viewer.openAcqImageCollection"
-          @open-server="viewer.openServer"
-          @open-exported-folder="viewer.openExportedFolder"
           @open-local-directory="viewer.openLocalDirectory"
         />
         <a

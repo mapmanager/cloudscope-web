@@ -6,13 +6,13 @@ import type { AcqImageDocument } from '../models/acqImageModels'
 const props = defineProps<{
   image: AcqImageDocument
   channel: number
-  roiId: number | null
+  roiId: string | null
   z: number
   t: number
 }>()
 const emit = defineEmits<{
   'update:channel': [value: number]
-  'update:roiId': [value: number | null]
+  'update:roiId': [value: string | null]
   'update:z': [value: number]
   'update:t': [value: number]
 }>()
@@ -45,7 +45,7 @@ const tSize = computed(() => props.image.image.sizes.t ?? 0)
             'update:roiId',
             ($event.target as HTMLSelectElement).value === ''
               ? null
-              : Number(($event.target as HTMLSelectElement).value),
+              : ($event.target as HTMLSelectElement).value,
           )
         "
       >

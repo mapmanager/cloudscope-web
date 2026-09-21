@@ -9,203 +9,168 @@ import type { AcqImageCollectionEntry } from '../src/models/acqImageCollectionMa
 afterEach(() => vi.unstubAllGlobals())
 
 const entry: AcqImageCollectionEntry = {
-  id: 'acq_image_000',
+  id: 'image-uuid',
   name: 'sample.oir',
-  source: { filename: 'sample.oir', relative_path: 'nested/sample.oir' },
-  ome_zarr_path: 'acq_images/acq_image_000',
-  sidecar_path: 'acq_images/acq_image_000/acqstore/acq_image.json',
-  manifest_path: 'acq_images/acq_image_000/acqstore/manifest.json',
-  reference_image_path: 'acq_images/acq_image_000/reference',
+  ome_zarr: 'images/image-uuid',
+  resources: {
+    acqimage: 'metadata/image-uuid/acqimage.json',
+    analyses: 'metadata/image-uuid/analyses.json',
+  },
+  reference_image: {
+    ome_zarr: 'images/image-uuid-reference',
+    metadata: 'metadata/image-uuid/reference-image.json',
+  },
   summary: {
-    shape: [30000, 14],
-    dims: ['y', 'x'],
-    sizes: { y: 30000, x: 14 },
+    shape: [1, 20, 10],
+    dims: ['c', 'y', 'x'],
     dtype: 'uint16',
     num_channels: 1,
     num_rois: 1,
     analysis_types: ['radon_velocity'],
-    acquisition: { date: '20251029', time: '15:30:55' },
     accepted: true,
     has_reference_image: true,
   },
 }
 
-describe('AcqImageCollection loader', () => {
-  it('builds the file-table index from the root manifest', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue(
-        Response.json({
-          format: 'acqstore-acq-image-collection',
-          version: 1,
-          zarr_format: 3,
-          name: 'sample collection',
-          created_utc: '2026-08-18T00:00:00Z',
-          acqstore_version: '1.0',
-          acq_images: [entry],
-          analysis_tables: {},
-        }),
-      ),
-    )
+const collection = {
+  format: 'acqstore-ome-zarr-collection',
+  version: 1,
+  id: 'collection-uuid',
+  name: 'sample collection',
+  created: '2026-09-21T00:00:00Z',
+  producer: { name: 'acqstore' },
+  members: [entry],
+  resources: {
+    tables: [{ id: 'velocity', media_type: 'text/csv', path: 'tables/velocity.csv' }],
+  },
+}
+
+describe('AcqImageCollection v1 loader', () => {
+  it('builds the collection index from acqstore/collection.json', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(Response.json(collection))
+    vi.stubGlobal('fetch', fetchMock)
+
     const loaded = await loadAcqImageCollection('https://example.test/sample.ome.zarr/')
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      new URL('https://example.test/sample.ome.zarr/acqstore/collection.json'),
+      undefined,
+    )
     expect(loaded.data.acq_images[0]).toMatchObject({
-      id: 'acq_image_000',
+      id: 'image-uuid',
       name: 'sample.oir',
       dtype: 'uint16',
       num_rois: 1,
-      load_state: { pixels: false, analysisCsv: false },
     })
-    expect(loaded.data.analysis_tables).toEqual({})
+    expect(loaded.data.analysis_tables).toEqual({
+      velocity: { csv: 'tables/velocity.csv' },
+    })
   })
 
-  it('rejects stale collection versions before reading new fields', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi
-        .fn()
-        .mockResolvedValue(
-          Response.json({ format: 'acqstore-acq-image-collection', version: 2, acq_images: [] }),
-        ),
-    )
-    await expect(loadAcqImageCollection('https://example.test/stale.ome.zarr/')).rejects.toThrow(
-      'requires AcqImageCollection version 1; re-export',
-    )
-  })
-
-  it('rejects obsolete path-only analysis table entries', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue(
-        Response.json({
-          format: 'acqstore-acq-image-collection',
-          version: 1,
-          zarr_format: 3,
-          name: 'obsolete',
-          created_utc: '2026-08-18T00:00:00Z',
-          acqstore_version: '1.0',
-          acq_images: [entry],
-          analysis_tables: { velocity: 'acqstore/analysis_tables/velocity.csv' },
-        }),
-      ),
-    )
-    await expect(loadAcqImageCollection('https://example.test/obsolete.ome.zarr/')).rejects.toThrow(
-      'obsolete path-only format; re-export',
-    )
-  })
-
-  it('reports the resource and exact missing manifest field', async () => {
-    const invalidEntry = { ...entry, source: undefined }
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue(
-        Response.json({
-          format: 'acqstore-acq-image-collection',
-          version: 1,
-          zarr_format: 3,
-          name: 'invalid',
-          created_utc: '2026-08-18T00:00:00Z',
-          acqstore_version: '1.0',
-          acq_images: [invalidEntry],
-          analysis_tables: {},
-        }),
-      ),
-    )
-    await expect(loadAcqImageCollection('https://example.test/invalid.ome.zarr/')).rejects.toThrow(
-      'https://example.test/invalid.ome.zarr/acqstore/acq_image_collection.json: $.acq_images[0].source must be an object',
-    )
-  })
-
-  it('joins native analysis identity to declared resources', async () => {
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValueOnce(
-        Response.json({
-          format: 'acqstore-native-ome-zarr',
-          version: 2,
-          image_group: '.',
-          reference_image: 'reference',
-          sidecar: 'acqstore/acq_image.json',
-          analyses: [
-            {
-              id: 'radon_velocity__c0__r1',
-              analysis_name: 'radon_velocity',
-              channel: 0,
-              roi_id: 1,
-              resources: {
-                table: 'acqstore/analysis/radon_velocity__c0__r1.table.csv',
-                peaks: null,
-              },
-            },
-          ],
-        }),
-      )
-      .mockResolvedValueOnce(
-        Response.json({
-          accepted: true,
-          image_contrast: {},
-          image_header_metadata: {},
-          experiment_metadata: { preparation: 'arteriole' },
-          reference_image_metadata: {
-            has_scan_path: true,
-            num_channels: 1,
-            scan_path_num_points: 2,
-            scan_path_x_pixels: [10, 20],
-            scan_path_y_pixels: [30, 40],
+  it('loads explicitly linked member resources and opaque ROI identities', async () => {
+    const responses: Record<string, unknown> = {
+      'metadata/image-uuid/acqimage.json': {
+        format: 'acqstore-acqimage',
+        version: 1,
+        image_id: 'image-uuid',
+        accepted: true,
+        rois: [
+          {
+            id: 'roi-uuid',
+            type: 'line',
+            coordinate_space: 'primary-image-full-resolution-pixels',
+            name: 'scan',
+            start: [4, 3],
+            stop: [14, 13],
           },
-          rois: [
+        ],
+        image_metadata: { date: '20260921', time: '12:00:00' },
+      },
+      'metadata/image-uuid/analyses.json': {
+        format: 'acqstore-analyses',
+        version: 1,
+        image_id: 'image-uuid',
+        analyses: [
+          {
+            id: 'analysis-uuid',
+            type: 'radon_velocity',
+            roi_id: 'roi-uuid',
+            channel: 0,
+            resources: [{ id: 'table', media_type: 'text/csv', path: 'analysis/result.csv' }],
+          },
+        ],
+      },
+      'metadata/image-uuid/reference-image.json': {
+        format: 'acqstore-reference-image',
+        version: 1,
+        image_id: 'image-uuid',
+        scan_path: {
+          coordinate_space: 'reference-image-full-resolution-pixels',
+          points: [
+            [10, 30],
+            [20, 40],
+          ],
+        },
+      },
+    }
+    const rootMetadata = {
+      attributes: {
+        ome: {
+          multiscales: [
             {
-              roi_id: 1,
-              roi_type: 'linesegmentroi',
-              version: '1.0',
-              name: 'primary line',
-              note: 'independent of the reference scan path',
-              data: { row0: 3, col0: 4, row1: 13, col1: 14 },
+              axes: [{ name: 'c' }, { name: 'y' }, { name: 'x' }],
+              datasets: [
+                { path: '0', coordinateTransformations: [{ type: 'scale', scale: [1, 2, 3] }] },
+              ],
             },
           ],
-          analysis: [
-            {
-              analysis_name: 'radon_velocity',
-              channel: 0,
-              roi_id: 1,
-              summary: { velocity_mean: 2.5 },
-              detection_params: { window_width: 64 },
-            },
-          ],
-        }),
-      )
+        },
+      },
+    }
+    const fetchMock = vi.fn(async (request: URL | RequestInfo) => {
+      const url = new URL(String(request))
+      const relative = url.pathname.split('/sample.ome.zarr/')[1] ?? ''
+      if (relative in responses) return Response.json(responses[relative])
+      if (relative.endsWith('/zarr.json') && !relative.endsWith('/0/zarr.json')) {
+        return Response.json(rootMetadata)
+      }
+      if (relative.endsWith('/0/zarr.json')) {
+        return Response.json({ shape: [1, 20, 10], data_type: 'uint16' })
+      }
+      return new Response(null, { status: 404 })
+    })
     vi.stubGlobal('fetch', fetchMock)
+
     const loaded = await loadAcqImageCollectionEntry(
       new URL('https://example.test/sample.ome.zarr/'),
       entry,
-      undefined,
     )
+
+    expect(loaded.data.rois[0]).toMatchObject({ id: 'roi-uuid', type: 'line' })
     expect(loaded.data.analyses[0]).toMatchObject({
-      id: 'radon_velocity__c0__r1',
-      analysis_type: 'radon_velocity',
-      resources: {
-        table: {
-          href: 'https://example.test/sample.ome.zarr/acq_images/acq_image_000/acqstore/analysis/radon_velocity__c0__r1.table.csv',
-        },
-        peaks: null,
-      },
+      id: 'analysis-uuid',
+      roi_id: 'roi-uuid',
+      table: { href: 'https://example.test/sample.ome.zarr/analysis/result.csv' },
     })
-    expect(loaded.data.reference_image).toMatchObject({
-      href: 'https://example.test/sample.ome.zarr/acq_images/acq_image_000/reference/',
-      num_channels: 1,
-      scan_path: { x_pixels: [10, 20], y_pixels: [30, 40] },
+    expect(loaded.data.reference_image?.scan_path).toEqual({
+      x_pixels: [10, 20],
+      y_pixels: [30, 40],
     })
-    expect(loaded.data.rois).toEqual([
-      {
-        id: 1,
-        type: 'line',
-        name: 'primary line',
-        note: 'independent of the reference scan path',
-        x0: 4,
-        y0: 3,
-        x1: 14,
-        y1: 13,
-      },
-    ])
-    expect(loaded.data.metadata.experiment).toEqual({ preparation: 'arteriole' })
+  })
+
+  it('rejects paths outside the collection root', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        Response.json({
+          ...collection,
+          members: [{ ...entry, ome_zarr: '../outside' }],
+        }),
+      ),
+    )
+
+    await expect(loadAcqImageCollection('https://example.test/sample.ome.zarr/')).rejects.toThrow(
+      '$.members[0].ome_zarr must be a collection-relative path',
+    )
   })
 })

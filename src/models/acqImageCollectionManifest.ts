@@ -1,80 +1,116 @@
-/** Denormalized fields used to build one collection-table row. */
+/** Optional discovery fields emitted for one collection member. */
 export interface AcqImageSummary {
-  shape: number[]
-  dims: string[]
-  sizes: Record<string, number>
-  dtype: string
-  num_channels: number
-  num_rois: number
-  analysis_types: string[]
-  acquisition: { date: string; time: string }
-  accepted: boolean
-  has_reference_image: boolean
+  shape?: number[]
+  dims?: string[]
+  dtype?: string
+  num_channels?: number
+  num_rois?: number
+  analysis_types?: string[]
+  accepted?: boolean
+  has_reference_image?: boolean
 }
 
-/** One AcqImage member declared by an AcqImageCollection manifest. */
+/** Explicit resources owned by one Collection v1 member. */
+export interface AcqImageMemberResources {
+  acqimage: string
+  analyses?: string
+}
+
+/** Optional reference image declared by one member. */
+export interface ReferenceImageLink {
+  ome_zarr: string
+  metadata: string
+}
+
+/** One member declared by AcqStore OME-Zarr Collection v1. */
 export interface AcqImageCollectionEntry {
   id: string
   name: string
-  source: { filename: string | null; relative_path: string | null }
-  ome_zarr_path: string
-  sidecar_path: string
-  manifest_path: string
-  reference_image_path?: string
-  summary: AcqImageSummary
+  ome_zarr: string
+  resources: AcqImageMemberResources
+  reference_image?: ReferenceImageLink
+  summary?: AcqImageSummary
 }
 
 export const ACQ_IMAGE_COLLECTION_VERSION = 1 as const
 
-/** One collection-level analysis table and its optional presentation state. */
+/** One collection-level CSV and optional CloudScope presentation state. */
 export interface AnalysisTableDescriptor {
   csv: string
   nicepool_state?: string
 }
 
-/** AcqStore-owned wrapper manifest around independent native OME-Zarr images. */
-export interface AcqImageCollectionManifest {
-  format: 'acqstore-acq-image-collection'
-  version: typeof ACQ_IMAGE_COLLECTION_VERSION
-  zarr_format: 3
-  name: string
-  created_utc: string
-  acqstore_version: string
-  acq_images: AcqImageCollectionEntry[]
-  analysis_tables: Record<string, AnalysisTableDescriptor>
-}
-
-export interface AnalysisResourceEntry {
+export interface CollectionCsvResource {
   id: string
-  analysis_name: string
-  channel: number
-  roi_id: number
-  resources: { table: string | null; peaks: string | null }
+  media_type: 'text/csv'
+  path: string
 }
 
-/** Existing native single-AcqImage manifest; collection export must not alter it. */
-export interface NativeImageManifest {
-  format: 'acqstore-native-ome-zarr'
-  version: 2
-  image_group: string
-  sidecar: string
-  reference_image?: string
-  analyses: AnalysisResourceEntry[]
+/** AcqStore OME-Zarr Collection v1 discovery document. */
+export interface AcqImageCollectionManifest {
+  format: 'acqstore-ome-zarr-collection'
+  version: typeof ACQ_IMAGE_COLLECTION_VERSION
+  id: string
+  name: string
+  created?: string
+  producer?: { name: string; version?: string }
+  members: AcqImageCollectionEntry[]
+  resources?: { tables?: CollectionCsvResource[] }
+  metadata?: Record<string, unknown>
 }
 
-/** Existing AcqImage sidecar stored inside each independent child image. */
-export interface NativeAcqImageSidecar {
+export interface CollectionRoi {
+  id: string
+  type: 'point' | 'line' | 'rectangle'
+  coordinate_space: 'primary-image-full-resolution-pixels'
+  name?: string
+  metadata?: Record<string, unknown>
+  position?: [number, number]
+  start?: [number, number]
+  stop?: [number, number]
+}
+
+export interface AcqImageSidecar {
+  format: 'acqstore-acqimage'
+  version: 1
+  image_id: string
   accepted: boolean
-  analysis: Array<{
-    analysis_name: string
-    channel: number
-    roi_id: number
-    summary: Record<string, unknown>
-    detection_params: Record<string, unknown>
-  }>
-  image_contrast: Record<string, unknown>
-  image_header_metadata: Record<string, unknown>
+  rois: CollectionRoi[]
   experiment_metadata?: Record<string, unknown>
-  reference_image_metadata?: Record<string, unknown>
-  rois: Array<Record<string, unknown>>
+  image_metadata?: Record<string, unknown>
+  axis_display?: Record<string, { type: string; unit: string; scale: number }>
+}
+
+export interface AnalysisResource {
+  id: string
+  media_type: 'text/csv'
+  path: string
+}
+
+export interface CollectionAnalysis {
+  id: string
+  type: string
+  roi_id?: string
+  channel?: number
+  parameters?: Record<string, unknown>
+  summary?: Record<string, unknown>
+  resources: AnalysisResource[]
+}
+
+export interface AnalysesDocument {
+  format: 'acqstore-analyses'
+  version: 1
+  image_id: string
+  analyses: CollectionAnalysis[]
+}
+
+export interface ReferenceImageDocument {
+  format: 'acqstore-reference-image'
+  version: 1
+  image_id: string
+  metadata?: Record<string, unknown>
+  scan_path?: {
+    coordinate_space: 'reference-image-full-resolution-pixels'
+    points: Array<[number, number]>
+  }
 }

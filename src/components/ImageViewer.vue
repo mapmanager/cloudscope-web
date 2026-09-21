@@ -39,7 +39,7 @@ const emit = defineEmits<{
   'update:channel': [value: number]
   'update:z': [value: number]
   'update:t': [value: number]
-  'update:roiId': [value: number | null]
+  'update:roiId': [value: string | null]
 }>()
 
 const host = ref<HTMLDivElement | null>(null)
@@ -130,7 +130,7 @@ function onChannelSelected(event: Event): void {
 }
 
 function onRoiSelect(event: Event): void {
-  const roiId = (event as CustomEvent).detail?.roi_id as number | null
+  const roiId = (event as CustomEvent).detail?.roi_id as string | null
   if (roiId !== props.roi?.id) emit('update:roiId', roiId)
 }
 
