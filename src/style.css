@@ -218,7 +218,11 @@ h3 {
 .collection-source__row {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 10px;
+}
+.collection-source__row label {
+  margin-bottom: 0;
 }
 input,
 select {
@@ -228,11 +232,13 @@ select {
   background: #0b171d;
 }
 .collection-source input {
-  width: 100%;
+  min-width: 0;
+  flex: 1;
   padding: 9px 11px;
 }
 .collection-source select {
-  width: 100%;
+  min-width: 0;
+  flex: 1;
   padding: 9px 11px;
 }
 button {

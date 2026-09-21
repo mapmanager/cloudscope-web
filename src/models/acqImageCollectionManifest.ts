@@ -34,10 +34,9 @@ export interface AcqImageCollectionEntry {
 
 export const ACQ_IMAGE_COLLECTION_VERSION = 1 as const
 
-/** One collection-level CSV and optional CloudScope presentation state. */
+/** One collection-level analysis CSV. */
 export interface AnalysisTableDescriptor {
   csv: string
-  nicepool_state?: string
 }
 
 export interface CollectionCsvResource {
@@ -60,7 +59,7 @@ export interface AcqImageCollectionManifest {
 }
 
 export interface CollectionRoi {
-  id: string
+  id: number
   type: 'point' | 'line' | 'rectangle'
   coordinate_space: 'primary-image-full-resolution-pixels'
   name?: string
@@ -90,7 +89,7 @@ export interface AnalysisResource {
 export interface CollectionAnalysis {
   id: string
   type: string
-  roi_id?: string
+  roi_id?: number
   channel?: number
   parameters?: Record<string, unknown>
   summary?: Record<string, unknown>

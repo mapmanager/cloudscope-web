@@ -59,7 +59,7 @@ function acqImageDocument(
   id: string,
   href: string,
   name: string,
-  roiId: string,
+  roiId: number,
 ): LoadedDocument<AcqImageDocument> {
   return {
     url: new URL(`https://example.test/${href}`),
@@ -125,14 +125,14 @@ describe('viewer URL state', () => {
       collection: 'https://data.test/study.ome.zarr/',
       acqImage: 'image-uuid',
       channel: 1,
-      roi: 'roi-uuid',
+      roi: 3,
       z: 3,
       t: 4,
     })
     expect(readUrlSelection(href)).toEqual({
       acqImage: 'image-uuid',
       channel: 1,
-      roi: 'roi-uuid',
+      roi: 3,
       z: 3,
       t: 4,
     })
@@ -148,11 +148,11 @@ describe('viewer selection state', () => {
   it('loads the first member and resets its selection', async () => {
     mockCollection([collectionRow('image-1', 'metadata/one.json', 'one')])
     sourceMocks.loadAcqImage.mockResolvedValue(
-      acqImageDocument('image-1', 'metadata/one.json', 'one', 'roi-7'),
+      acqImageDocument('image-1', 'metadata/one.json', 'one', 7),
     )
     const state = useViewerState()
     state.selectedChannel.value = 2
-    state.selectedRoiId.value = 'old-roi'
+    state.selectedRoiId.value = 99
     state.selectedZ.value = 4
     state.selectedT.value = 3
 
@@ -160,14 +160,14 @@ describe('viewer selection state', () => {
 
     expect(state.selectedAcqImageId.value).toBe('image-1')
     expect(state.selectedChannel.value).toBe(0)
-    expect(state.selectedRoiId.value).toBe('roi-7')
+    expect(state.selectedRoiId.value).toBe(7)
     expect(state.selectedZ.value).toBe(0)
     expect(state.selectedT.value).toBe(0)
   })
 
   it('keeps the previous member until the next member commits', async () => {
-    const first = acqImageDocument('image-1', 'metadata/one.json', 'one', 'roi-7')
-    const second = acqImageDocument('image-2', 'metadata/two.json', 'two', 'roi-3')
+    const first = acqImageDocument('image-1', 'metadata/one.json', 'one', 7)
+    const second = acqImageDocument('image-2', 'metadata/two.json', 'two', 3)
     mockCollection([
       collectionRow('image-1', 'metadata/one.json', 'one'),
       collectionRow('image-2', 'metadata/two.json', 'two'),
@@ -189,13 +189,13 @@ describe('viewer selection state', () => {
     await pending
 
     expect(state.acqImageDocument.value?.data.id).toBe('image-2')
-    expect(state.selectedRoiId.value).toBe('roi-3')
+    expect(state.selectedRoiId.value).toBe(3)
   })
 
   it('reuses a cached channel/Z/T plane', async () => {
     mockCollection([collectionRow('image-1', 'metadata/one.json', 'one')])
     sourceMocks.loadAcqImage.mockResolvedValue(
-      acqImageDocument('image-1', 'metadata/one.json', 'one', 'roi-7'),
+      acqImageDocument('image-1', 'metadata/one.json', 'one', 7),
     )
     sourceMocks.loadPlane.mockResolvedValue({
       data: new Uint16Array([1, 2, 3, 4]),

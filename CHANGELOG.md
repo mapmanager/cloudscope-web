@@ -12,15 +12,19 @@ deployed.
 
 - Added a collapsible, resizable NicePool panel for exploring collection-level analysis tables.
 - Added read-only opening of local AcqStore OME-Zarr collection directories in Chrome and Edge.
-- Added collection and NicePool table row numbers, exported NicePool workspace loading, and bidirectional analysis-row selection.
+- Added collection and NicePool table row numbers and bidirectional analysis-row selection.
+- Added CloudScope-owned default NicePool plots for velocity and diameter tables.
 
 ### Changed
 
-- Updated collection loading to the authoritative AcqStore OME-Zarr Collection v1 contract and opaque ROI identities.
+- Updated collection loading to the authoritative AcqStore OME-Zarr Collection v1 contract and explicit resources.
+- Preserved native integer AcqStore ROI IDs throughout collection loading, image selection, and NicePool navigation.
 - Removed the unused localhost server and Web Dataset compatibility controls.
 - Deduplicated the Plotly runtime shared by CloudScope Web and NicePool in production builds.
 - Reordered the left toolbar into file, metadata, reference-image, and application-information workflow order.
 - Expanded the App Information panel with a project description, documentation links, and contact information.
+- Streamlined the collection picker and close it after a source is selected.
+- Open NicePool with its controls collapsed.
 
 ## 2026-08-21
 

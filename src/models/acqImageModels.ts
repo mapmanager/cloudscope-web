@@ -78,7 +78,7 @@ export interface PrimaryImageDescriptor extends PixelDescriptor {
 }
 
 export interface RectRoi {
-  id: string
+  id: number
   type: 'rect'
   name: string
   note: string
@@ -89,7 +89,7 @@ export interface RectRoi {
 }
 
 export interface LineRoi {
-  id: string
+  id: number
   type: 'line'
   name: string
   note: string
@@ -122,7 +122,7 @@ export interface ExportedAnalysis {
   analysis_type: string
   display_name: string
   channel: number
-  roi_id: string | null
+  roi_id: number | null
   summary: Record<string, unknown>
   table: ResourceLink | null
   plot: AnalysisPlotResource | null

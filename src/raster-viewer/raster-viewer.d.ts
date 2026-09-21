@@ -113,7 +113,7 @@ export class RasterViewer {
   setTIndex(tIndex: number): Promise<RasterPlaneSelection>
   selectChannel(channelId: string, notify?: boolean): string
   setRois(envelopes: unknown[]): number
-  selectRoi(roiId: string | null, options?: { emit?: boolean; source?: string }): boolean
+  selectRoi(roiId: string | number | null, options?: { emit?: boolean; source?: string }): boolean
   addXYPlot(specification: RasterXYPlot): string
   showXYPlot(plotId: string): boolean
   hideXYPlot(plotId: string): boolean

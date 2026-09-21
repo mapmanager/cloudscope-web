@@ -5,13 +5,13 @@ import SelectionControls from './SelectionControls.vue'
 defineProps<{
   image: AcqImageDocument
   channel: number
-  roiId: string | null
+  roiId: number | null
   z: number
   t: number
 }>()
 defineEmits<{
   'update:channel': [value: number]
-  'update:roiId': [value: string | null]
+  'update:roiId': [value: number | null]
   'update:z': [value: number]
   'update:t': [value: number]
 }>()

@@ -71,7 +71,7 @@ describe('normalizeLutName', () => {
 describe('ROI envelopes', () => {
   it('maps source X/Y into row/col without display orientation', () => {
     const rect: Roi = {
-      id: 'roi-1',
+      id: 1,
       type: 'rect',
       name: 'r',
       note: '',
@@ -85,7 +85,7 @@ describe('ROI envelopes', () => {
       data: { row_start: 10, row_stop: 30, col_start: 2, col_stop: 8 },
     })
     const line: Roi = {
-      id: 'roi-2',
+      id: 2,
       type: 'line',
       name: '',
       note: '',
@@ -104,7 +104,7 @@ describe('ROI envelopes', () => {
     expect(
       roiToEnvelope(
         {
-          id: 'roi-1',
+          id: 1,
           type: 'rect',
           name: '',
           note: '',

@@ -49,14 +49,14 @@ describe('NicePool collection table adapter', () => {
 })
 
 const rows = [
-  { pool_row_id: 'row-a', acq_image_id: 'image-1', channel: 0, roi_id: 'roi-1', value: 2 },
-  { pool_row_id: 'row-b', acq_image_id: 'image-1', channel: 1, roi_id: 'roi-2', value: 3 },
-  { pool_row_id: 'row-c', acq_image_id: 'image-2', channel: 0, roi_id: 'roi-1', value: 4 },
+  { pool_row_id: 'row-a', acq_image_id: 'image-1', channel: 0, roi_id: 1, value: 2 },
+  { pool_row_id: 'row-b', acq_image_id: 'image-1', channel: 1, roi_id: 2, value: 3 },
+  { pool_row_id: 'row-c', acq_image_id: 'image-2', channel: 0, roi_id: 1, value: 4 },
 ]
 
 describe('NicePool and viewer selection identity', () => {
   it('selects all analysis rows for an image and makes channel/ROI exact row primary', () => {
-    expect(nicePoolSelectionForViewer(rows, 'image-1', 1, 'roi-2')).toEqual({
+    expect(nicePoolSelectionForViewer(rows, 'image-1', 1, 2)).toEqual({
       primaryRowId: 'row-b',
       selectedRowIds: ['row-a', 'row-b'],
     })
@@ -68,6 +68,6 @@ describe('NicePool and viewer selection identity', () => {
         primaryRowId: 'row-c',
         selectedRowIds: ['row-c'],
       }),
-    ).toEqual({ acqImageId: 'image-2', channel: 0, roiId: 'roi-1' })
+    ).toEqual({ acqImageId: 'image-2', channel: 0, roiId: 1 })
   })
 })

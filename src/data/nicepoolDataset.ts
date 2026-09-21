@@ -68,7 +68,7 @@ export function nicePoolSelectionForViewer(
   rows: readonly NicePoolRow[],
   acqImageId: string | null,
   channel: number,
-  roiId: string | null,
+  roiId: number | null,
 ): NicePoolSelection {
   if (!acqImageId) return { primaryRowId: null, selectedRowIds: [] }
   const matching = rows.filter((row) => row.acq_image_id === acqImageId)
@@ -85,7 +85,7 @@ export function nicePoolSelectionForViewer(
 export interface NicePoolSelectionTarget {
   acqImageId: string
   channel: number
-  roiId: string
+  roiId: number
 }
 
 /** Resolve a NicePool primary row into CloudScope's image-plane selection identity. */
@@ -98,7 +98,7 @@ export function nicePoolTargetForSelection(
   if (!row || typeof row.acq_image_id !== 'string') return null
   const channel = integerField(row, 'channel')
   const roiId = row.roi_id
-  if (channel === null || typeof roiId !== 'string' || !roiId) {
+  if (channel === null || typeof roiId !== 'number' || !Number.isInteger(roiId)) {
     throw new Error('Selected analysis row has no valid channel or ROI.')
   }
   return { acqImageId: row.acq_image_id, channel, roiId }

@@ -40,7 +40,7 @@ export function initialCollectionUrl(): string {
 interface UrlSelection {
   acqImage: string | null
   channel: number
-  roi: string | null
+  roi: number | null
   z: number
   t: number
 }
@@ -50,12 +50,19 @@ function nonNegativeInteger(params: URLSearchParams, key: string): number {
   return Number.isInteger(value) && value >= 0 ? value : 0
 }
 
+function positiveIntegerOrNull(params: URLSearchParams, key: string): number | null {
+  const raw = params.get(key)
+  if (raw === null) return null
+  const value = Number(raw)
+  return Number.isInteger(value) && value > 0 ? value : null
+}
+
 export function readUrlSelection(href: string): UrlSelection {
   const params = new URL(href).searchParams
   return {
     acqImage: params.get('acq_image'),
     channel: nonNegativeInteger(params, 'channel'),
-    roi: params.get('roi'),
+    roi: positiveIntegerOrNull(params, 'roi'),
     z: nonNegativeInteger(params, 'z'),
     t: nonNegativeInteger(params, 't'),
   }
@@ -82,7 +89,7 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
   const acqImageDocument = shallowRef<LoadedDocument<AcqImageDocument> | null>(null)
   const selectedAcqImageId = ref<string | null>(null)
   const selectedChannel = ref(0)
-  const selectedRoiId = ref<string | null>(null)
+  const selectedRoiId = ref<number | null>(null)
   const selectedZ = ref(0)
   const selectedT = ref(0)
   const loading = ref(false)
@@ -370,17 +377,11 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     return activeSource.value.loadTable(url, signal)
   }
 
-  /** Load collection-level JSON through the active hosted or local source. */
-  async function loadCollectionJson(url: URL, signal?: AbortSignal): Promise<unknown> {
-    if (!activeSource.value) throw new Error('No collection source is active')
-    return activeSource.value.loadJson(url, signal)
-  }
-
   /** Select an analysis row through the same image-loading path as the file table. */
   async function selectAnalysisRow(
     acqImageId: string,
     channel: number,
-    roiId: string,
+    roiId: number,
   ): Promise<void> {
     await selectAcqImage(acqImageId)
     const image = acqImageDocument.value?.data
@@ -454,7 +455,6 @@ export function useViewerState(planeCacheOptions: PlaneCacheOptions = DEFAULT_PL
     loadPixelDescriptor,
     loadTable,
     loadCollectionTable,
-    loadCollectionJson,
     selectAnalysisRow,
     unloadImage,
     closeAcqImageCollection,

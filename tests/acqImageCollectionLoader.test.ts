@@ -67,7 +67,7 @@ describe('AcqImageCollection v1 loader', () => {
     })
   })
 
-  it('loads explicitly linked member resources and opaque ROI identities', async () => {
+  it('loads explicitly linked member resources and native integer ROI identities', async () => {
     const responses: Record<string, unknown> = {
       'metadata/image-uuid/acqimage.json': {
         format: 'acqstore-acqimage',
@@ -76,7 +76,7 @@ describe('AcqImageCollection v1 loader', () => {
         accepted: true,
         rois: [
           {
-            id: 'roi-uuid',
+            id: 1,
             type: 'line',
             coordinate_space: 'primary-image-full-resolution-pixels',
             name: 'scan',
@@ -94,14 +94,14 @@ describe('AcqImageCollection v1 loader', () => {
           {
             id: 'analysis-uuid',
             type: 'radon_velocity',
-            roi_id: 'roi-uuid',
+            roi_id: 1,
             channel: 0,
             resources: [{ id: 'table', media_type: 'text/csv', path: 'analysis/result.csv' }],
           },
           {
             id: 'heart-rate-uuid',
             type: 'heart_rate',
-            roi_id: 'roi-uuid',
+            roi_id: 1,
             channel: 0,
             summary: { status: 'ok', bpm: 420 },
           },
@@ -153,10 +153,10 @@ describe('AcqImageCollection v1 loader', () => {
       entry,
     )
 
-    expect(loaded.data.rois[0]).toMatchObject({ id: 'roi-uuid', type: 'line' })
+    expect(loaded.data.rois[0]).toMatchObject({ id: 1, type: 'line' })
     expect(loaded.data.analyses[0]).toMatchObject({
       id: 'analysis-uuid',
-      roi_id: 'roi-uuid',
+      roi_id: 1,
       table: { href: 'https://example.test/sample.ome.zarr/analysis/result.csv' },
     })
     expect(loaded.data.analyses[1]).toMatchObject({

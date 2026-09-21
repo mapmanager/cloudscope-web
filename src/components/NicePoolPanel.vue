@@ -2,9 +2,9 @@
 import {
   NicePoolElement,
   registerNicePoolElement,
-  type NicePoolPreset,
+  type DatasetInput,
+  type NicePoolPresetDefinition,
   type NicePoolSelection,
-  type NicePoolState,
   type NicePoolRow,
 } from '@mapmanager/nicepool'
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
@@ -24,21 +24,64 @@ const props = defineProps<{
   analysisTables: Record<string, AnalysisTableDescriptor>
   preferredTable: string | null
   loadTable: (url: URL, signal?: AbortSignal) => Promise<CsvTable>
-  loadJson: (url: URL, signal?: AbortSignal) => Promise<unknown>
   selectedAcqImageId: string | null
   selectedChannel: number
-  selectedRoiId: string | null
+  selectedRoiId: number | null
 }>()
 const emit = defineEmits<{
-  selectAnalysisRow: [acqImageId: string, channel: number, roiId: string]
+  selectAnalysisRow: [acqImageId: string, channel: number, roiId: number]
 }>()
 
 const element = ref<NicePoolElement | null>(null)
 const selectedTable = ref('')
 const loading = ref(false)
 const error = ref<string | null>(null)
+const warning = ref<string | null>(null)
 let request: AbortController | null = null
 let currentRows: readonly NicePoolRow[] = []
+
+interface TablePreset {
+  definition: NicePoolPresetDefinition
+  requiredColumns: readonly string[]
+}
+
+const tablePresets: Readonly<Partial<Record<string, TablePreset>>> = {
+  velocity: {
+    definition: {
+      name: 'Velocity Default',
+      state: {
+        layout: '1x1',
+        plots: [{ plotType: 'swarm', yColumn: 'velocity_mean', groupColumn: 'grandparent' }],
+      },
+    },
+    requiredColumns: ['velocity_mean', 'grandparent'],
+  },
+  sum_intensity: {
+    definition: {
+      name: 'Diameter Default',
+      state: {
+        layout: '1x1',
+        plots: [{ plotType: 'scatter', xColumn: 'onset_time_sec', yColumn: 'peak_value' }],
+      },
+    },
+    requiredColumns: ['onset_time_sec', 'peak_value'],
+  },
+}
+
+function initializeNicePool(dataset: DatasetInput): void {
+  if (!element.value) return
+  const preset = tablePresets[selectedTable.value]
+  const columns = new Set(dataset.rows.flatMap((row) => Object.keys(row)))
+  const missing = preset?.requiredColumns.filter((column) => !columns.has(column)) ?? []
+  const definitions = preset && missing.length === 0 ? [preset.definition] : []
+  warning.value =
+    preset && missing.length > 0
+      ? `${preset.definition.name} is unavailable because the table is missing ${missing.join(', ')}.`
+      : null
+  element.value.setControlsCollapsed(true)
+  element.value.setShowPresetEditing(false)
+  element.value.initializeData(dataset, definitions, definitions[0]?.name ?? null)
+}
 
 const tableNames = computed(() => Object.keys(props.analysisTables))
 
@@ -52,6 +95,7 @@ function initialTable(): string {
 async function loadSelectedTable(): Promise<void> {
   request?.abort()
   error.value = null
+  warning.value = null
   currentRows = []
   if (!selectedTable.value) return
   const controller = new AbortController()
@@ -65,28 +109,10 @@ async function loadSelectedTable(): Promise<void> {
       controller.signal,
     )
     const dataset = csvTableToNicePoolDataset(table)
-    const workspace = descriptor.nicepool_state
-      ? await props.loadJson(
-          new URL(descriptor.nicepool_state, props.collectionUrl),
-          controller.signal,
-        )
-      : null
     await nextTick()
     if (!controller.signal.aborted && element.value) {
       currentRows = dataset.rows
-      element.value.setShowPresetEditing(false)
-      element.value.setData(dataset)
-      if (workspace !== null) {
-        const preset: NicePoolPreset = {
-          schemaVersion: 1,
-          name: 'Collection default',
-          state: workspace as NicePoolState,
-        }
-        element.value.setNicePoolPresets([preset])
-        element.value.applyNicePoolPreset(preset.name)
-      } else {
-        element.value.setNicePoolPresets([])
-      }
+      initializeNicePool(dataset)
       syncSelectionFromViewer()
     }
   } catch (reason) {
@@ -155,6 +181,7 @@ watch(
     </header>
     <p v-if="loading" class="nicepool-panel__message">Loading analysis table…</p>
     <p v-else-if="error" class="nicepool-panel__message error-message" role="alert">{{ error }}</p>
+    <p v-else-if="warning" class="nicepool-panel__message" role="status">{{ warning }}</p>
     <p v-else-if="tableNames.length === 0" class="nicepool-panel__message">
       This collection does not advertise any analysis tables.
     </p>

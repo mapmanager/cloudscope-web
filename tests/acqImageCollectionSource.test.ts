@@ -46,12 +46,25 @@ describe('AcqImageCollectionSource', () => {
     await wrapper.get('.collection-source__trigger').trigger('click')
     const localButton = wrapper
       .findAll('button')
-      .find((button) => button.text().trim() === 'Open local directory')
+      .find((button) => button.text().trim() === 'Open Local AcqStore OME-Zarr')
     expect(localButton).toBeDefined()
     await localButton!.trigger('click')
 
     expect(wrapper.emitted('open-local-directory')).toEqual([[]])
+    expect(wrapper.find('.collection-source__popover').exists()).toBe(false)
     wrapper.unmount()
     vi.unstubAllGlobals()
+  })
+
+  it('closes the panel after submitting a hosted URL', async () => {
+    const wrapper = mount(AcqImageCollectionSource, {
+      props: { modelValue: 'https://example.test/sample.ome.zarr/', loading: false },
+    })
+
+    await wrapper.get('.collection-source__trigger').trigger('click')
+    await wrapper.get('form:nth-of-type(2)').trigger('submit')
+
+    expect(wrapper.emitted('open')).toEqual([[]])
+    expect(wrapper.find('.collection-source__popover').exists()).toBe(false)
   })
 })

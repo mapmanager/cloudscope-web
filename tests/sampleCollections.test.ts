@@ -36,5 +36,6 @@ describe('hosted sample catalog', () => {
     await wrapper.get('#sample-collection').setValue(sampleCollections[1].url)
 
     expect(wrapper.emitted('open-sample')).toEqual([[sampleCollections[1].url]])
+    expect(wrapper.find('.collection-source__popover').exists()).toBe(false)
   })
 })
