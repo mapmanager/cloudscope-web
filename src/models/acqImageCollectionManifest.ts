@@ -94,7 +94,7 @@ export interface CollectionAnalysis {
   channel?: number
   parameters?: Record<string, unknown>
   summary?: Record<string, unknown>
-  resources: AnalysisResource[]
+  resources?: AnalysisResource[]
 }
 
 export interface AnalysesDocument {

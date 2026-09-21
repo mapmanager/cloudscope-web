@@ -98,6 +98,13 @@ describe('AcqImageCollection v1 loader', () => {
             channel: 0,
             resources: [{ id: 'table', media_type: 'text/csv', path: 'analysis/result.csv' }],
           },
+          {
+            id: 'heart-rate-uuid',
+            type: 'heart_rate',
+            roi_id: 'roi-uuid',
+            channel: 0,
+            summary: { status: 'ok', bpm: 420 },
+          },
         ],
       },
       'metadata/image-uuid/reference-image.json': {
@@ -151,6 +158,12 @@ describe('AcqImageCollection v1 loader', () => {
       id: 'analysis-uuid',
       roi_id: 'roi-uuid',
       table: { href: 'https://example.test/sample.ome.zarr/analysis/result.csv' },
+    })
+    expect(loaded.data.analyses[1]).toMatchObject({
+      id: 'heart-rate-uuid',
+      summary: { status: 'ok', bpm: 420 },
+      table: null,
+      resources: { table: null, peaks: null },
     })
     expect(loaded.data.reference_image?.scan_path).toEqual({
       x_pixels: [10, 20],

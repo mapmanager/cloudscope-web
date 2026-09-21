@@ -200,7 +200,7 @@ function normalizeRoi(roi: CollectionRoi): Roi {
 }
 
 function normalizeAnalysis(item: CollectionAnalysis, root: URL): ExportedAnalysis {
-  const table = item.resources.find(
+  const table = (item.resources ?? []).find(
     (resource) => resource.id === 'table' && resource.media_type === 'text/csv',
   )
   const tableHref = table ? new URL(table.path, root).href : null
