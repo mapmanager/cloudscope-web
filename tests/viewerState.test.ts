@@ -29,7 +29,6 @@ import {
   useViewerState,
   viewerUrl,
 } from '../src/composables/useViewerState'
-import { defaultSampleCollection } from '../src/config/sampleCollections'
 import type {
   AcqImageCollectionRow,
   AcqImageDocument,
@@ -115,9 +114,9 @@ function mockCollection(acqImages: AcqImageCollectionRow[]): void {
 }
 
 describe('viewer URL state', () => {
-  it('uses the configured sample when no explicit source is present', () => {
+  it('waits for the runtime catalog when no explicit source is present', () => {
     window.history.replaceState(null, '', '/')
-    expect(initialCollectionUrl()).toBe(defaultSampleCollection.url)
+    expect(initialCollectionUrl()).toBe('')
   })
 
   it('round-trips opaque collection, image, and ROI identities', () => {

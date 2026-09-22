@@ -22,7 +22,6 @@ registerNicePoolElement()
 const props = defineProps<{
   collectionUrl: URL
   analysisTables: Record<string, AnalysisTableDescriptor>
-  preferredTable: string | null
   loadTable: (url: URL, signal?: AbortSignal) => Promise<CsvTable>
   selectedAcqImageId: string | null
   selectedChannel: number
@@ -86,9 +85,6 @@ function initializeNicePool(dataset: DatasetInput): void {
 const tableNames = computed(() => Object.keys(props.analysisTables))
 
 function initialTable(): string {
-  if (props.preferredTable && tableNames.value.includes(props.preferredTable)) {
-    return props.preferredTable
-  }
   return tableNames.value[0] ?? ''
 }
 
@@ -150,7 +146,7 @@ function handleNicePoolSelection(event: Event): void {
 }
 
 watch(
-  () => [props.collectionUrl.href, props.analysisTables, props.preferredTable] as const,
+  () => [props.collectionUrl.href, props.analysisTables] as const,
   () => {
     selectedTable.value = initialTable()
     void loadSelectedTable()

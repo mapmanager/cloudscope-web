@@ -2,7 +2,7 @@ import { readdir } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { sampleCollections } from '../src/config/sampleCollections.ts'
+import { CLOUDSCOPE_SAMPLE_CATALOG_URL } from '../src/data/sampleCatalog.ts'
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const checkingDist = process.argv.includes('--dist')
@@ -35,40 +35,9 @@ async function findBundledOmeZarr(root: string): Promise<string[]> {
   return found
 }
 
-function verifySampleUrl(sample: (typeof sampleCollections)[number]): void {
-  let url: URL
-
-  try {
-    url = new URL(sample.url)
-  } catch {
-    throw new Error(`${sample.name} has an invalid URL: ${sample.url}`)
-  }
-
-  if (url.protocol !== 'https:') {
-    throw new Error(`${sample.name} URL must use HTTPS: ${sample.url}`)
-  }
-
-  if (url.hostname !== 'data.mapmanager.net') {
-    throw new Error(`${sample.name} URL must be hosted at data.mapmanager.net: ${sample.url}`)
-  }
-
-  if (!url.pathname.endsWith('.ome.zarr/')) {
-    throw new Error(`${sample.name} URL must end in '.ome.zarr/': ${sample.url}`)
-  }
-}
-
 async function main(): Promise<void> {
-  const ids = new Set<string>()
-  const urls = new Set<string>()
-
-  for (const sample of sampleCollections) {
-    if (ids.has(sample.id)) throw new Error(`Duplicate sample ID: ${sample.id}`)
-    if (urls.has(sample.url)) throw new Error(`Duplicate sample URL: ${sample.url}`)
-
-    ids.add(sample.id)
-    urls.add(sample.url)
-
-    verifySampleUrl(sample)
+  if (CLOUDSCOPE_SAMPLE_CATALOG_URL !== 'https://data.mapmanager.net/cloudscope-web/samples.json') {
+    throw new Error(`Unexpected sample catalog URL: ${CLOUDSCOPE_SAMPLE_CATALOG_URL}`)
   }
 
   const bundledSamples = await findBundledOmeZarr(path.join(siteRoot, 'samples'))
@@ -84,7 +53,7 @@ async function main(): Promise<void> {
   }
 
   console.log(
-    `Verified ${sampleCollections.length} R2-hosted sample collection URLs; no OME-Zarr samples are bundled in ${
+    `Verified the R2-hosted sample catalog URL; no OME-Zarr samples are bundled in ${
       checkingDist ? 'dist' : 'public'
     }.`,
   )

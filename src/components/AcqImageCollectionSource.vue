@@ -1,10 +1,21 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 
-import { sampleCollections } from '../config/sampleCollections'
 import { browserDirectoryPickerSupported } from '../data/browserDirectory'
+import type { CloudScopeSample } from '../data/sampleCatalog'
 
-defineProps<{ modelValue: string; loading: boolean }>()
+withDefaults(
+  defineProps<{
+    modelValue: string
+    loading: boolean
+    samples?: readonly CloudScopeSample[]
+    sampleCatalogError?: string | null
+  }>(),
+  {
+    samples: () => [],
+    sampleCatalogError: null,
+  },
+)
 const emit = defineEmits<{
   'update:modelValue': [value: string]
   open: []
@@ -71,16 +82,17 @@ onBeforeUnmount(() => {
           <label for="sample-collection">Sample AcqStore OME-Zarr</label>
           <select
             id="sample-collection"
-            :value="sampleCollections.some(({ url }) => url === modelValue) ? modelValue : ''"
-            :disabled="loading"
+            :value="samples.some(({ url }) => url === modelValue) ? modelValue : ''"
+            :disabled="loading || samples.length === 0"
             @change="openSampleCollection"
           >
             <option value="" disabled>Choose a sample…</option>
-            <option v-for="sample in sampleCollections" :key="sample.id" :value="sample.url">
-              {{ sample.name }} — {{ sample.description }}
+            <option v-for="sample in samples" :key="sample.url" :value="sample.url">
+              {{ sample.name }}
             </option>
           </select>
         </form>
+        <p v-if="sampleCatalogError" class="muted">{{ sampleCatalogError }}</p>
         <form @submit.prevent="openHostedCollection">
           <div class="collection-source__row">
             <button type="submit" :disabled="loading || !modelValue.trim()">

@@ -15,12 +15,14 @@ import ReferenceImageInspector from './components/ReferenceImageInspector.vue'
 import SelectedAcqImageBar from './components/SelectedAcqImageBar.vue'
 import { useViewerState } from './composables/useViewerState'
 import { appInformation } from './config/buildInfo'
-import { preferredAnalysisTableForUrl } from './config/sampleCollections'
 import { clampSectionHeight } from './data/resizableSection'
+import { loadSampleCatalog, type CloudScopeSample } from './data/sampleCatalog'
 import { plotsForAnalysis } from './plots/analysisPlotRegistry'
 import type { AxisRange, LinkedAxisUpdate } from './models/viewState'
 
 const viewer = useViewerState()
+const samples = ref<CloudScopeSample[]>([])
+const sampleCatalogError = ref<string | null>(null)
 /** Hidden while the raster viewer owns Channel/ROI/Z/T. Restore after 2-channel sample smoke. */
 const showSelectedAcqImageBar = false
 const linkedTimeRange = ref<AxisRange | null>(null)
@@ -225,8 +227,19 @@ function toggleInspector(kind: InspectorKind): void {
   activeInspector.value = kind
 }
 
-onMounted(() => {
-  if (viewer.hostedCollectionUrl.value) void viewer.openAcqImageCollection()
+onMounted(async () => {
+  if (viewer.hostedCollectionUrl.value) {
+    void viewer.openAcqImageCollection()
+  }
+  try {
+    samples.value = await loadSampleCatalog()
+    if (!viewer.hostedCollectionUrl.value && samples.value[0]) {
+      viewer.hostedCollectionUrl.value = samples.value[0].url
+      void viewer.openAcqImageCollection()
+    }
+  } catch (reason) {
+    sampleCatalogError.value = reason instanceof Error ? reason.message : String(reason)
+  }
 })
 </script>
 
@@ -253,6 +266,8 @@ onMounted(() => {
         <AcqImageCollectionSource
           v-model="viewer.hostedCollectionUrl.value"
           :loading="viewer.loading.value"
+          :samples="samples"
+          :sample-catalog-error="sampleCatalogError"
           @open="viewer.openAcqImageCollection()"
           @open-sample="viewer.openAcqImageCollection"
           @open-local-directory="viewer.openLocalDirectory"
@@ -443,7 +458,6 @@ onMounted(() => {
       v-if="nicepoolOpen && viewer.acqImageCollectionDocument.value"
       :collection-url="viewer.acqImageCollectionDocument.value.url"
       :analysis-tables="viewer.acqImageCollectionDocument.value.data.analysis_tables"
-      :preferred-table="preferredAnalysisTableForUrl(viewer.acqImageCollectionDocument.value.url)"
       :load-table="viewer.loadCollectionTable"
       :selected-acq-image-id="viewer.selectedAcqImageId.value"
       :selected-channel="viewer.selectedChannel.value"

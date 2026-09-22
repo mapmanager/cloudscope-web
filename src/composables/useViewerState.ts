@@ -2,7 +2,6 @@ import { computed, ref, shallowRef, watch } from 'vue'
 
 import type { CsvTable } from '../data/csvLoader'
 import type { ImagePlane, PlaneIndices } from '../data/omeZarrLoader'
-import { defaultSampleCollection } from '../config/sampleCollections'
 import {
   BrowserDirectoryCollectionSource,
   AcqImageCollectionSource,
@@ -24,7 +23,8 @@ const DEFAULT_DEVELOPMENT_COLLECTION = '/__dev_collection__/'
  * Selects the initial collection without requiring a runtime server.
  *
  * Explicit query-string state wins, followed by a configured Vite development
- * collection and finally the bundled diameter sample.
+ * collection. Hosted catalog defaults are selected by the app after the
+ * runtime sample catalog loads.
  *
  * @returns A URL accepted by {@link openAcqImageCollection}.
  */
@@ -34,7 +34,7 @@ export function initialCollectionUrl(): string {
   if (import.meta.env.DEV && __ACQSTORE_DEV_DATASET_CONFIGURED__) {
     return DEFAULT_DEVELOPMENT_COLLECTION
   }
-  return defaultSampleCollection.url
+  return ''
 }
 
 interface UrlSelection {
