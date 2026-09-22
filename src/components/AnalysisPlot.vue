@@ -18,7 +18,7 @@ const emit = defineEmits<{ 'x-range-change': [update: LinkedAxisUpdate] }>()
 
 const specs = computed(() => plotsForAnalysis(props.analysis.analysis_type))
 
-function resourceUrl(spec: XYPlotSpec): URL | null {
+function resourceUrl(): URL | null {
   const resource = props.analysis.resources?.table
   if (resource) return new URL(resource.href, props.documentUrl)
   if (props.analysis.plot) {
@@ -43,9 +43,9 @@ function overlays(spec: XYPlotSpec) {
 <template>
   <template v-for="spec in specs" :key="spec.id">
     <XYPlot
-      v-if="resourceUrl(spec)"
+      v-if="resourceUrl()"
       :spec="spec"
-      :resource-url="resourceUrl(spec)!"
+      :resource-url="resourceUrl()!"
       :overlays="overlays(spec)"
       :load-table="loadScopedTable"
       :x-range="xRange"
