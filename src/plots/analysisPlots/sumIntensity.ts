@@ -17,8 +17,7 @@ export const sumIntensityPlots: XYPlotSpec[] = [
       {
         id: 'detected-peaks',
         title: 'Detected peaks',
-        source: { resource: 'peaks' },
-        data: { xColumn: 'peak_time_sec', yColumn: 'peak_value' },
+        source: { summary: 'peak_events' },
         presentation: {
           seriesName: 'Detected peaks',
           mode: 'markers',

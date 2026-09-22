@@ -163,7 +163,7 @@ describe('AcqImageCollection v1 loader', () => {
       id: 'heart-rate-uuid',
       summary: { status: 'ok', bpm: 420 },
       table: null,
-      resources: { table: null, peaks: null },
+      resources: { table: null },
     })
     expect(loaded.data.reference_image?.scan_path).toEqual({
       x_pixels: [10, 20],

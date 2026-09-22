@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildXYSeries, type XYPlotSpec } from '../src/plots/xyPlot'
+import {
+  buildXYSeries,
+  filterAnalysisTable,
+  peakSeriesFromSummary,
+  type XYPlotSpec,
+} from '../src/plots/xyPlot'
 import { plotsForAnalysis } from '../src/plots/analysisPlotRegistry'
 
 const spec: XYPlotSpec = {
@@ -44,17 +49,30 @@ describe('X/Y plot data', () => {
 
     expect(sumIntensity?.data).toEqual({ xColumn: 'time_sec', yColumn: 'df_f_signal' })
     expect(sumIntensity?.overlays?.[0]).toMatchObject({
-      source: { resource: 'peaks' },
-      data: { xColumn: 'peak_time_sec', yColumn: 'peak_value' },
+      source: { summary: 'peak_events' },
       presentation: { mode: 'markers' },
     })
   })
 
-  it('allows a declared peak overlay to contain no rows', () => {
-    const overlay = plotsForAnalysis('sum_intensity')[0]?.overlays?.[0]
-    expect(overlay).toBeDefined()
+  it('selects one analysis instance from a native combined table', () => {
+    const table = {
+      columns: ['channel', 'roi_id', 'time_sec', 'df_f_signal'],
+      rows: [
+        { channel: '0', roi_id: '1', time_sec: '0', df_f_signal: '2' },
+        { channel: '1', roi_id: '2', time_sec: '0', df_f_signal: '4' },
+      ],
+    }
+    expect(filterAnalysisTable(table, 1, 2).rows).toEqual([table.rows[1]])
+  })
+
+  it('reads authoritative sparse peaks directly from the analysis summary', () => {
     expect(
-      buildXYSeries({ columns: ['peak_time_sec', 'peak_value'], rows: [] }, overlay!, true),
-    ).toEqual({ x: [], y: [] })
+      peakSeriesFromSummary({
+        peak_events: [
+          { peak: { time_sec: 1.25, value: 4.5 } },
+          { peak: { time_sec: null, value: null } },
+        ],
+      }),
+    ).toEqual({ x: [1.25], y: [4.5] })
   })
 })

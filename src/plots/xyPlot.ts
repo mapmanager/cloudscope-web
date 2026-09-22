@@ -4,7 +4,7 @@ import type { AxisLinkGroup } from '../models/viewState'
 export interface XYPlotSpec {
   id: string
   title: string
-  source: { analysisName: string; resource: 'table' | 'peaks' }
+  source: { analysisName: string; resource: 'table' }
   data: { xColumn: string; yColumn: string }
   presentation: {
     xLinkGroup: AxisLinkGroup
@@ -19,8 +19,7 @@ export interface XYPlotSpec {
 export interface XYPlotOverlaySpec {
   id: string
   title: string
-  source: { resource: 'table' | 'peaks' }
-  data: { xColumn: string; yColumn: string }
+  source: { summary: 'peak_events' }
   presentation: {
     seriesName: string
     mode: 'markers'
@@ -34,9 +33,45 @@ export interface XYSeries {
   y: number[]
 }
 
+/** Select one analysis instance from AcqStore's combined analysis-type table. */
+export function filterAnalysisTable(
+  table: CsvTable,
+  channel: number,
+  roiId: number | null,
+): CsvTable {
+  return {
+    columns: table.columns,
+    rows: table.rows.filter(
+      (row) => Number(row.channel) === channel && (roiId === null || Number(row.roi_id) === roiId),
+    ),
+  }
+}
+
+/** Read the authoritative sparse peak result without deriving it from the trace. */
+export function peakSeriesFromSummary(summary: Record<string, unknown>): XYSeries {
+  const events = Array.isArray(summary.peak_events) ? summary.peak_events : []
+  const x: number[] = []
+  const y: number[] = []
+  for (const event of events) {
+    if (!event || typeof event !== 'object') continue
+    const peak = (event as Record<string, unknown>).peak
+    if (!peak || typeof peak !== 'object') continue
+    const values = peak as Record<string, unknown>
+    if (values.time_sec === null || values.time_sec === undefined) continue
+    if (values.value === null || values.value === undefined) continue
+    const time = Number(values.time_sec)
+    const value = Number(values.value)
+    if (Number.isFinite(time) && Number.isFinite(value)) {
+      x.push(time)
+      y.push(value)
+    }
+  }
+  return { x, y }
+}
+
 export function buildXYSeries(
   table: CsvTable,
-  spec: Pick<XYPlotSpec, 'title' | 'data'> | Pick<XYPlotOverlaySpec, 'title' | 'data'>,
+  spec: Pick<XYPlotSpec, 'title' | 'data'>,
   allowEmpty = false,
 ): XYSeries {
   if (!table.columns.includes(spec.data.xColumn)) {

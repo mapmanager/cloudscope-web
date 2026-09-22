@@ -214,7 +214,7 @@ function normalizeAnalysis(item: CollectionAnalysis, root: URL): ExportedAnalysi
     detection_params: item.parameters ?? {},
     table: tableHref ? { href: tableHref } : null,
     plot: null,
-    resources: { table: tableHref ? { href: tableHref } : null, peaks: null },
+    resources: { table: tableHref ? { href: tableHref } : null },
   }
 }
 

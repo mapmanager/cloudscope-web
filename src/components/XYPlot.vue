@@ -10,11 +10,16 @@ import {
   xRangeFromRelayout,
   type PlotlyRelayoutEvent,
 } from '../plots/plotlyAxisRange'
-import { buildXYSeries, type XYPlotOverlaySpec, type XYPlotSpec } from '../plots/xyPlot'
+import {
+  buildXYSeries,
+  type XYPlotOverlaySpec,
+  type XYPlotSpec,
+  type XYSeries,
+} from '../plots/xyPlot'
 
 interface XYPlotOverlayInput {
   spec: XYPlotOverlaySpec
-  resourceUrl: URL
+  series: XYSeries
 }
 
 const props = defineProps<{
@@ -91,19 +96,13 @@ async function renderPlot(): Promise<void> {
   plotReady = false
   loading.value = true
   try {
-    const [table, ...overlayTables] = await Promise.all([
-      props.loadTable(props.resourceUrl, currentRequest.signal),
-      ...(props.overlays ?? []).map((overlay) =>
-        props.loadTable(overlay.resourceUrl, currentRequest.signal),
-      ),
-    ])
+    const table = await props.loadTable(props.resourceUrl, currentRequest.signal)
     const series = buildXYSeries(table, props.spec)
-    const overlayTraces = (props.overlays ?? []).flatMap((overlay, index) => {
-      const overlaySeries = buildXYSeries(overlayTables[index]!, overlay.spec, true)
-      return overlaySeries.x.length
+    const overlayTraces = (props.overlays ?? []).flatMap((overlay) => {
+      return overlay.series.x.length
         ? [
             {
-              ...overlaySeries,
+              ...overlay.series,
               type: 'scattergl' as const,
               mode: overlay.spec.presentation.mode,
               name: overlay.spec.presentation.seriesName,

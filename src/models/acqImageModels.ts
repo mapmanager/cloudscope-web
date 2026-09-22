@@ -113,10 +113,6 @@ export interface AnalysisPlotResource extends ResourceLink {
   series_name: string
 }
 
-export interface AnalysisPeakResource extends ResourceLink {
-  count: number
-}
-
 export interface ExportedAnalysis {
   id: string
   analysis_type: string
@@ -126,10 +122,8 @@ export interface ExportedAnalysis {
   summary: Record<string, unknown>
   table: ResourceLink | null
   plot: AnalysisPlotResource | null
-  peaks?: AnalysisPeakResource
   resources?: {
     table: ResourceLink | null
-    peaks: ResourceLink | null
   }
   detection_params?: Record<string, unknown>
 }

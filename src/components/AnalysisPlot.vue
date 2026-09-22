@@ -5,7 +5,7 @@ import type { CsvTable } from '../data/csvLoader'
 import type { ExportedAnalysis } from '../models/acqImageModels'
 import type { AxisRange, LinkedAxisUpdate } from '../models/viewState'
 import { plotsForAnalysis } from '../plots/analysisPlotRegistry'
-import type { XYPlotOverlaySpec, XYPlotSpec } from '../plots/xyPlot'
+import { filterAnalysisTable, peakSeriesFromSummary, type XYPlotSpec } from '../plots/xyPlot'
 import XYPlot from './XYPlot.vue'
 
 const props = defineProps<{
@@ -19,28 +19,24 @@ const emit = defineEmits<{ 'x-range-change': [update: LinkedAxisUpdate] }>()
 const specs = computed(() => plotsForAnalysis(props.analysis.analysis_type))
 
 function resourceUrl(spec: XYPlotSpec): URL | null {
-  const resources = props.analysis.resources
-  const resource = spec.source.resource === 'table' ? resources?.table : resources?.peaks
+  const resource = props.analysis.resources?.table
   if (resource) return new URL(resource.href, props.documentUrl)
-  if (spec.source.resource === 'table' && props.analysis.plot) {
+  if (props.analysis.plot) {
     return new URL(props.analysis.plot.href, props.documentUrl)
   }
   return null
 }
 
-function overlayResourceUrl(spec: XYPlotOverlaySpec): URL | null {
-  const resource =
-    spec.source.resource === 'table'
-      ? props.analysis.resources?.table
-      : props.analysis.resources?.peaks
-  return resource ? new URL(resource.href, props.documentUrl) : null
+async function loadScopedTable(url: URL, signal?: AbortSignal): Promise<CsvTable> {
+  const table = await props.loadTable(url, signal)
+  return filterAnalysisTable(table, props.analysis.channel, props.analysis.roi_id)
 }
 
 function overlays(spec: XYPlotSpec) {
-  return (spec.overlays ?? []).flatMap((overlay) => {
-    const url = overlayResourceUrl(overlay)
-    return url ? [{ spec: overlay, resourceUrl: url }] : []
-  })
+  return (spec.overlays ?? []).map((overlay) => ({
+    spec: overlay,
+    series: peakSeriesFromSummary(props.analysis.summary),
+  }))
 }
 </script>
 
@@ -51,7 +47,7 @@ function overlays(spec: XYPlotSpec) {
       :spec="spec"
       :resource-url="resourceUrl(spec)!"
       :overlays="overlays(spec)"
-      :load-table="loadTable"
+      :load-table="loadScopedTable"
       :x-range="xRange"
       @x-range-change="emit('x-range-change', $event)"
     />
